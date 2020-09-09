@@ -1,0 +1,23 @@
+{
+    "encoding": {
+        "level": 95,
+        "type": "jpeg"
+    },
+    "ingestor": {
+        "loop_video": true,
+        "pipeline": "./test_videos/Safety_Full_Hat_and_Vest.avi",
+        "poll_interval": 0.2,
+        "queue_size": 10,
+        "type": "opencv"
+    },
+    "max_jobs": 20,
+    "max_workers": 4,
+    "queue_size": 10,
+    "udfs": [
+        {
+            "name": "dummy",
+            "type": "python"
+         }
+    ]
+}
+
