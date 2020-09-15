@@ -21,7 +21,47 @@
 cmake_minimum_required(VERSION 3.12)
 project(eis-udf-safety_gear_demo VERSION 1.0.0 LANGUAGES C CXX)
 
+# Globals
+set(EIS_COMMON_CMAKE "${CMAKE_CURRENT_SOURCE_DIR}/../../cmake")
+
+# Set C++ standard to C11
+set(CMAKE_CXX_STANDARD 11)
+
+# Set CFLAGS
+#set(CMAKE_CXX_FLAGS "-fPIE -fPIC -O2 -Wall -pedantic -fstack-protector-strong -D_FORTIFY_SOURCE=2")
+set(CMAKE_CXX_FLAGS "-fPIE -fPIC -O2 -Wall -fstack-protector-strong -D_FORTIFY_SOURCE=2")
+
+# Set LDFLAGS
+set(CMAKE_SHARED_LINKER_FLAGS "-z noexecstack -z relro -z now")
+
+# Add cmake module path
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "${EIS_COMMON_CMAKE}")
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json")
+    EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json
+        ${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json
+    )
+endif()
+
+# Finding libraries
+find_package(EISUtils REQUIRED)
+find_package(EISMsgEnv REQUIRED)
 find_package(UDFLoader REQUIRED)
+find_package(OpenCV REQUIRED)
+find_package(IntelSafeString REQUIRED)
+find_package(InferenceEngine 2.1 REQUIRED)
+
+# Set include directories
+include_directories(
+    ${OpenCV_INCLUDE_DIRS}
+    ${EISMsgEnv_INCLUDE}
+    ${EISUtils_INCLUDE}
+    ${UDFLoader_INCLUDE}
+    ${IntelSafeString_INCLUDE})
+
+set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/lib/udfs/")
 
 add_library(safety_gear_demo SHARED "safety_gear_demo.cpp")
 #find_library(CPU_LIB cpu_extension PATH /EIS/go/src/IEdgeInsights/common/udfs/native/safety_gear_demo)

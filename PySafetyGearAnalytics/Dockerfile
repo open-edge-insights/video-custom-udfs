@@ -27,5 +27,9 @@ LABEL description="Python based safety gear analytics image"
 
 WORKDIR ${GO_WORK_DIR}
 
+# Added GO_WORK_DIR to python path as copying the UDF code block under GO_WORK_DIR
+# else user can add the path to which it copies its udf code.
+ENV PYTHONPATH ${PYTHONPATH}:${GO_WORK_DIR}
+
 # User can mention about all UDF directories here, both py and C++.
-COPY ./safety_gear ./common/udfs/python/safety_gear
+COPY ./safety_gear ./safety_gear

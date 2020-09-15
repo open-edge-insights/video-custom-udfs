@@ -11,8 +11,8 @@
             "name": "safety_gear_demo",
             "type": "native",
             "device": "CPU",
-            "model_xml": "common/udfs/native/safety_gear_demo/ref/frozen_inference_graph.xml",
-            "model_bin": "common/udfs/native/safety_gear_demo/ref/frozen_inference_graph.bin"
+            "model_xml": "safety_gear_demo/ref/frozen_inference_graph.xml",
+            "model_bin": "safety_gear_demo/ref/frozen_inference_graph.bin"
         }
     ]
 }
