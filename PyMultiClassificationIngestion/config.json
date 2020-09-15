@@ -1,0 +1,25 @@
+{
+    "encoding": {
+        "level": 95,
+        "type": "jpeg"
+    },
+    "ingestor": {
+        "loop_video": true,
+        "pipeline": "./test_videos/classification_vid.avi",
+        "poll_interval": 0.2,
+        "queue_size": 10,
+        "type": "opencv"
+    },
+    "max_jobs": 20,
+    "max_workers": 4,
+    "queue_size": 10,
+    "udfs": [ {
+        "name": "sample_classification.multi_class_classifier",
+        "type": "python",
+        "device": "CPU",
+        "labels_file_path": "common/udfs/python/sample_classification/ref/squeezenet1.1.labels",
+        "model_xml": "common/udfs/python/sample_classification/ref/squeezenet1.1_FP32.xml",
+        "model_bin": "common/udfs/python/sample_classification/ref/squeezenet1.1_FP32.bin"
+    }
+	]
+}
