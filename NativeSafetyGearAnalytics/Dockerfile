@@ -1,3 +1,4 @@
+
 # Copyright (c) 2020 Intel Corporation.
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,12 +30,11 @@ WORKDIR ${GO_WORK_DIR}
 
 # Copy more than one UDFs here
 # Both C++ & Python are allowed in a container.
-COPY ./safety_gear_demo/ ./common/udfs/native/safety_gear_demo
+COPY ./safety_gear_demo/ ./safety_gear_demo
 
 # Build native UDF samples
 RUN /bin/bash -c "source /opt/intel/openvino/bin/setupvars.sh && \
-    cd ./common/udfs/native && \
-    echo \"add_subdirectory(safety_gear_demo)\" >> CMakeLists.txt &&  \
+    cd ./safety_gear_demo && \
     rm -rf build && \
     mkdir build && \
     cd build && \

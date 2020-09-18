@@ -10,32 +10,67 @@
 
    `UDF config`:
 
-  ```javascript
+  ```json
   {
       "name": "safety_gear.safety_classifier",
       "type": "python",
       "device": "CPU",
-      "model_xml": "common/udfs/python/safety_gear/ref/frozen_inference_graph.xml",
-      "model_bin": "common/udfs/python/safety_gear/ref/frozen_inference_graph.bin"
+      "model_xml": "./safety_gear/ref/frozen_inference_graph.xml",
+      "model_bin": "./safety_gear/ref/frozen_inference_graph.bin"
   }
   ```
 
   ----
   **NOTE**:
-  The above config works for both "CPU" and "GPU" devices after setting
+  * The above config works for both "CPU" and "GPU" devices after setting
   appropriate `device` value. If the device in the above config is "HDDL" or
   "MYRIAD", please use the below config where the model_xml and model_bin files
   are different. If the device is "HETERO:FPGA,CPU" or "HETERO:FPGA,GPU",
   both FP32 and FP16 model_xml and model_bin files will work. Please set the
   "device" value appropriately based on the device used for inferencing.
 
-  ```javascript
-  {
-      "name": "safety_gear.safety_classifier",
-      "type": "python",
-      "device": "HDDL",
-      "model_xml": "common/udfs/python/safety_gear/ref/frozen_inference_graph_fp16.xml",
-      "model_bin": "common/udfs/python/safety_gear/ref/frozen_inference_graph_fp16.bin"
-  }
-  ```
+        ```json
+        {
+            "name": "safety_gear.safety_classifier",
+            "type": "python",
+            "device": "HDDL",
+            "model_xml": "./safety_gear/ref/frozen_inference_graph_fp16.xml",
+            "model_bin": "./safety_gear/ref/frozen_inference_graph_fp16.bin"
+        }
+        ```
 
+* The UDFs are placed under [CustomUDFs](../../CustomUdfs) for the sake of maintaining modularity of code structure so that all sample UDFs can be clubbed at one place.
+User can move these directory to anwhere in the host system and compile the code. For example following steps can make this UDF to run from home directory.
+
+    1. The [docker-compose.yml](./docker-compose.yml) file of the UDF can be altered to update the path for **build-context** and **Dockerfile** as shown below.
+
+    From:
+
+	```yml
+	---snip---
+    build:
+        context: $PWD/../CustomUdfs/PySafetyGearAnalytics
+        dockerfile: $PWD/../CustomUdfs/PySafetyGearAnalytics/Dockerfile
+	---snip---
+    ```
+    To
+
+	```yml
+    -----snip-----
+    build:
+        context: $HOME/PySafetyGearAnalytics
+        dockerfile: $HOME/PySafetyGearAnalytics/Dockerfile
+	```
+
+	2. Change the [video-streaming-all-udfs.yml](../../build/video-streaming-all-udfs.yml) file to define the service with full path instead of relative path from IEdgeInsights as follows: 
+
+    From:
+
+    ```yml
+    CustomUdfs/PySafetyGearAnalytics
+    ```
+    To
+    
+    ```yml
+    /home/<user_name>/PySafetyGearAnalytics   <<< Make sure the full path should start with "/">>>
+    ```
