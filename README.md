@@ -64,8 +64,8 @@ The top level directory ***"NativeSafetyGearAnalytics"*** & ***"PyMultiClassific
                 "name": "safety_gear_demo",
                 "type": "native",
                 "device": "CPU",
-                "model_xml": "common/udfs/native/safety_gear_demo/ref/frozen_inference_graph.xml",
-                "model_bin": "common/udfs/native/safety_gear_demo/ref/frozen_inference_graph.bin"
+                "model_xml": "safety_gear_demo/ref/frozen_inference_graph.xml",
+                "model_bin": "safety_gear_demo/ref/frozen_inference_graph.bin"
             }
         ]
     }
@@ -83,11 +83,8 @@ The top level directory ***"NativeSafetyGearAnalytics"*** & ***"PyMultiClassific
 
     WORKDIR ${GO_WORK_DIR}
 
-    COPY ./safety_gear_demo/ ./common/udfs/native/safety_gear_demo  <<<<<Copy of UDF artifacts to container
-
     RUN /bin/bash -c "source /opt/intel/openvino/bin/setupvars.sh && \
-        cd ./common/udfs/native && \
-        echo \"add_subdirectory(safety_gear_demo)\" >> CMakeLists.txt &&  \  <<<<<Making CMake compile this UDF
+        cd ./safetty_gear_demo && \
         rm -rf build && \
         mkdir build && \
         cd build && \
@@ -95,7 +92,6 @@ The top level directory ***"NativeSafetyGearAnalytics"*** & ***"PyMultiClassific
         make && \
         make install"
     ```
-    The add_subdirectory command of CMAKE should have the directory name which contains the CPP and all related files.
     An Example of python based UDF's ***Dockerfile*** will looks as below:
 
     ```dockerfile
@@ -106,8 +102,12 @@ The top level directory ***"NativeSafetyGearAnalytics"*** & ***"PyMultiClassific
 
     WORKDIR ${GO_WORK_DIR}
 
+    # Added GO_WORK_DIR to python path as copying the UDF code block under GO_WORK_DIR
+    # else user can add the path to which it copies its udf code.
+    ENV PYTHONPATH ${PYTHONPATH}:${GO_WORK_DIR}
+
     # User can mention about all UDF directories here, both py and C++.
-    COPY ./sample_classification ./common/udfs/python/sample_classification  <<<<< ./common/udfs/python path is the destination here for UdfLoader to pick it at runtime.
+    COPY ./sample_classification ./sample_classification  <<<<< ./sample_classification is the destination here for UdfLoader to pick it at runtime. Additionally we have set the python path for UdfLoader to identify the algo artifacts properly.
     ```
 
   * ## *docker-compose.yml*
