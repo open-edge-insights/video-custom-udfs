@@ -1,18 +1,21 @@
 {
-    "encoding": {
-        "level": 95,
-        "type": "jpeg"
+    "config": {
+        "encoding": {
+            "level": 95,
+            "type": "jpeg"
+        },
+        "max_jobs": 20,
+        "max_workers": 4,
+        "queue_size": 10,
+        "udfs": [
+            {
+                "name": "safety_gear_demo",
+                "type": "native",
+                "device": "CPU",
+                "model_xml": "safety_gear_demo/ref/frozen_inference_graph.xml",
+                "model_bin": "safety_gear_demo/ref/frozen_inference_graph.bin"
+            }
+        ]
     },
-    "max_jobs": 20,
-    "max_workers": 4,
-    "queue_size": 10,
-    "udfs": [
-        {
-            "name": "safety_gear_demo",
-            "type": "native",
-            "device": "CPU",
-            "model_xml": "safety_gear_demo/ref/frozen_inference_graph.xml",
-            "model_bin": "safety_gear_demo/ref/frozen_inference_graph.bin"
-        }
-    ]
+    "interfaces": {}
 }
