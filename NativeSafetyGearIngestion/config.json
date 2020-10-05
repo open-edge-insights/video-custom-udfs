@@ -22,5 +22,29 @@
              }
         ]
     },
-    "interfaces": {}
+    "interfaces": {
+        "Servers": [
+            {
+                "Name": "default",
+                "Type": "zmq_tcp",
+                "EndPoint": "127.0.0.1:66017",
+                "AllowedClients": [
+                    "*"
+                ]
+            }
+        ],
+        "Publishers": [
+            {
+                "Name": "default",
+                "Type": "zmq_ipc",
+                "EndPoint": "/EIS/sockets",
+                "Topics": [
+                    "native_video_file_strm"
+                ],
+                "AllowedClients": [
+                    "VideoAnalytics", "Visualizer", "WebVisualizer", "TLSRemoteAgent", "RestDataExport"
+                ]
+            }
+        ]
+    }
 }

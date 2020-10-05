@@ -110,7 +110,7 @@ class Udf:
         t0 = time()
         res = self.exec_net.infer(inputs={self.input_blob: images})
         infer_time.append((time() - t0)*1000)
-        self.log.info('Average running time of one iteration: {} ms'.
+        self.log.debug('Average running time of one iteration: {} ms'.
                       format(np.average(np.asarray(infer_time))))
 
         # Display information for visualizer
@@ -119,7 +119,7 @@ class Udf:
         # Processing output blob
         self.log.debug('Processing output blob')
         res = res[self.output_blob]
-        self.log.info("Top 5 results :")
+        self.log.debug("Top 5 results :")
 
         for i, probs in enumerate(res):
             probs = np.squeeze(probs)
@@ -127,7 +127,7 @@ class Udf:
             for id in top_ind:
                 det_label = self.labels_map[id] \
                     if self.labels_map else '#{}'.format(id)
-                self.log.info('prob: {:.7f}, label: {}'.format(probs[id],
+                self.log.debug('prob: {:.7f}, label: {}'.format(probs[id],
                               det_label))
                 # LOW priority information string to be displayed with
                 # frame

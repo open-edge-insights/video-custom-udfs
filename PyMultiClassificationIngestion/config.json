@@ -24,5 +24,29 @@
         }
         ]
     },
-    "interfaces": {}
+    "interfaces": {
+        "Servers": [
+            {
+                "Name": "default",
+                "Type": "zmq_tcp",
+                "EndPoint": "127.0.0.1:66018",
+                "AllowedClients": [
+                    "*"
+                ]
+            }
+        ],
+        "Publishers": [
+            {
+                "Name": "default",
+                "Type": "zmq_ipc",
+                "EndPoint": "/EIS/sockets",
+                "Topics": [
+                    "py_analytic_result_strm"
+                ],
+                "AllowedClients": [
+                    "*"
+                ]
+            }
+        ]
+    }
 }

@@ -17,5 +17,31 @@
             }
         ]
     },
-    "interfaces": {}
+    "interfaces": {
+        "Subscribers": [
+            {
+                "Name": "default",
+                "Type": "zmq_ipc",
+                "EndPoint": "/EIS/sockets",
+                "PublisherAppName": "PySafetyGearIngestion",
+                "Topics": [
+                    "py_safetygear_stream"
+                ],
+                "zmq_recv_hwm": 50
+            }
+        ],
+        "Publishers": [
+            {
+                "Name": "default",
+                "Type": "zmq_tcp",
+                "EndPoint": "127.0.0.1:67019",
+                "Topics": [
+                    "py_safety_gear_stream_results"
+                ],
+                "AllowedClients": [
+                    "*"
+                ]
+            }
+        ]
+    }
 }

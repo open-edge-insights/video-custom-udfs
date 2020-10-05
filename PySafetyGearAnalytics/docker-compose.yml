@@ -52,19 +52,6 @@ services:
       # MessageBus Endpoint Configuration
       Clients : "Visualizer,FactoryControlApp,OpcuaExport,ImageStore,InfluxDBConnector,RestDataExport,WebVisualizer,TLSRemoteAgent"
       CertType: "zmq"
-      ZMQ_RECV_HWM: "50"
-
-      # Use IPC mode (zmq_ipc) when Ingestion and Analytics
-      # containers are running on the same host. If they are running on diff
-      # host, please use TCP mode for communication.
-      # Eg: Stream cfg for
-      # IPC: zmq_ipc, <absolute_socket_directory_path>
-      # TCP: zmq_tcp, <publisher_host>:<publisher_port>
-      SubTopics: "PySafetyGearIngestion/py_safetygear_stream"
-      py_safetygear_stream_cfg: "zmq_ipc,${SOCKET_DIR}/"
-      PubTopics: "py_safety_gear_stream_results"
-      py_safety_gear_stream_results_cfg: "zmq_tcp,127.0.0.1:67019"
-      #camera1_stream_results_cfg: "zmq_ipc,${SOCKET_DIR}/"
     privileged: true
     volumes:
       - "/var/tmp:/var/tmp"
