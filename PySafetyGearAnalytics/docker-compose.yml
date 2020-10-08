@@ -49,6 +49,8 @@ services:
       ETCD_HOST: ${ETCD_HOST}
       ETCD_PREFIX: ${ETCD_PREFIX}
       CertType: "zmq"
+      # Setting GENICAM value to the respective camera which needs to be used
+      GENICAM: "Basler"
     privileged: true
     volumes:
       - "/var/tmp:/var/tmp"
