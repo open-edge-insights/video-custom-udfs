@@ -51,10 +51,6 @@ services:
       no_proxy: ${eis_no_proxy},${RTSP_CAMERA_IP},${ETCD_HOST}
       ETCD_HOST: ${ETCD_HOST}
       ETCD_PREFIX: ${ETCD_PREFIX}
-
-      # MessageBus Endpoint Configuration
-      # Setting Visualizer as a subscriber here for FpsCalculator
-      Clients: "VideoAnalytics,Visualizer,RestDataExport,WebVisualizer,TLSRemoteAgent"
       CertType: "zmq"
     volumes:
       - "vol_eis_socket:${SOCKET_DIR}"
