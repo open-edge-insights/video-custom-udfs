@@ -10,21 +10,14 @@
             "type": "gstreamer"
         },
         "max_jobs": 20,
-        "max_workers": 4,
-        "queue_size": 10,
-        "udfs": [
-            {
-                "name": "dummy",
-                "type": "python"
-            }
-        ]
+        "max_workers": 4
     },
     "interfaces": {
         "Servers": [
             {
                 "Name": "default",
                 "Type": "zmq_tcp",
-                "EndPoint": "127.0.0.1:66017",
+                "EndPoint": "127.0.0.1:66020",
                 "AllowedClients": [
                     "*"
                 ]
@@ -36,7 +29,7 @@
                 "Type": "zmq_ipc",
                 "EndPoint": "/EIS/sockets",
                 "Topics": [
-                    "native_video_file_strm"
+                    "gva_safety_gear_stream_results"
                 ],
                 "AllowedClients": [
                     "VideoAnalytics", "Visualizer", "WebVisualizer", "TLSRemoteAgent", "RestDataExport"

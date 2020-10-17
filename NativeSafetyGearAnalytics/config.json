@@ -25,7 +25,7 @@
                 "EndPoint": "/EIS/sockets",
                 "PublisherAppName": "NativeSafetyGearIngestion",
                 "Topics": [
-                    "native_video_file_strm"
+                    "native_safety_gear_stream"
                 ],
                 "zmq_recv_hwm": 50
             }

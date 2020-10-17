@@ -13,15 +13,15 @@
         },
         "max_jobs": 20,
         "max_workers": 4,
-        "queue_size": 10,
-        "udfs": [ {
-            "name": "sample_classification.multi_class_classifier",
-            "type": "python",
-            "device": "CPU",
-            "labels_file_path": "common/udfs/python/sample_classification/ref/squeezenet1.1.labels",
-            "model_xml": "common/udfs/python/sample_classification/ref/squeezenet1.1_FP32.xml",
-            "model_bin": "common/udfs/python/sample_classification/ref/squeezenet1.1_FP32.bin"
-        }
+        "udfs": [
+            {
+                "name": "sample_classification.multi_class_classifier",
+                "type": "python",
+                "device": "CPU",
+                "labels_file_path": "common/udfs/python/sample_classification/ref/squeezenet1.1.labels",
+                "model_xml": "common/udfs/python/sample_classification/ref/squeezenet1.1_FP32.xml",
+                "model_bin": "common/udfs/python/sample_classification/ref/squeezenet1.1_FP32.bin"
+            }
         ]
     },
     "interfaces": {
@@ -41,7 +41,7 @@
                 "Type": "zmq_ipc",
                 "EndPoint": "/EIS/sockets",
                 "Topics": [
-                    "py_analytic_result_strm"
+                    "py_multi_calssification_results_stream"
                 ],
                 "AllowedClients": [
                     "*"
