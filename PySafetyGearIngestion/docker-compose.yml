@@ -63,7 +63,6 @@ services:
       # Following devices under /dev filesystem will be needed based on usecase
       # dri - GPU
       # ion - VPU
-      # acla10_1150_sg20 - FPGA
       # USB camera devices
       # Selective mount can be done for deployment
       - "/dev/:/dev/"

@@ -23,8 +23,7 @@ This UDF accepts the frame, and classifies object in frame into different cataeg
   **NOTE**:
   The above config works for both "CPU" and "GPU" devices after setting appropriate `device` value.
   If the device in the above config is "HDDL" or "MYRIAD", please use the below config where the
-  model_xml and model_bin files are different and should be of FP16 based. If the device is
-  "HETERO:FPGA,CPU" or "HETERO:FPGA,GPU", both FP32 and FP16 model_xml and model_bin files will work.
+  model_xml and model_bin files are different and should be of FP16 based.
   Please set the "device" value appropriately based on the device used for inferencing.
 
   ```javascript

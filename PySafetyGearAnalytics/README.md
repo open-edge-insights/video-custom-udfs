@@ -25,9 +25,8 @@
   * The above config works for both "CPU" and "GPU" devices after setting
   appropriate `device` value. If the device in the above config is "HDDL" or
   "MYRIAD", please use the below config where the model_xml and model_bin files
-  are different. If the device is "HETERO:FPGA,CPU" or "HETERO:FPGA,GPU",
-  both FP32 and FP16 model_xml and model_bin files will work. Please set the
-  "device" value appropriately based on the device used for inferencing.
+  are different.Please set the "device" value appropriately based on the device
+  used for inferencing.
 
         ```json
         {
@@ -62,7 +61,7 @@ User can move these directory to anwhere in the host system and compile the code
         dockerfile: $HOME/PySafetyGearAnalytics/Dockerfile
 	```
 
-	2. Change the [video-streaming-all-udfs.yml](../../build/video-streaming-all-udfs.yml) file to define the service with full path instead of relative path from IEdgeInsights as follows: 
+	2. Change the [video-streaming-all-udfs.yml](../../build/video-streaming-all-udfs.yml) file to define the service with full path instead of relative path from IEdgeInsights as follows:
 
     From:
 
@@ -70,7 +69,7 @@ User can move these directory to anwhere in the host system and compile the code
     CustomUdfs/PySafetyGearAnalytics
     ```
     To
-    
+
     ```yml
     /home/<user_name>/PySafetyGearAnalytics   <<< Make sure the full path should start with "/">>>
     ```

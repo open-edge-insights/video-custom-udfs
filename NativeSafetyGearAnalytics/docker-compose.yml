@@ -57,16 +57,11 @@ services:
       - "/var/tmp:/var/tmp"
       - "/dev:/dev"
       - "vol_eis_socket:${SOCKET_DIR}"
-      # Please uncomment the below volume mappings if the FPGA need to be used.
-      #- "/opt/Intel/OpenCL/Boards:/opt/Intel/OpenCL/Boards"
-      #- "/opt/altera:/opt/altera"
-      #- "/opt/intel/intelFPGA:/opt/intel/intelFPGA"
     devices:
       - "/dev/:/dev/"
       # Following devices under /dev filesystem will be needed based on usecase
       # dri - GPU
       # ion - VPU
-      # acla10_1150_sg20 - FPGA
       # Selective mount can be done for deployment
     secrets:
       - ca_etcd
