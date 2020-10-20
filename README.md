@@ -5,14 +5,14 @@ Currently the UDFs are to be created inside [udfs-path](../common/video/udfs) of
 
 * With increased number of sample UDFs, VI and VA need not grow large in size because of the bloated Algo artifacts.
 * Any update to the UDF's Algo or its logic will compile and build only intended UDF specific code, instead of rebuilding every UDFs
-* Any change to base containers because of some unrelated changes in ubuntu packages triggers a complete container build again, this adds to build time of an UDF. 
+* Any change to base containers because of some unrelated changes in ubuntu packages triggers a complete container build again, this adds to build time of an UDF.
 * Every UDF can be versioned independently as they are represented by its own container.
 * A reduced size of UDF container will reduce the network overhaul while transferring the images from REGISTRY to target system.
 
 As per this approach an UDF or a chain of UDFs should be compiled and run as a separate EIS container. A video streaming pipeline contains two important components among all i.e. ingestion and analytics and in EIS user adds UDFs as pre-processing, post-processing or analytics Algo, hence these UDF containers need to ne inherited from VI and VA container.
 
 # **UDF Container Directory Layout**
-1. A native(c++) & python UDF container source base looks as below, though it can look different based on use-case. 
+1. A native(c++) & python UDF container source base looks as below, though it can look different based on use-case.
 
 ``` bash
 NativeSafetyGearAnalytics
@@ -50,7 +50,7 @@ The top level directory ***"NativeSafetyGearAnalytics"*** & ***"PyMultiClassific
 
   * ## *config.json*
     This file defines UDF specific configuration and other generic configs such as queue-depth, number-of-worker-thread etc. These generic configs can be added to overwrite any default of setting of VI and VA container. In order to know more about schema of defining these configs and its permissible values, kindly refer [UDF-README](../common/video/udfs/README.md) file. An example snippet would look as below:
-    ```bash 
+    ```bash
     {
         "encoding": {
             "level": 95,
@@ -72,9 +72,9 @@ The top level directory ***"NativeSafetyGearAnalytics"*** & ***"PyMultiClassific
     ```
   * ## *Dockerfile*
     This file defines the container build process and what all build time and runtime artifacts need to be copied to the container.
-    In case of native(c++) UDF we need to describe the destination path to copy the code to native UDF and compilation instruction of the same. And in case of python we just need to copy the udf defining artifacts to proper destination location. Some code comments are given for describing important key values. 
+    In case of native(c++) UDF we need to describe the destination path to copy the code to native UDF and compilation instruction of the same. And in case of python we just need to copy the udf defining artifacts to proper destination location. Some code comments are given for describing important key values.
     An example ***Dockerfile*** for C++ based UDF is pasted below:
-    
+
     ```dockerfile
     ARG EIS_VERSION                                          <<<<This is to use latest version of VI & VA automatically instead of hardcoding a version
     ARG DOCKER_REGISTRY
@@ -171,12 +171,12 @@ The build process is similar to the EIS's build and deploy process with some min
     ```bash
     cd <multi-repo cloned path>/IEdgeInsights/build/
     python3 eis_builder.py -f video-streaming-all-udfs.yml
-    ```   
-    **Note:** 
-    It is not mandatory to keep the custom Udfs in the CustomUdfs directory, but user must change the video-streaming-all-udfs.yml file accordingly to point the right path accordingly. 
+    ```
+    **Note:**
+    It is not mandatory to keep the custom Udfs in the CustomUdfs directory, but user must change the video-streaming-all-udfs.yml file accordingly to point the right path accordingly.
     Additionally if it is placed under ***IEdgeInsights*** directory then the eis_builder.py file automatically picks it to generate a consolidated [***eis-config.json***](../build/config/eis-config.json) and [***docker-compose.yml***](../build/docker-compose.yml) file.
 
-  * After generation of consolidated [***eis-config.json***](../build/config/eis-config.json) and [***docker-compose.yml***](../build/docker-compose.yml) file, Run the below command to provision the UDF containers. As a pre-cautionary measure, User can cross check the afore-mentioned file to verify the sanity of the UDF specific config and service details.  
+  * After generation of consolidated [***eis-config.json***](../build/config/eis-config.json) and [***docker-compose.yml***](../build/docker-compose.yml) file, Run the below command to provision the UDF containers. As a pre-cautionary measure, User can cross check the afore-mentioned file to verify the sanity of the UDF specific config and service details.
     ```bash
     cd <WORK_DIR_PATH>/IEdgeInsights/build/provision
     sudo ./provision_eis.sh  ../docker-compose.yml
@@ -220,3 +220,23 @@ Refer [PyMultiClassificationIngestion-README](./PyMultiClassificationIngestion/R
 * It is not mandatory to have Ingestion containers for every analytics UDF, UDFs are connected to each other via MSGBUS topics. Hence we can always use stock VideoIngestion container as long as Custom Analytic UDF container can read and churn the data it receives.
 
 * User shouldn't remove VI & VA containers before first time build of custom UDF as it will fail to build custom UDFs. Once these UDFs are functional user can always get rid of running VI & VA containers.
+
+## GVASafetyGearIngestion
+
+Following the above mentioned steps in this document [*GVASafetyGearIngestion*](./GVASafetyGearIngestion) UDF container has been added. It is a GVA based UDF container based out of VI container.
+
+Refer [GVASafetyGearIngestion-README.md](./GVASafetyGearIngestion/README.md) for more information on the udf configs.
+
+**Notes**:
+* Since analytics operation is performed using the constructed gstreamer pipeline using the GVA plugin elements, it is not mandatory to have an udf parameter in the config and it is also not mandatory to have an analytics container as the classified results can be directly subscribed from the GVA ingestion container.
+* The model files which are provided to the GVA plugin elements needed to be copied inside the container to  `./models` directory path as the `MODELS_PATH` env variable is set to this path during the VI build.
+
+  **Example:** Refer [GVASafetyGearIngestion-Dockerfile](./GVASafetyGearIngestion/Dockerfile) snip below:
+
+  ```Dockerfile
+
+  ----snip----
+  COPY ./ref ./models/ref
+
+  ```
+  Here the models files placed under the `ref` directory on the hostsystem is copied to `./models/ref` path inside the container.
