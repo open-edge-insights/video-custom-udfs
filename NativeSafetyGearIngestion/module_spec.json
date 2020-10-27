@@ -1,0 +1,29 @@
+{
+    "SchemaVersion": "0.2",
+    "Runtime": "docker",
+    "RuntimeOptions": {
+        "ContainerImage": "native_safety_gear_ingestion:$EIS_VERSION",
+        "Privileged": true,
+        "TemporaryVolumes": [
+            "/dev:/dev",
+            "/var/tmp:/var/tmp"
+        ]
+    },
+    "DataStore": {
+        "Protocol": "DIRECT",
+        "DataBuckets": [
+            {
+                "Name": "EIS/NativeSafetyGearIngestion",
+                "Permissions": "RO"
+            },
+            {
+                "Name": "EIS/GlobalEnv",
+                "Permissions": "RO"
+            },
+            {
+                "Name": "EIS/Publickeys",
+                "Permissions": "RO"
+            }
+        ]
+    }
+}

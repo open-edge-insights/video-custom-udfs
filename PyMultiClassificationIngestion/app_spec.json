@@ -1,0 +1,40 @@
+{
+    "Module": {
+        "Name": "PMCI",
+        "Description": "PyMultiClassificationIngestion manifest",
+        "SchemaVersion": "0.2",
+        "ManifestFile": "${idx:python_multi_classification:$EIS_VERSION}",
+        "Resources": {
+            "CPU": 100,
+            "MemoryMB": 100
+        },
+        "ExecutionEnv": {
+            "AppName": "PyMultiClassificationIngestion",
+            "ETCD_ENDPOINT": "${datastore.endpoint}",
+            "CONFIGMGR_CACERT": "${databucket.cacert}",
+            "CONFIGMGR_CERT": "${databucket.cert}",
+            "CONFIGMGR_KEY": "${databucket.key}",
+            "ETCD_PREFIX": "$ETCD_PREFIX",
+            "GENICAM": "Basler",
+            "DEV_MODE": "$DEV_MODE",
+            "PROFILING_MODE": "false",
+            "PUBLISHER_TYPE": "zmq_tcp",
+            "PUBLISHER_ENDPOINT": "0.0.0.0:${ep.op-pmci.localport}",
+            "SERVER_ENDPOINT": "0.0.0.0:${ep.op-pmci-sw-tr.localport}"
+        },
+        "Endpoints": [
+            {
+                "Name": "op-pmci-sw-tr",
+                "Endtype": "server",
+                "DataType": "messages",
+                "Link": "pmci-sw-tr"
+            },
+            {
+                "Name": "op-pmci",
+                "Endtype": "server",
+                "DataType": "messages",
+                "Link": "pmci-link"
+            }
+        ]
+    }
+}

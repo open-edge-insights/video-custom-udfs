@@ -1,0 +1,40 @@
+{
+    "Module": {
+        "Name": "PSGI",
+        "Description": "PySafetyGearIngestion manifest",
+        "SchemaVersion": "0.2",
+        "ManifestFile": "${idx:python_safety_gear_ingestion:$EIS_VERSION}",
+        "Resources": {
+            "CPU": 100,
+            "MemoryMB": 100
+        },
+        "ExecutionEnv": {
+            "AppName": "PySafetyGearIngestion",
+            "ETCD_ENDPOINT": "${datastore.endpoint}",
+            "CONFIGMGR_CACERT": "${databucket.cacert}",
+            "CONFIGMGR_CERT": "${databucket.cert}",
+            "CONFIGMGR_KEY": "${databucket.key}",
+            "ETCD_PREFIX": "$ETCD_PREFIX",
+            "GENICAM": "Basler",
+            "DEV_MODE": "$DEV_MODE",
+            "PROFILING_MODE": "false",
+            "PUBLISHER_TYPE": "zmq_tcp",
+            "PUBLISHER_ENDPOINT": "0.0.0.0:${ep.op-psgi.localport}",
+            "SERVER_ENDPOINT": "0.0.0.0:${ep.op-psgi-sw-tr.localport}"
+        },
+        "Endpoints": [
+            {
+                "Name": "op-psgi-sw-tr",
+                "Endtype": "server",
+                "DataType": "messages",
+                "Link": "psgi-sw-tr"
+            },
+            {
+                "Name": "op-psgi",
+                "Endtype": "server",
+                "DataType": "messages",
+                "Link": "psgi-psga"
+            }
+        ]
+    }
+}

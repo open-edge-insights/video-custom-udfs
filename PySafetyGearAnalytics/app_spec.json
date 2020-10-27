@@ -1,0 +1,41 @@
+{
+    "Module": {
+        "Name": "PSGA",
+        "Description": "PySafetyGearAnalytics manifest",
+        "SchemaVersion": "0.2",
+        "ManifestFile": "${idx:python_safety_gear_analytics:$EIS_VERSION}",
+        "Resources": {
+            "CPU": 100,
+            "MemoryMB": 100
+        },
+        "ExecutionEnv": {
+            "AppName": "PySafetyGearAnalytics",
+            "ETCD_ENDPOINT": "${datastore.endpoint}",
+            "CONFIGMGR_CACERT": "${databucket.cacert}",
+            "CONFIGMGR_CERT": "${databucket.cert}",
+            "CONFIGMGR_KEY": "${databucket.key}",
+            "DEV_MODE": "$DEV_MODE",
+            "ETCD_PREFIX": "$ETCD_PREFIX",
+            "PROFILING_MODE": "false",
+            "PUBLISHER_ENDPOINT": "0.0.0.0:${ep.op-psga.localport}",
+            "SUBSCRIBER_TYPE": "zmq_tcp",
+            "SUBSCRIBER_ENDPOINT": "${ep.ip-psga.remoteaddress}:${ep.ip-psga.remoteport}"
+        },
+        "Endpoints": [
+            {
+                "Name": "op-psga",
+                "Endtype": "server",
+                "Protocol": "TCP",
+                "DataType": "messages",
+                "Link": "psga-op"
+            },
+            {
+                "Name": "ip-psga",
+                "Endtype": "client",
+                "Protocol": "TCP",
+                "DataType": "messages",
+                "Link": "psgi-psga"
+            }
+        ]
+    }
+}

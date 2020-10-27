@@ -40,7 +40,7 @@
                     "py_safety_gear_stream"
                 ],
                 "AllowedClients": [
-                    "VideoAnalytics", "Visualizer", "WebVisualizer", "TLSRemoteAgent", "RestDataExport"
+                    "*"
                 ]
             }
         ]

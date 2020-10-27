@@ -1,0 +1,41 @@
+{
+    "Module": {
+        "Name": "NSGA",
+        "Description": "NativeSafetyGearAnalytics manifest",
+        "SchemaVersion": "0.2",
+        "ManifestFile": "${idx:native_safety_gear_analytics:$EIS_VERSION}",
+        "Resources": {
+            "CPU": 100,
+            "MemoryMB": 100
+        },
+        "ExecutionEnv": {
+            "AppName": "NativeSafetyGearAnalytics",
+            "ETCD_ENDPOINT": "${datastore.endpoint}",
+            "CONFIGMGR_CACERT": "${databucket.cacert}",
+            "CONFIGMGR_CERT": "${databucket.cert}",
+            "CONFIGMGR_KEY": "${databucket.key}",
+            "DEV_MODE": "$DEV_MODE",
+            "ETCD_PREFIX": "$ETCD_PREFIX",
+            "PROFILING_MODE": "false",
+            "PUBLISHER_ENDPOINT": "0.0.0.0:${ep.op-nsga.localport}",
+            "SUBSCRIBER_TYPE": "zmq_tcp",
+            "SUBSCRIBER_ENDPOINT": "${ep.ip-nsga.remoteaddress}:${ep.ip-nsga.remoteport}"
+        },
+        "Endpoints": [
+            {
+                "Name": "op-nsga",
+                "Endtype": "server",
+                "Protocol": "TCP",
+                "DataType": "messages",
+                "Link": "nsga-op"
+            },
+            {
+                "Name": "ip-nsga",
+                "Endtype": "client",
+                "Protocol": "TCP",
+                "DataType": "messages",
+                "Link": "nsgi-nsga"
+            }
+        ]
+    }
+}

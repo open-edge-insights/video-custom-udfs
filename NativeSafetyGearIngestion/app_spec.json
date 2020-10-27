@@ -1,0 +1,40 @@
+{
+    "Module": {
+        "Name": "NSGI",
+        "Description": "NativeSafetyGearIngestion manifest",
+        "SchemaVersion": "0.2",
+        "ManifestFile": "${idx:native_safety_gear_ingestion:$EIS_VERSION}",
+        "Resources": {
+            "CPU": 100,
+            "MemoryMB": 100
+        },
+        "ExecutionEnv": {
+            "AppName": "NativeSafetyGearIngestion",
+            "ETCD_ENDPOINT": "${datastore.endpoint}",
+            "CONFIGMGR_CACERT": "${databucket.cacert}",
+            "CONFIGMGR_CERT": "${databucket.cert}",
+            "CONFIGMGR_KEY": "${databucket.key}",
+            "ETCD_PREFIX": "$ETCD_PREFIX",
+            "GENICAM": "Basler",
+            "DEV_MODE": "$DEV_MODE",
+            "PROFILING_MODE": "false",
+            "PUBLISHER_TYPE": "zmq_tcp",
+            "PUBLISHER_ENDPOINT": "0.0.0.0:${ep.op-nsgi.localport}",
+            "SERVER_ENDPOINT": "0.0.0.0:${ep.op-nsgi-sw-tr.localport}"
+        },
+        "Endpoints": [
+            {
+                "Name": "op-nsgi-sw-tr",
+                "Endtype": "server",
+                "DataType": "messages",
+                "Link": "nsgi-sw-tr"
+            },
+            {
+                "Name": "op-nsgi",
+                "Endtype": "server",
+                "DataType": "messages",
+                "Link": "nsgi-nsga"
+            }
+        ]
+    }
+}
