@@ -9,6 +9,9 @@
             "queue_size": 10,
             "type": "gstreamer"
         },
+        "sw_trigger": {
+            "init_state": "running"
+        },
         "max_jobs": 20,
         "max_workers": 4
     },
