@@ -32,4 +32,4 @@ WORKDIR ${GO_WORK_DIR}
 ENV PYTHONPATH ${PYTHONPATH}:${GO_WORK_DIR}
 
 # User can mention about all UDF directories here, both py and C++.
-COPY ./safety_gear ./safety_gear
+COPY ./safety_gear ./common/video/udfs/python/safety_gear
