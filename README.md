@@ -222,7 +222,7 @@ Refer [PyMultiClassificationIngestion-README](./PyMultiClassificationIngestion/R
 **Notes**:
 * It is not mandatory to have Ingestion containers for every analytics UDF, UDFs are connected to each other via MSGBUS topics. Hence we can always use stock VideoIngestion container as long as Custom Analytic UDF container can read and churn the data it receives.
 
-* User shouldn't remove VI & VA containers before first time build of custom UDF as it will fail to build custom UDFs. Once these UDFs are functional user can always get rid of running VI & VA containers.
+* User shouldn't remove VI & VA containers before first time build of custom UDF as it will fail to build custom UDFs. Once these UDFs are functional user can always get rid of running VI & VA containers. While removing the VI and VA containers, user need to make necessary chnages in the [***docker-compose.yml***](../build/docker-compose.yml) files based on the way it is written for e.g. user may need to remove **depends_on** keyword if custom container has it for VI and VA containers.
 
 ## GVASafetyGearIngestion
 
