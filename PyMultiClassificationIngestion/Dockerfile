@@ -28,5 +28,5 @@ LABEL description="Multi-class clasifcation UDF Image"
 WORKDIR ${GO_WORK_DIR}
 
 # User can mention about all UDF directories here, both py and C++.
-COPY ./sample_classification ./common/video/udfs/python/sample_classification
+COPY ./sample_classification ./sample_classification
 COPY ./classification_vid.avi ./test_videos/classification_vid.avi

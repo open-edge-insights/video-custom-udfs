@@ -15,8 +15,8 @@ the frame and any violations occuring.
 "name": "safety_gear_demo",
 "type": "native",
 "device": "CPU",
-"model_xml": "common/video/udfs/native/safety_gear_demo/ref/frozen_inference_graph.xml",
-"model_bin": "common/video/udfs/native/safety_gear_demo/ref/frozen_inference_graph.bin"
+"model_xml": "./safety_gear_demo/ref/frozen_inference_graph.xml",
+"model_bin": "./safety_gear_demo/ref/frozen_inference_graph.bin"
 }
 ```
 
@@ -33,8 +33,8 @@ the device used for inferencing.
     "name": "safety_gear_demo",
     "type": "native",
     "device": "HDDL",
-    "model_xml": "common/video/udfs/native/safety_gear_demo/ref/frozen_inference_graph_fp16.xml",
-    "model_bin": "common/video/udfs/native/safety_gear_demo/ref/frozen_inference_graph_fp16.bin"
+    "model_xml": "./safety_gear_demo/ref/frozen_inference_graph_fp16.xml",
+    "model_bin": "./safety_gear_demo/ref/frozen_inference_graph_fp16.bin"
     }
     ```
 

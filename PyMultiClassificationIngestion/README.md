@@ -13,9 +13,9 @@ This UDF accepts the frame, and classifies object in frame into different cataeg
       "name": "sample_classification.multi_class_classifier",
       "type": "python",
       "device": "CPU",
-      "labels_file_path": "common/udfs/python/sample_classification/ref/squeezenet1.1.labels",
-      "model_xml": "common/udfs/python/sample_classification/ref/squeezenet1.1_FP32.xml",
-      "model_bin": "common/udfs/python/sample_classification/ref/squeezenet1.1_FP32.bin"
+      "labels_file_path": "./sample_classification/ref/squeezenet1.1.labels",
+      "model_xml": "./sample_classification/ref/squeezenet1.1_FP32.xml",
+      "model_bin": "./sample_classification/ref/squeezenet1.1_FP32.bin"
   }
   ```
 
@@ -31,9 +31,9 @@ This UDF accepts the frame, and classifies object in frame into different cataeg
       "name": "sample_classification.multi_class_classifier",
       "type": "python",
       "device": "HDDL",
-      "labels_file_path": "common/udfs/python/sample_classification/ref/squeezenet1.1.labels",
-      "model_xml": "common/udfs/python/sample_classification/ref/squeezenet1.1_FP16.xml",
-      "model_bin": "common/udfs/python/sample_classification/ref/squeezenet1.1_FP16.bin",
+      "labels_file_path": "./sample_classification/ref/squeezenet1.1.labels",
+      "model_xml": "./sample_classification/ref/squeezenet1.1_FP16.xml",
+      "model_bin": "./sample_classification/ref/squeezenet1.1_FP16.bin",
   }
   ```
 

@@ -15,8 +15,8 @@
       "name": "safety_gear.safety_classifier",
       "type": "python",
       "device": "CPU",
-      "model_xml": "common/video/udfs/python/safety_gear/ref/frozen_inference_graph.xml",
-      "model_bin": "common/video/udfs/python/safety_gear/ref/frozen_inference_graph.bin"
+      "model_xml": "./safety_gear/ref/frozen_inference_graph.xml",
+      "model_bin": "./safety_gear/ref/frozen_inference_graph.bin"
   }
   ```
 
@@ -33,8 +33,8 @@
             "name": "safety_gear.safety_classifier",
             "type": "python",
             "device": "HDDL",
-            "model_xml": "common/video/udfs/python/safety_gear/ref/frozen_inference_graph_fp16.xml",
-            "model_bin": "common/video/udfs/python/safety_gear/ref/frozen_inference_graph_fp16.bin"
+            "model_xml": "./safety_gear/ref/frozen_inference_graph_fp16.xml",
+            "model_bin": "./safety_gear/ref/frozen_inference_graph_fp16.bin"
         }
         ```
 

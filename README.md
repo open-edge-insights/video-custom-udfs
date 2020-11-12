@@ -67,8 +67,8 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
                 "name": "safety_gear_demo",
                 "type": "native",
                 "device": "CPU",
-                "model_xml": "common/video/udfs/native/safety_gear_demo/ref/frozen_inference_graph.xml",
-                "model_bin": "common/video/udfs/native/safety_gear_demo/ref/frozen_inference_graph.bin"
+                "model_xml": "./safety_gear_demo/ref/frozen_inference_graph.xml",
+                "model_bin": "./safety_gear_demo/ref/frozen_inference_graph.bin"
             }
         ]
     }

@@ -21,9 +21,9 @@
                 "name": "sample_classification.multi_class_classifier",
                 "type": "python",
                 "device": "CPU",
-                "labels_file_path": "common/video/udfs/python/sample_classification/ref/squeezenet1.1.labels",
-                "model_xml": "common/video/udfs/python/sample_classification/ref/squeezenet1.1_FP32.xml",
-                "model_bin": "common/video/udfs/python/sample_classification/ref/squeezenet1.1_FP32.bin"
+                "labels_file_path": "./sample_classification/ref/squeezenet1.1.labels",
+                "model_xml": "./sample_classification/ref/squeezenet1.1_FP32.xml",
+                "model_bin": "./sample_classification/ref/squeezenet1.1_FP32.bin"
             }
         ]
     },
