@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Dockerfile for Native Safety Gear UDF 
+# Dockerfile for Native Safety Gear UDF
 
 ARG EIS_VERSION
 ARG DOCKER_REGISTRY
@@ -30,11 +30,11 @@ WORKDIR ${GO_WORK_DIR}
 
 # Copy more than one UDFs here
 # Both C++ & Python are allowed in a container.
-COPY ./safety_gear_demo/ ./safety_gear_demo
+COPY ./safety_gear_demo/ ./common/video/udfs/native/safety_gear_demo
 
 # Build native UDF samples
 RUN /bin/bash -c "source /opt/intel/openvino/bin/setupvars.sh && \
-    cd ./safety_gear_demo && \
+    cd ./common/video/udfs/native/safety_gear_demo && \
     rm -rf build && \
     mkdir build && \
     cd build && \

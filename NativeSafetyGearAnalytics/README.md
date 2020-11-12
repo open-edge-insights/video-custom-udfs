@@ -15,8 +15,8 @@ the frame and any violations occuring.
 "name": "safety_gear_demo",
 "type": "native",
 "device": "CPU",
-"model_xml": "./safety_gear_demo/ref/frozen_inference_graph.xml",
-"model_bin": "./safety_gear_demo/ref/frozen_inference_graph.bin"
+"model_xml": "common/video/udfs/native/safety_gear_demo/ref/frozen_inference_graph.xml",
+"model_bin": "common/video/udfs/native/safety_gear_demo/ref/frozen_inference_graph.bin"
 }
 ```
 
@@ -33,8 +33,8 @@ the device used for inferencing.
     "name": "safety_gear_demo",
     "type": "native",
     "device": "HDDL",
-    "model_xml": "./safety_gear_demo/ref/frozen_inference_graph_fp16.xml",
-    "model_bin": "./safety_gear_demo/ref/frozen_inference_graph_fp16.bin"
+    "model_xml": "common/video/udfs/native/safety_gear_demo/ref/frozen_inference_graph_fp16.xml",
+    "model_bin": "common/video/udfs/native/safety_gear_demo/ref/frozen_inference_graph_fp16.bin"
     }
     ```
 
@@ -61,7 +61,7 @@ User can move these directory to anwhere in the host system and compile the code
         dockerfile: $HOME/NativeSafetyGearAnalytics/Dockerfile
 	```
 
-	2. Change the [video-streaming-all-udfs.yml](../../build/video-streaming-all-udfs.yml) file to define the service with full path instead of relative path from IEdgeInsights as follows: 
+	2. Change the [video-streaming-all-udfs.yml](../../build/video-streaming-all-udfs.yml) file to define the service with full path instead of relative path from IEdgeInsights as follows:
 
     From:
 
@@ -69,7 +69,7 @@ User can move these directory to anwhere in the host system and compile the code
     CustomUdfs/NativeSafetyGearAnalytics
     ```
     To
-    
+
     ```yml
     /home/<user_name>/NativeSafetyGearAnalytics   <<< Make sure the full path should start with "/">>>
     ```
