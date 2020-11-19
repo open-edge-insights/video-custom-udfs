@@ -2,7 +2,7 @@
 
 This container is based out of VideoIngestion container. Since GVA elements are used for analytics there is no need for using any udf.
 
- * `GVA - Gstreamer ingestor with GVA elements`
+ * `Video File - Gstreamer ingestor with GVA elements`
 
       ```javascript
       {
@@ -11,7 +11,7 @@ This container is based out of VideoIngestion container. Since GVA elements are 
       }
 
 
- * `GVA - Gstreamer ingestor with GVA elements`
+ * `Generic Plugin - Gstreamer ingestor with GVA elements`
 
     ```javascript
      {
@@ -20,7 +20,7 @@ This container is based out of VideoIngestion container. Since GVA elements are 
      }
     ```
 
- * `GVA - Gstreamer ingestor with GVA elements`
+ * `RTSP camera - Gstreamer ingestor with GVA elements`
 
       ```javascript
       {
@@ -29,7 +29,7 @@ This container is based out of VideoIngestion container. Since GVA elements are 
       }
       ```
 
- * `GVA - Gstreamer ingestor with GVA elements`
+ * `USB camera - Gstreamer ingestor with GVA elements`
 
       ```javascript
       {
@@ -38,7 +38,7 @@ This container is based out of VideoIngestion container. Since GVA elements are 
       }
       ```
 
- * `GVA - Gstreamer ingestor with GVA elements`
+ * `RTSP simulated - Gstreamer ingestor with GVA elements`
 
       ```javascript
       {
