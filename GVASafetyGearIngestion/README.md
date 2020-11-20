@@ -20,6 +20,15 @@ This container is based out of VideoIngestion container. Since GVA elements are 
      }
     ```
 
+    **Below is the sample pipeline for using monochrome/mono8 basler camera:**
+
+    ```javascript
+    {
+     "type": "gstreamer",
+     "pipeline" : "gencamsrc serial=<DEVICE_SERIAL_NUMBER> pixel-format=mono8 width=1920 height=1080 exposure-time=3250 ! videoconvert ! video/x-raw,format=BGR ! gvadetect model=models/ref/frozen_inference_graph.xml ! appsink"
+    }
+    ```
+
  * `RTSP camera - Gstreamer ingestor with GVA elements`
 
       ```javascript
