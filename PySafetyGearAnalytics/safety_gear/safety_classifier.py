@@ -32,12 +32,12 @@ import sys
 
 """
 Labels based on trained model used in this sample app
+"""
 
 safety_helmet = 1
 safety_jacket = 2
 safe = 3
 violation = 4
-"""
 
 
 class Udf:
@@ -128,9 +128,7 @@ class Udf:
                     class_id = int(obj[1])
                     prob = obj[2]
 
-                    # defect type returned as string, no user_labels mapping
-                    # required
-                    defects.append({'type': 'safety_helmet',
+                    defects.append({'type': safety_helmet,
                                     'tl': (xmin, ymin),
                                     'br': (xmax, ymax)})
 
@@ -142,9 +140,7 @@ class Udf:
                     class_id = int(obj[1])
                     prob = obj[2]
 
-                    # defect type returned as string, no user_labels mapping
-                    # required
-                    defects.append({'type': 'safety_jacket',
+                    defects.append({'type': safety_jacket,
                                     'tl': (xmin, ymin),
                                     'br': (xmax, ymax)})
 
@@ -156,9 +152,7 @@ class Udf:
                     class_id = int(obj[1])
                     prob = obj[2]
 
-                    # defect type returned as string, no user_labels mapping
-                    # required
-                    defects.append({'type': 'safe', 'tl': (xmin, ymin),
+                    defects.append({'type': safe, 'tl': (xmin, ymin),
                                     'br': (xmax, ymax)})
 
                 if obj[1] == 4 and obj[2] > 0.35:
@@ -169,9 +163,7 @@ class Udf:
                     class_id = int(obj[1])
                     prob = obj[2]
 
-                    # defect type returned as string, no user_labels mapping
-                    # required
-                    defects.append({'type': 'violation', 'tl': (xmin, ymin),
+                    defects.append({'type': violation, 'tl': (xmin, ymin),
                                     'br': (xmax, ymax)})
 
         metadata["defects"] = defects
