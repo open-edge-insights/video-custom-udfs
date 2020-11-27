@@ -53,7 +53,7 @@ services:
       ETCD_PREFIX: ${ETCD_PREFIX}
       CertType: "zmq"
       # Setting GENICAM value to the respective camera which needs to be used
-      GENICAM: "Basler"
+      GENICAM: "Matrix_Vision"
     volumes:
       - "vol_eis_socket:${SOCKET_DIR}"
       - "/dev:/dev"
