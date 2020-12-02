@@ -4,7 +4,6 @@
             "level": 95,
             "type": "jpeg"
         },
-        "max_jobs": 20,
         "max_workers": 4,
         "queue_size": 10,
         "udfs": [
