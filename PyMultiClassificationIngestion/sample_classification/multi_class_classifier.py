@@ -71,13 +71,6 @@ class Udf:
         self.net = self.ie.read_network(model=model_xml, weights=model_bin)
         self.log.debug("Loading network files:\n\t{}\n\t{}".format(model_xml,
                                                                    model_bin))
-        if device.upper() == "CPU":
-            supported_layers = self.ie.query_network(self.net, device_name="CPU")
-            not_supported_layers = [l for l in self.net.layers.keys() if l not
-                                    in supported_layers]
-            if len(not_supported_layers) != 0:
-                self.log.debug('ERROR: Following layers are not supported by \
-                                {}'.format(not_supported_layer))
 
         assert len(self.net.input_info.keys()) == 1, \
             'Sample supports only single input topologies'
