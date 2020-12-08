@@ -2,7 +2,7 @@
     "SchemaVersion": "0.2",
     "Runtime": "docker",
     "RuntimeOptions": {
-        "ContainerImage": "python_safety_gear_analytics:$EIS_VERSION",
+        "ContainerImage": "${idx:python_safety_gear_analytics:$EIS_VERSION}",
         "Privileged": true,
         "TemporaryVolumes": [
             "/dev:/dev",
