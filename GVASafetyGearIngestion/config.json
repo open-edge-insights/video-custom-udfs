@@ -17,7 +17,7 @@
     "interfaces": {
         "Servers": [
             {
-                "Name": "default",
+                "Name": "gva_safety_gear",
                 "Type": "zmq_tcp",
                 "EndPoint": "127.0.0.1:66020",
                 "AllowedClients": [
