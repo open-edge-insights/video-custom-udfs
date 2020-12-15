@@ -232,7 +232,7 @@ Refer [GVASafetyGearIngestion-README.md](./GVASafetyGearIngestion/README.md) for
 
 **Notes**:
 * Since analytics operation is performed using the constructed gstreamer pipeline using the GVA plugin elements, it is not mandatory to have an udf parameter in the config and it is also not mandatory to have an analytics container as the classified results can be directly subscribed from the GVA ingestion container.
-* The model files which are provided to the GVA plugin elements needed to be copied inside the container to  `./models` directory path as the `MODELS_PATH` env variable is set to this path during the VI build.
+* The model files which are provided to the GVA plugin elements needed to be copied inside the container to  `./models` directory path.
 
   **Example:** Refer [GVASafetyGearIngestion-Dockerfile](./GVASafetyGearIngestion/Dockerfile) snip below:
 
