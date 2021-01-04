@@ -25,7 +25,7 @@ ARG EIS_VERSION
 ARG DOCKER_REGISTRY
 FROM ${DOCKER_REGISTRY}ia_video_analytics:$EIS_VERSION
 LABEL description="C++ based Safety Gear UDF Image"
-
+HEALTHCHECK NONE
 WORKDIR ${GO_WORK_DIR}
 
 # Copy more than one UDFs here

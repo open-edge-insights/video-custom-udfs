@@ -24,6 +24,7 @@ ARG EIS_VERSION
 ARG DOCKER_REGISTRY
 FROM ${DOCKER_REGISTRY}ia_video_analytics:$EIS_VERSION
 LABEL description="Python based safety gear analytics image"
+HEALTHCHECK NONE
 
 WORKDIR ${GO_WORK_DIR}
 

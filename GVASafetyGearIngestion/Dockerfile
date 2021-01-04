@@ -24,6 +24,7 @@ ARG EIS_VERSION
 ARG DOCKER_REGISTRY
 FROM ${DOCKER_REGISTRY}ia_video_ingestion:$EIS_VERSION
 LABEL description="GVA based Safety gear Ingestion image"
+HEALTHCHECK NONE
 
 COPY ./Safety_Full_Hat_and_Vest.avi ./test_videos/Safety_Full_Hat_and_Vest.avi
 COPY ./ref ./models/ref

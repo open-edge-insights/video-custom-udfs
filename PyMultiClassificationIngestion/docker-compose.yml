@@ -41,6 +41,11 @@ services:
     hostname: python_multi_classification
     network_mode: host
     restart: unless-stopped
+    security_opt:
+    - no-new-privileges    
+    healthcheck:
+      test: ["CMD-SHELL", "exit", "0"]
+      interval: 5m 
     ipc: "none"
     environment:
       AppName: "PyMultiClassificationIngestion"
