@@ -81,7 +81,7 @@ class Udf:
         self.output_blob = next(iter(self.net.outputs))
         self.net.batch_size = 1  # change to enable batch loading
         self.exec_net = self.ie.load_network(network=self.net,
-            device_name=device.upper())
+                                             device_name=device.upper())
 
     # Main classification algorithm
     def process(self, frame, metadata):
@@ -103,8 +103,9 @@ class Udf:
         t0 = time()
         res = self.exec_net.infer(inputs={self.input_blob: images})
         infer_time.append((time() - t0)*1000)
-        self.log.debug('Average running time of one iteration: {} ms'.
-                      format(np.average(np.asarray(infer_time))))
+        average_time = np.average(np.asarray(infer_time))
+        average_time_msg = 'Average running time of one iteration'
+        self.log.debug('{}: {} ms'.format(average_time_msg, average_time))
 
         # Display information for visualizer
         d_info = []
@@ -121,7 +122,7 @@ class Udf:
                 det_label = self.labels_map[id] \
                     if self.labels_map else '#{}'.format(id)
                 self.log.debug('prob: {:.7f}, label: {}'.format(probs[id],
-                              det_label))
+                               det_label))
                 # LOW priority information string to be displayed with
                 # frame
                 disp_info = DisplayInfo('prob: {:.7f}, label: {} \

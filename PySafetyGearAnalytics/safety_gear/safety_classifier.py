@@ -76,7 +76,8 @@ class Udf:
             self.outputBlob = next(iter(self.neuralNet.outputs))
             self.neuralNet.batch_size = 1
             self.executionNet = self.ie.load_network(network=self.neuralNet,
-                device_name=self.device.upper())
+                                                     device_name=self.
+                                                     device.upper())
 
         self.profiling = bool(strtobool(os.environ['PROFILING_MODE']))
 
