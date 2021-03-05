@@ -25,7 +25,7 @@
 #include <algorithm>
 #include <map>
 
-#include <eis/udf/base_udf.h>
+#include <eii/udf/base_udf.h>
 #include <inference_engine.hpp>
 
 #ifdef WITH_EXTENSIONS
@@ -33,9 +33,9 @@
 #endif
 
 using namespace InferenceEngine;
-using namespace eis::udf;
+using namespace eii::udf;
 
-namespace eis {
+namespace eii {
     namespace custom_udfs {
         /**
          * The safety gear detection UDF (C++ based)

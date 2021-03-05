@@ -20,9 +20,9 @@
 
 # Dockerfile for GVA Safety Gear Ingestion UDF
 
-ARG EIS_VERSION
+ARG EII_VERSION
 ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}ia_video_ingestion:$EIS_VERSION
+FROM ${DOCKER_REGISTRY}ia_video_ingestion:$EII_VERSION
 LABEL description="GVA based Safety gear Ingestion image"
 HEALTHCHECK NONE
 

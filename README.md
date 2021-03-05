@@ -1,7 +1,7 @@
 # **Introduction**
-This document describes the new approach of creating UDFs and using them inside the EIS framework. Unlike [The UDF Writing Guide](../common/video/udfs/HOWTO_GUIDE_FOR_WRITING_UDF.md) which specifically emphasizes on the coding aspects(callbacks) of the UDFs, this document describes the workflow of a  custom UDF.
+This document describes the new approach of creating UDFs and using them inside the EII framework. Unlike [The UDF Writing Guide](../common/video/udfs/HOWTO_GUIDE_FOR_WRITING_UDF.md) which specifically emphasizes on the coding aspects(callbacks) of the UDFs, this document describes the workflow of a  custom UDF.
 
-Currently the UDFs are to be created inside [udfs-path](../common/video/udfs) of EIS build environment so that it can get compiled into the VI(Video Ingestion) & VA(Video Analytics) containers. In addition to aforementioned approach,each UDF can be built as an independent container based out of VI(VideoIngestion) or VA(VideoAnalytics) container image. This additional method has multiple benefits, listing some of them below:
+Currently the UDFs are to be created inside [udfs-path](../common/video/udfs) of EII build environment so that it can get compiled into the VI(Video Ingestion) & VA(Video Analytics) containers. In addition to aforementioned approach,each UDF can be built as an independent container based out of VI(VideoIngestion) or VA(VideoAnalytics) container image. This additional method has multiple benefits, listing some of them below:
 
 * With increased number of sample UDFs, VI and VA need not grow large in size because of the bloated Algo artifacts.
 * Any update to the UDF's Algo or its logic will compile and build only intended UDF specific code, instead of rebuilding every UDFs
@@ -9,7 +9,7 @@ Currently the UDFs are to be created inside [udfs-path](../common/video/udfs) of
 * Every UDF can be versioned independently as they are represented by its own container.
 * A reduced size of UDF container will reduce the network overhaul while transferring the images from REGISTRY to target system.
 
-As per this approach an UDF or a chain of UDFs should be compiled and run as a separate EIS container. A video streaming pipeline contains two important components among all i.e. ingestion and analytics and in EIS user adds UDFs as pre-processing, post-processing or analytics Algo, hence these UDF containers need to ne inherited from VI and VA container.
+As per this approach an UDF or a chain of UDFs should be compiled and run as a separate EII container. A video streaming pipeline contains two important components among all i.e. ingestion and analytics and in EII user adds UDFs as pre-processing, post-processing or analytics Algo, hence these UDF containers need to ne inherited from VI and VA container.
 
 # **UDF Container Directory Layout**
 1. A native(c++) & python UDF container source base looks as below, though it can look different based on use-case.
@@ -79,9 +79,9 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
     An example ***Dockerfile*** for C++ based UDF is pasted below:
 
     ```dockerfile
-    ARG EIS_VERSION                                          <<<<This is to use latest version of VI & VA automatically instead of hardcoding a version
+    ARG EII_VERSION                                          <<<<This is to use latest version of VI & VA automatically instead of hardcoding a version
     ARG DOCKER_REGISTRY
-    FROM ${DOCKER_REGISTRY}ia_video_analytics:$EIS_VERSION   <<<<<This container is based VA container
+    FROM ${DOCKER_REGISTRY}ia_video_analytics:$EII_VERSION   <<<<<This container is based VA container
     LABEL description="C++ based Safety Gear UDF Image"
 
     WORKDIR ${GO_WORK_DIR}
@@ -98,9 +98,9 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
     An Example of python based UDF's ***Dockerfile*** will looks as below:
 
     ```dockerfile
-    ARG EIS_VERSION
+    ARG EII_VERSION
     ARG DOCKER_REGISTRY
-    FROM ${DOCKER_REGISTRY}ia_video_ingestion:$EIS_VERSION
+    FROM ${DOCKER_REGISTRY}ia_video_ingestion:$EII_VERSION
     LABEL description="Multi-class clasifcation UDF Image"
 
     WORKDIR ${GO_WORK_DIR}
@@ -114,7 +114,7 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
     ```
 
   * ## *docker-compose.yml*
-    The docker-compose.yml makes the custom UDF container to be managed by EIS infrastructure. The content for this file also defines how the UDF container will communicate with other containers via messagebus. Some of the important key-value pairs of this docker-compose.yml file is described below. The value of certain  keys can be altered based on the need. Below mentioned keys need to alter for a different UDF container. Import key-value combinations are described in the code comments with prescript of "<<<<<".
+    The docker-compose.yml makes the custom UDF container to be managed by EII infrastructure. The content for this file also defines how the UDF container will communicate with other containers via messagebus. Some of the important key-value pairs of this docker-compose.yml file is described below. The value of certain  keys can be altered based on the need. Below mentioned keys need to alter for a different UDF container. Import key-value combinations are described in the code comments with prescript of "<<<<<".
 
     ```yml
     services:
@@ -125,7 +125,7 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
           context: $PWD/../CustomUdfs/PyMultiClassificationIngestion                 <<<<< This path should be the relative path of container artifact
           dockerfile: $PWD/../CustomUdfs/PyMultiClassificationIngestion/Dockerfile   <<<<< Path to Dockerfile of the container
     -----snip-----
-        image: ${DOCKER_REGISTRY}python_multi_classification:${EIS_VERSION} <<<<< Image Name
+        image: ${DOCKER_REGISTRY}python_multi_classification:${EII_VERSION} <<<<< Image Name
         container_name: python_multi_classification                         <<<<< container Name
         hostname: python_multi_classification                               <<<<< Docker Network Namespace defined container name
     -----snip----
@@ -154,9 +154,9 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
     This directory need to have the Algo/pre-processing implementation which defines the necessary callbacks, IR files and other configurational files as per need. User can place them directly without having another directory level too, in that case the ***Dockerfile*** and ***docker-compose.yml*** should update the path accordingly.  User can find sample implementation in [custom sample UDF](../CustomUdfs) directory.
 
 # **Build and deploy Process**
-The build process is similar to the EIS's build and deploy process with some minor chnages. Please find the ordered steps for building and deploying the Custom UDFs.
+The build process is similar to the EII's build and deploy process with some minor chnages. Please find the ordered steps for building and deploying the Custom UDFs.
 
-  * As per EIS default scenario, the sample custom UDF containers are not mandatory containers to run, hence the eis_builder.py should run "video-streaming-all-udfs.yml". All the sample UDF containers are added in this example. Below code snnipet signifies the same.
+  * As per EII default scenario, the sample custom UDF containers are not mandatory containers to run, hence the builder.py should run "video-streaming-all-udfs.yml". All the sample UDF containers are added in this example. Below code snnipet signifies the same.
 
     ```yml
     AppName:
@@ -173,16 +173,16 @@ The build process is similar to the EIS's build and deploy process with some min
     Run the following command:
     ```bash
     cd <multi-repo cloned path>/IEdgeInsights/build/
-    python3 eis_builder.py -f video-streaming-all-udfs.yml
+    python3 builder.py -f video-streaming-all-udfs.yml
     ```
     **Note:**
     It is not mandatory to keep the custom Udfs in the CustomUdfs directory, but user must change the video-streaming-all-udfs.yml file accordingly to point the right path accordingly.
-    Additionally if it is placed under ***IEdgeInsights*** directory then the eis_builder.py file automatically picks it to generate a consolidated [***eis-config.json***](../build/config/eis-config.json) and [***docker-compose.yml***](../build/docker-compose.yml) file.
+    Additionally if it is placed under ***IEdgeInsights*** directory then the builder.py file automatically picks it to generate a consolidated [***eii_config.json***](../build/config/eii_config.json) and [***docker-compose.yml***](../build/docker-compose.yml) file.
 
-  * After generation of consolidated [***eis-config.json***](../build/config/eis-config.json) and [***docker-compose.yml***](../build/docker-compose.yml) file, Run the below command to provision the UDF containers. As a pre-cautionary measure, User can cross check the afore-mentioned file to verify the sanity of the UDF specific config and service details.
+  * After generation of consolidated [***eii_config.json***](../build/config/eii_config.json) and [***docker-compose.yml***](../build/docker-compose.yml) file, Run the below command to provision the UDF containers. As a pre-cautionary measure, User can cross check the afore-mentioned file to verify the sanity of the UDF specific config and service details.
     ```bash
     cd <WORK_DIR_PATH>/IEdgeInsights/build/provision
-    sudo ./provision_eis.sh  ../docker-compose.yml
+    sudo ./provision.sh  ../docker-compose.yml
     ```
   * Build and run the containers.
     ```bash
@@ -205,7 +205,7 @@ In the CustomUdfs directory, there are 5 sample UDfs implemented and they relate
 └── README.md
 
 ```
-The [*NativeSafetyGearIngestion*](./NativeSafetyGearIngestion) container has used [dummy](../common/video/udfs/native/dummy) UDF which is defined in VideoIngestion container. user can define its own preprocessing UDF and add to config.json file to modify it. The results are posted to a eis-msgbus topic which is subscribed by [NativeSafetyGearAnalytics](./NativeSafetyGearAnalytics) containers. The configs can be seen in [docker-compose.yml](./NativeSafetyGearAnalytics/docker-compose.yml) file.
+The [*NativeSafetyGearIngestion*](./NativeSafetyGearIngestion) container has used [dummy](../common/video/udfs/native/dummy) UDF which is defined in VideoIngestion container. user can define its own preprocessing UDF and add to config.json file to modify it. The results are posted to a eii-msgbus topic which is subscribed by [NativeSafetyGearAnalytics](./NativeSafetyGearAnalytics) containers. The configs can be seen in [docker-compose.yml](./NativeSafetyGearAnalytics/docker-compose.yml) file.
 
 Refer [NativeSafetyGearIngestion-README](./NativeSafetyGearIngestion/README.md) for more information on the udf configs.
 Refer [NativeSafetyGearAnalytics-README](./NativeSafetyGearAnalytics/README.md) for more information on the udf configs.
@@ -215,7 +215,7 @@ The [PySafetyGearIngestion](./PySafetyGearIngestion) & [PySafetyGearAnalytics](.
 Refer [PySafetyGearIngestion-README](./PySafetyGearIngestion/README.md) for more information on the udf configs.
 Refer [PySafetyGearAnalytics-README](./PySafetyGearAnalytics/README.md) for more information on the udf configs.
 
-The [PyMultiClassificationIngestion](./PyMultiClassificationIngestion) showcases a UDF wherein everything is performed inside VideoIngestion containers, hence this is something user executes when it doesn't want to involve the eis-msgbus to be involved for data transfer between containers thereby achieving faster processing of the pipeline.
+The [PyMultiClassificationIngestion](./PyMultiClassificationIngestion) showcases a UDF wherein everything is performed inside VideoIngestion containers, hence this is something user executes when it doesn't want to involve the eii-msgbus to be involved for data transfer between containers thereby achieving faster processing of the pipeline.
 
 Refer [PyMultiClassificationIngestion-README](./PyMultiClassificationIngestion/README.md) for more information on the udf configs.
 

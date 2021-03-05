@@ -29,14 +29,14 @@ services:
       context: $PWD/../CustomUdfs/PyMultiClassificationIngestion
       dockerfile: $PWD/../CustomUdfs/PyMultiClassificationIngestion/Dockerfile
       args:
-        EIS_VERSION: ${EIS_VERSION}
-        EIS_UID: ${EIS_UID}
-        EIS_USER_NAME: ${EIS_USER_NAME}
+        EII_VERSION: ${EII_VERSION}
+        EII_UID: ${EII_UID}
+        EII_USER_NAME: ${EII_USER_NAME}
         # set CMAKE_BUILD_TYPE value to "Debug" to generate debug symbols
         CMAKE_BUILD_TYPE: "Release"
         DOCKER_REGISTRY: ${DOCKER_REGISTRY}
         RUN_TESTS: "OFF"
-    image: ${DOCKER_REGISTRY}python_multi_classification:${EIS_VERSION}
+    image: ${DOCKER_REGISTRY}python_multi_classification:${EII_VERSION}
     container_name: python_multi_classification
     hostname: python_multi_classification
     network_mode: host
@@ -51,7 +51,7 @@ services:
       AppName: "PyMultiClassificationIngestion"
       DEV_MODE: ${DEV_MODE}
       PROFILING_MODE: ${PROFILING_MODE}
-      no_proxy: ${eis_no_proxy},${RTSP_CAMERA_IP},${ETCD_HOST}
+      no_proxy: ${eii_no_proxy},${RTSP_CAMERA_IP},${ETCD_HOST}
       ETCD_HOST: ${ETCD_HOST}
       ETCD_CLIENT_PORT: ${ETCD_CLIENT_PORT}
       ETCD_PREFIX: ${ETCD_PREFIX}
@@ -59,7 +59,7 @@ services:
       # Setting GENICAM value to the respective camera which needs to be used
       GENICAM: "Matrix_Vision"
     volumes:
-      - "vol_eis_socket:${SOCKET_DIR}"
+      - "vol_eii_socket:${SOCKET_DIR}"
       - "/dev:/dev"
       - "/var/tmp:/var/tmp"
     privileged: true

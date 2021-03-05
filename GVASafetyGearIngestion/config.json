@@ -29,7 +29,7 @@
             {
                 "Name": "default",
                 "Type": "zmq_ipc",
-                "EndPoint": "/EIS/sockets",
+                "EndPoint": "/EII/sockets",
                 "Topics": [
                     "gva_safety_gear_stream_results"
                 ],

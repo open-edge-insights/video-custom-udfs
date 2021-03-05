@@ -20,9 +20,9 @@
 
 # Dockerfile for python based Safety Gear Analytics container
 
-ARG EIS_VERSION
+ARG EII_VERSION
 ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}ia_video_analytics:$EIS_VERSION
+FROM ${DOCKER_REGISTRY}ia_video_analytics:$EII_VERSION
 LABEL description="Python based safety gear analytics image"
 HEALTHCHECK NONE
 
