@@ -21,9 +21,9 @@
 
 # Dockerfile for Native Safety Gear UDF
 
-ARG EIS_VERSION
+ARG EII_VERSION
 ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}ia_video_analytics:$EIS_VERSION
+FROM ${DOCKER_REGISTRY}ia_video_analytics:$EII_VERSION
 LABEL description="C++ based Safety Gear UDF Image"
 HEALTHCHECK NONE
 WORKDIR ${GO_WORK_DIR}

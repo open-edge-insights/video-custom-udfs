@@ -20,9 +20,9 @@
 
 # Dockerfile for Multiclass Classification UDF
 
-ARG EIS_VERSION
+ARG EII_VERSION
 ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}ia_video_ingestion:$EIS_VERSION
+FROM ${DOCKER_REGISTRY}ia_video_ingestion:$EII_VERSION
 LABEL description="Multi-class clasifcation UDF Image"
 HEALTHCHECK NONE
 

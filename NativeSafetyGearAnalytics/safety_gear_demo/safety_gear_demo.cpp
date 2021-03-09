@@ -20,7 +20,7 @@
 
 /**
  * @file
- * @brief SafetyGear Demo UDF Implementation, ported to EIS from OpenVINO.
+ * @brief SafetyGear Demo UDF Implementation, ported to EII from OpenVINO.
  */
 #include <iostream>
 #include <string>
@@ -28,14 +28,14 @@
 #include <vector>
 #include <algorithm>
 #include <map>
-#include <eis/utils/logger.h>
-#include <eis/utils/config.h>
+#include <eii/utils/logger.h>
+#include <eii/utils/config.h>
 #include <opencv2/opencv.hpp>
 
 #include "safety_gear_demo.h"
 
-using namespace eis::custom_udfs;
-using namespace eis::msgbus;
+using namespace eii::custom_udfs;
+using namespace eii::msgbus;
 
 
 SafetyDemo::SafetyDemo(config_t *config) : BaseUdf(config) {

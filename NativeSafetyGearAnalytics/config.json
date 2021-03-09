@@ -21,7 +21,7 @@
             {
                 "Name": "default",
                 "Type": "zmq_ipc",
-                "EndPoint": "/EIS/sockets",
+                "EndPoint": "/EII/sockets",
                 "PublisherAppName": "NativeSafetyGearIngestion",
                 "Topics": [
                     "native_safety_gear_stream"
