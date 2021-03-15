@@ -156,7 +156,7 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
 # **Build and deploy Process**
 The build process is similar to the EII's build and deploy process with some minor chnages. Please find the ordered steps for building and deploying the Custom UDFs.
 
-  * As per EII default scenario, the sample custom UDF containers are not mandatory containers to run, hence the eii_builder.py should run "video-streaming-all-udfs.yml". All the sample UDF containers are added in this example. Below code snnipet signifies the same.
+  * As per EII default scenario, the sample custom UDF containers are not mandatory containers to run, hence the builder.py should run "video-streaming-all-udfs.yml". All the sample UDF containers are added in this example. Below code snnipet signifies the same.
 
     ```yml
     AppName:
@@ -173,16 +173,16 @@ The build process is similar to the EII's build and deploy process with some min
     Run the following command:
     ```bash
     cd <multi-repo cloned path>/IEdgeInsights/build/
-    python3 eii_builder.py -f video-streaming-all-udfs.yml
+    python3 builder.py -f video-streaming-all-udfs.yml
     ```
     **Note:**
     It is not mandatory to keep the custom Udfs in the CustomUdfs directory, but user must change the video-streaming-all-udfs.yml file accordingly to point the right path accordingly.
-    Additionally if it is placed under ***IEdgeInsights*** directory then the eii_builder.py file automatically picks it to generate a consolidated [***eii-config.json***](../build/config/eii-config.json) and [***docker-compose.yml***](../build/docker-compose.yml) file.
+    Additionally if it is placed under ***IEdgeInsights*** directory then the builder.py file automatically picks it to generate a consolidated [***eii-config.json***](../build/config/eii-config.json) and [***docker-compose.yml***](../build/docker-compose.yml) file.
 
   * After generation of consolidated [***eii-config.json***](../build/config/eii-config.json) and [***docker-compose.yml***](../build/docker-compose.yml) file, Run the below command to provision the UDF containers. As a pre-cautionary measure, User can cross check the afore-mentioned file to verify the sanity of the UDF specific config and service details.
     ```bash
     cd <WORK_DIR_PATH>/IEdgeInsights/build/provision
-    sudo ./provision_eii.sh  ../docker-compose.yml
+    sudo ./provision.sh  ../docker-compose.yml
     ```
   * Build and run the containers.
     ```bash
