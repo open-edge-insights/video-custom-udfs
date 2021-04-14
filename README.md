@@ -81,19 +81,47 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
     ```dockerfile
     ARG EII_VERSION                                          <<<<This is to use latest version of VI & VA automatically instead of hardcoding a version
     ARG DOCKER_REGISTRY
-    FROM ${DOCKER_REGISTRY}ia_video_analytics:$EII_VERSION   <<<<<This container is based VA container
+    ARG ARTIFACTS="/artifacts"
+    FROM ${DOCKER_REGISTRY}ia_video_common:$EII_VERSION as video_common
+    FROM ${DOCKER_REGISTRY}ia_openvino_base:$EII_VERSION as openvino_base
+    FROM ${DOCKER_REGISTRY}ia_video_analytics:$EII_VERSION as video_analytics
+    FROM ${DOCKER_REGISTRY}ia_eiibase:$EII_VERSION as builder
     LABEL description="C++ based Safety Gear UDF Image"
 
-    WORKDIR ${GO_WORK_DIR}
+    WORKDIR /app
 
+    ARG ARTIFACTS
+    RUN mkdir $ARTIFACTS \
+              $ARTIFACTS/safety_gear_demo \
+              $ARTIFACTS/lib
+    ARG CMAKE_INSTALL_PREFIX
+    COPY --from=video_common ${CMAKE_INSTALL_PREFIX}/include ${CMAKE_INSTALL_PREFIX}/include
+    COPY --from=video_common ${CMAKE_INSTALL_PREFIX}/lib ${CMAKE_INSTALL_PREFIX}/lib
+    COPY --from=openvino_base /opt/intel /opt/intel
+
+    # Copy more than one UDFs here
+    # Both C++ & Python are allowed in a container.
+    COPY ./safety_gear_demo/ ./safety_gear_demo
+    RUN cp -r ./safety_gear_demo $ARTIFACTS/safety_gear_demo
+
+    # Build native UDF samples
     RUN /bin/bash -c "source /opt/intel/openvino/bin/setupvars.sh && \
-        cd ./safetty_gear_demo && \
+        cd ./safety_gear_demo && \
         rm -rf build && \
         mkdir build && \
         cd build && \
-        cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} .. && \
-        make && \
-        make install"
+        cmake -DCMAKE_INSTALL_INCLUDEDIR=${CMAKE_INSTALL_PREFIX}/include -DCMAKE_INSTALL_PREFIX=$CMAKE_INSTALL_PREFIX -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} .. && \
+        make"
+
+    RUN cp ./safety_gear_demo/build/libsafety_gear_demo.so $ARTIFACTS/lib
+
+    FROM video_analytics as runtime   <<<<<This container is based VA container
+    HEALTHCHECK NONE
+    WORKDIR /app
+    ARG ARTIFACTS
+    ARG CMAKE_INSTALL_PREFIX
+    COPY --from=builder $ARTIFACTS/lib ${CMAKE_INSTALL_PREFIX}/lib
+    COPY --from=builder $ARTIFACTS/safety_gear_demo .
     ```
     An Example of python based UDF's ***Dockerfile*** will looks as below:
 
@@ -103,11 +131,11 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
     FROM ${DOCKER_REGISTRY}ia_video_ingestion:$EII_VERSION
     LABEL description="Multi-class clasifcation UDF Image"
 
-    WORKDIR ${GO_WORK_DIR}
+    WORKDIR /app
 
-    # Added GO_WORK_DIR to python path as copying the UDF code block under GO_WORK_DIR
+    # Added /app to python path as copying the UDF code block under /app
     # else user can add the path to which it copies its udf code.
-    ENV PYTHONPATH ${PYTHONPATH}:${GO_WORK_DIR}
+    ENV PYTHONPATH ${PYTHONPATH}:/app
 
     # User can mention about all UDF directories here, both py and C++.
     COPY ./sample_classification ./sample_classification  <<<<< ./sample_classification is the destination here for UdfLoader to pick it at runtime. Additionally we have set the python path for UdfLoader to identify the algo artifacts properly.
@@ -173,7 +201,7 @@ The build process is similar to the EII's build and deploy process with some min
     Run the following command:
     ```bash
     cd <multi-repo cloned path>/IEdgeInsights/build/
-    python3 builder.py -f video-streaming-all-udfs.yml
+    python3 builder.py -f usecases/video-streaming-all-udfs.yml
     ```
     **Note:**
     It is not mandatory to keep the custom Udfs in the CustomUdfs directory, but user must change the video-streaming-all-udfs.yml file accordingly to point the right path accordingly.
@@ -186,7 +214,8 @@ The build process is similar to the EII's build and deploy process with some min
     ```
   * Build and run the containers.
     ```bash
-    docker-compose up --build -d
+    docker-compose -f docker-compose-build.yml build
+    docker-compose up -d
     ```
 
 # *Sample UDFs Directory*

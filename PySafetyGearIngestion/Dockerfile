@@ -26,7 +26,7 @@ FROM ${DOCKER_REGISTRY}ia_video_ingestion:$EII_VERSION
 LABEL description="Python based safety Gear Ingestion container"
 HEALTHCHECK NONE
 
-WORKDIR ${GO_WORK_DIR}
+WORKDIR /app
 
 # The destination directory of video file can be chnaged and upadted in config.json
 COPY ./Safety_Full_Hat_and_Vest.avi ./test_videos/Safety_Full_Hat_and_Vest.avi

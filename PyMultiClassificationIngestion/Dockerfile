@@ -26,7 +26,7 @@ FROM ${DOCKER_REGISTRY}ia_video_ingestion:$EII_VERSION
 LABEL description="Multi-class clasifcation UDF Image"
 HEALTHCHECK NONE
 
-WORKDIR ${GO_WORK_DIR}
+WORKDIR /app
 
 # User can mention about all UDF directories here, both py and C++.
 COPY ./sample_classification ./sample_classification
