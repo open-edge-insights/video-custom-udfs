@@ -22,7 +22,7 @@ version: '3.6'
 
 services:
   ## Define ingestion based UDF
-  python_multi_classification:
+  ia_python_multi_classification:
     depends_on:
     - ia_video_ingestion
     build:
@@ -36,9 +36,9 @@ services:
         CMAKE_BUILD_TYPE: "Release"
         DOCKER_REGISTRY: ${DOCKER_REGISTRY}
         RUN_TESTS: "OFF"
-    image: ${DOCKER_REGISTRY}python_multi_classification:${EII_VERSION}
-    container_name: python_multi_classification
-    hostname: python_multi_classification
+    image: ${DOCKER_REGISTRY}ia_python_multi_classification:${EII_VERSION}
+    container_name: ia_python_multi_classification
+    hostname: ia_python_multi_classification
     network_mode: host
     restart: unless-stopped
     security_opt:

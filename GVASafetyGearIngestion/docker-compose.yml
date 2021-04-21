@@ -22,7 +22,7 @@ version: '3.6'
 
 services:
   ## Define ingestion based UDF
-  gva_safety_gear_ingestion:
+  ia_gva_safety_gear_ingestion:
     depends_on:
     - ia_video_ingestion
     build:
@@ -37,9 +37,9 @@ services:
         CMAKE_BUILD_TYPE: "Release"
         DOCKER_REGISTRY: ${DOCKER_REGISTRY}
         RUN_TESTS: "OFF"
-    image: ${DOCKER_REGISTRY}gva_safety_gear_ingestion:${EII_VERSION}
-    container_name: gva_safety_gear_ingestion
-    hostname: gva_safety_gear_ingestion
+    image: ${DOCKER_REGISTRY}ia_gva_safety_gear_ingestion:${EII_VERSION}
+    container_name: ia_gva_safety_gear_ingestion
+    hostname: ia_gva_safety_gear_ingestion
     network_mode: host
     restart: unless-stopped
     ipc: "none"

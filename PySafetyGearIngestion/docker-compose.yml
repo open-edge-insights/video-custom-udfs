@@ -22,7 +22,7 @@ version: '3.6'
 
 services:
   ## Define ingestion based UDF
-  python_safety_gear_ingestion:
+  ia_python_safety_gear_ingestion:
     depends_on:
     - ia_video_ingestion
     build:
@@ -37,9 +37,9 @@ services:
         CMAKE_BUILD_TYPE: "Release"
         DOCKER_REGISTRY: ${DOCKER_REGISTRY}
         RUN_TESTS: "OFF"
-    image: ${DOCKER_REGISTRY}python_safety_gear_ingestion:${EII_VERSION}
-    container_name: python_safety_gear_ingestion
-    hostname: python_safety_gear_ingestion
+    image: ${DOCKER_REGISTRY}ia_python_safety_gear_ingestion:${EII_VERSION}
+    container_name: ia_python_safety_gear_ingestion
+    hostname: ia_python_safety_gear_ingestion
     network_mode: host
     restart: unless-stopped
     security_opt:
