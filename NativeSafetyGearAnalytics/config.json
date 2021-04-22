@@ -33,7 +33,7 @@
             {
                 "Name": "default",
                 "Type": "zmq_tcp",
-                "EndPoint": "127.0.0.1:67017",
+                "EndPoint": "0.0.0.0:65017",
                 "Topics": [
                     "native_safety_gear_stream_results"
                 ],

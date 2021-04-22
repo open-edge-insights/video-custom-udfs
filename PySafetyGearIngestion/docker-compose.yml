@@ -40,7 +40,6 @@ services:
     image: ${DOCKER_REGISTRY}ia_python_safety_gear_ingestion:${EII_VERSION}
     container_name: ia_python_safety_gear_ingestion
     hostname: ia_python_safety_gear_ingestion
-    network_mode: host
     restart: unless-stopped
     security_opt:
     - no-new-privileges    
@@ -59,6 +58,10 @@ services:
       CertType: "zmq"
       # Setting GENICAM value to the respective camera which needs to be used
       GENICAM: "Matrix_Vision"
+    ports:
+      - 64019:64019
+    networks:
+      - eii
     volumes:
       - "vol_eii_socket:${SOCKET_DIR}"
       - "/dev:/dev"

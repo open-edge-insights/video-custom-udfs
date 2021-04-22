@@ -27,7 +27,7 @@
             {
                 "Name": "native_safety_gear",
                 "Type": "zmq_tcp",
-                "EndPoint": "127.0.0.1:66017",
+                "EndPoint": "0.0.0.0:64017",
                 "AllowedClients": [
                     "*"
                 ]

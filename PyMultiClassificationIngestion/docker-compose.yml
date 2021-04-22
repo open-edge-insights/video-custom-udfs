@@ -39,7 +39,6 @@ services:
     image: ${DOCKER_REGISTRY}ia_python_multi_classification:${EII_VERSION}
     container_name: ia_python_multi_classification
     hostname: ia_python_multi_classification
-    network_mode: host
     restart: unless-stopped
     security_opt:
     - no-new-privileges    
@@ -51,17 +50,21 @@ services:
       AppName: "PyMultiClassificationIngestion"
       DEV_MODE: ${DEV_MODE}
       PROFILING_MODE: ${PROFILING_MODE}
-      no_proxy: ${eii_no_proxy},${RTSP_CAMERA_IP},${ETCD_HOST}
+      no_proxy: ${RTSP_CAMERA_IP},${ETCD_HOST}
       ETCD_HOST: ${ETCD_HOST}
       ETCD_CLIENT_PORT: ${ETCD_CLIENT_PORT}
       ETCD_PREFIX: ${ETCD_PREFIX}
       CertType: "zmq"
       # Setting GENICAM value to the respective camera which needs to be used
       GENICAM: "Matrix_Vision"
+    ports:
+      - 64018:64018
     volumes:
       - "vol_eii_socket:${SOCKET_DIR}"
       - "/dev:/dev"
       - "/var/tmp:/var/tmp"
+    networks:
+      - eii
     privileged: true
     devices:
       # Following devices under /dev filesystem will be needed based on usecase

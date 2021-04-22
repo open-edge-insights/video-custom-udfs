@@ -31,7 +31,7 @@
             {
                 "Name": "py_multi_calssification",
                 "Type": "zmq_tcp",
-                "EndPoint": "127.0.0.1:66018",
+                "EndPoint": "0.0.0.0:64018",
                 "AllowedClients": [
                     "*"
                 ]

@@ -38,7 +38,6 @@ services:
     image: ${DOCKER_REGISTRY}ia_python_safety_gear_analytics:${EII_VERSION}
     container_name: ia_python_safety_gear_analytics
     hostname: ia_python_safety_gear_analytics
-    network_mode: host
     restart: unless-stopped
     security_opt:
     - no-new-privileges    
@@ -56,6 +55,10 @@ services:
       ETCD_PREFIX: ${ETCD_PREFIX}
       CertType: "zmq"
     privileged: true
+    ports:
+      - 65019:65019
+    networks:
+      - eii
     volumes:
       - "/var/tmp:/var/tmp"
       - "/dev:/dev"

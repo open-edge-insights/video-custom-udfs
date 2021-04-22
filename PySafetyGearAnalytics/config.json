@@ -33,7 +33,7 @@
             {
                 "Name": "default",
                 "Type": "zmq_tcp",
-                "EndPoint": "127.0.0.1:67019",
+                "EndPoint": "0.0.0.0:65019",
                 "Topics": [
                     "py_safety_gear_stream_results"
                 ],

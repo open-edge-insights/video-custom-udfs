@@ -40,7 +40,6 @@ services:
     image: ${DOCKER_REGISTRY}ia_native_safety_gear_analytics:${EII_VERSION}
     container_name: ia_native_safety_gear_analytics
     hostname: ia_native_safety_gear_analytics
-    network_mode: host
     restart: unless-stopped
     security_opt:
     - no-new-privileges    
@@ -52,14 +51,18 @@ services:
       AppName: "NativeSafetyGearAnalytics"
       DEV_MODE: ${DEV_MODE}
       PROFILING_MODE: ${PROFILING_MODE}
-      no_proxy: ${eii_no_proxy},${ETCD_HOST}
+      no_proxy: ${ETCD_HOST}
       ETCD_HOST: ${ETCD_HOST}
       ETCD_CLIENT_PORT: ${ETCD_CLIENT_PORT}
       ETCD_PREFIX: ${ETCD_PREFIX}
       CertType: "zmq"
       # Setting GENICAM value to the respective camera which needs to be used
       GENICAM: "Basler"
+    ports:
+      - 65017:65017
     privileged: true
+    networks:
+      - eii
     volumes:
       - "/var/tmp:/var/tmp"
       - "/dev:/dev"

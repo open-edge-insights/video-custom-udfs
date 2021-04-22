@@ -40,7 +40,6 @@ services:
     image: ${DOCKER_REGISTRY}ia_gva_safety_gear_ingestion:${EII_VERSION}
     container_name: ia_gva_safety_gear_ingestion
     hostname: ia_gva_safety_gear_ingestion
-    network_mode: host
     restart: unless-stopped
     ipc: "none"
     security_opt:
@@ -52,13 +51,17 @@ services:
       AppName: "GVASafetyGearIngestion"
       DEV_MODE: ${DEV_MODE}
       PROFILING_MODE: ${PROFILING_MODE}
-      no_proxy: ${eii_no_proxy},${RTSP_CAMERA_IP},${ETCD_HOST}
+      no_proxy: ${RTSP_CAMERA_IP},${ETCD_HOST}
       ETCD_HOST: ${ETCD_HOST}
       ETCD_CLIENT_PORT: ${ETCD_CLIENT_PORT}
       ETCD_PREFIX: ${ETCD_PREFIX}
       CertType: "zmq"
       # Setting GENICAM value to the respective camera which needs to be used
       GENICAM: "Matrix_Vision"
+    ports:
+      - 64020:64020
+    networks:
+      - eii
     volumes:
     - "vol_eii_socket:${SOCKET_DIR}"
     - "/dev:/dev"
