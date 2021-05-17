@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Intel Corporation.
+# Copyright (c) 2021 Intel Corporation.
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,12 +21,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: gvasafetygearingestion
-  namespace: eii
+  name: {{ .Values.config.gvasafetygearingestion.name }}
+  namespace: {{ .Values.namespace }}
 spec:
   ports:
-  - port: 65021
-    name: tcp
+  - port: {{ .Values.config.gvasafetygearingestion.publisher_port }}
+    name: publisher-port
+  ports:
+  - port: {{ .Values.config.gvasafetygearingestion.server_port }}
+    name: server-port
   selector:
     app: gvasafetygearingestion
 ---
@@ -36,7 +39,7 @@ metadata:
   labels:
     app: gvasafetygearingestion
   name: deployment-gva-safety-gear-ingestion
-  namespace: eii
+  namespace: {{ .Values.namespace }}
 
 spec:
   replicas: 1
@@ -50,77 +53,67 @@ spec:
     spec:
       containers:
       - name: ia-gva-safety-gear-ingestion
-        image: ${DOCKER_REGISTRY}ia_gva_safety_gear_ingestion:${EII_VERSION}
+        image: {{ .Values.registry }}ia_gva_safety_gear_ingestion:{{ .Values.eii_version }}
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
         securityContext:
           privileged: true
         volumeMounts:
         - name: eii-dev
           mountPath: /dev
-        - name: eii-socket
-          mountPath: ${SOCKET_DIR}
-        - name: tmp
-          mountPath: /var/tmp
-        - name: "ca-cert"
-          mountPath: /run/secrets/ca_etcd
-        - name: "gva-safety-gear-ingestion-cert"
-          mountPath: /run/secrets/etcd_GVASafetyGearIngestion_cert
-        - name: "gva-safety-gear-ingestion-key"
-          mountPath: /run/secrets/etcd_GVASafetyGearIngestion_key
+        {{ if eq .Values.env.dev_mode false}}
+        - name: etcd-certs
+          mountPath: /run/secrets/etcd/
+        {{ end }}
+
         env:
         - name: AppName
           value: "GVASafetyGearIngestion"
         - name: DEV_MODE
-          value: '${DEV_MODE}'
+          value: '{{ .Values.env.dev_mode }}'
         - name: PROFILING_MODE
-          value: '${PROFILING_MODE}'
-        - name: no_proxy
-          value: '${eii_no_proxy},${RTSP_CAMERA_IP}'
+          value: '{{ .Values.env.PROFILING_MODE }}'
         - name: ETCD_HOST
-          value: etcd
+          value: {{ .Values.config.etcd.name }}
         - name: ETCD_CLIENT_PORT
-          value: '${ETCD_CLIENT_PORT}'
-        - name: PROVISION_MODE
-          value: '${PROVISION_MODE}'
+          value: '{{ .Values.config.etcd.client_port }}'
         - name:  ETCD_PREFIX
-          value: '${ETCD_PREFIX}'
+          value: ''
         - name:  GENICAM
           value: 'Matrix_Vision'
-        - name: CONFIGMGR_CACERT
-          value: "/run/secrets/ca_etcd/ca_certificate.pem"
-        - name: CONFIGMGR_CERT
-          value: "/run/secrets/etcd_GVASafetyGearIngestion_cert/GVASafetyGearIngestion_client_certificate.pem"
-        - name: CONFIGMGR_KEY
-          value: "/run/secrets/etcd_GVASafetyGearIngestion_key/GVASafetyGearIngestion_client_key.pem"
-      #MessageBus Endpoint Configuration
-      # Setting Visualizer as a subscriber here for FpsCalculator
-        - name: CertType
-          value: "zmq"
         # Override the endpoint provided in interfaces for PUBLISHER
         - name: PUBLISHER_ENDPOINT
-          value: "0.0.0.0:65021"
+          value: "0.0.0.0:{{ .Values.config.gvasafetygearingestion.publisher_port }}"
         # Override the endpoint provided in interfaces for PUBLISHER
         - name: PUBLISHER_TYPE
           value: "zmq_tcp"
         # Override the endpoint provided in interfaces for SERVER
         - name: SERVER_ENDPOINT
-          value: "0.0.0.0:64020"
+          value: "0.0.0.0:{{ .Values.config.gvasafetygearingestion.server_port }}"
+        - name: SERVER_TYPE
+          value: "zmq_tcp"
+
+        {{ if eq .Values.env.dev_mode false}}
+        - name: CONFIGMGR_CACERT
+          value: "/run/secrets/etcd/ca_certificate.pem"
+        - name: CONFIGMGR_CERT
+          value: "/run/secrets/etcd/GVASafetyGearIngestion_client_certificate.pem"
+        - name: CONFIGMGR_KEY
+          value: "/run/secrets/etcd/GVASafetyGearIngestion_client_key.pem"
+        {{ end }}
 
       volumes:
       - name: eii-dev
         hostPath:
           path: /dev
-      - name: eii-socket
-        hostPath:
-          path: ${EII_INSTALL_PATH}/sockets
-      - name: tmp
-        hostPath:
-          path: /var/tmp
-      - name: "ca-cert"
+      {{ if eq .Values.env.dev_mode false}}
+      - name: etcd-certs
         secret:
-          secretName: ca-etcd
-      - name: "gva-safety-gear-ingestion-cert"
-        secret:
-          secretName: gvasafetygearingestion-cert
-      - name: "gva-safety-gear-ingestion-key"
-        secret:
-          secretName: gvasafetygearingestion-key
+          secretName: eii-certs
+          items:
+          - key: ca_certificate.pem
+            path: ca_certificate.pem
+          - key: GVASafetyGearIngestion_client_certificate.pem
+            path: GVASafetyGearIngestion_client_certificate.pem
+          - key: GVASafetyGearIngestion_client_key.pem
+            path: GVASafetyGearIngestion_client_key.pem
+      {{ end }}

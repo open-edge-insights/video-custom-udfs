@@ -49,8 +49,8 @@ spec:
         app: pythonsafetygearingestion
     spec:
       containers:
-      - name: python-safety-gear-ingestion
-        image: ${DOCKER_REGISTRY}python_safety_gear_ingestion:${EII_VERSION}
+      - name: ia-python-safety-gear-ingestion
+        image: ${DOCKER_REGISTRY}ia_python_safety_gear_ingestion:${EII_VERSION}
         securityContext:
           privileged: true
         volumeMounts:
@@ -103,7 +103,7 @@ spec:
           value: "zmq_tcp"
         # Override the endpoint provided in interfaces for SERVER
         - name: SERVER_ENDPOINT
-          value: "0.0.0.0:66019"
+          value: "0.0.0.0:64019"
 
       volumes:
       - name: eii-dev

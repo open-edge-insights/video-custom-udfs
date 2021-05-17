@@ -1,0 +1,5 @@
+config:
+    pythonsafetygearingestion:
+      name: pythonsafetygearingestion
+      publisher_port: 65023
+      server_port: 64019

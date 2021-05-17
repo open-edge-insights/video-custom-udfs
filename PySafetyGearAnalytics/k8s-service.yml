@@ -50,8 +50,8 @@ spec:
     spec:
       #nodeName: master-node
       containers:
-      - name: python-safety-gear-analytics
-        image: ${DOCKER_REGISTRY}python_safety_gear_analytics:${EII_VERSION}
+      - name: ia-python-safety-gear-analytics
+        image: ${DOCKER_REGISTRY}ia_python_safety_gear_analytics:${EII_VERSION}
         securityContext:
           privileged: true
         volumeMounts:

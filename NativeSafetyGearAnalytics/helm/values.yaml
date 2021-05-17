@@ -1,0 +1,4 @@
+config:
+    nativesafetygearanalytics:
+      name: nativesafetygearanalytics
+      publisher_port: 65017

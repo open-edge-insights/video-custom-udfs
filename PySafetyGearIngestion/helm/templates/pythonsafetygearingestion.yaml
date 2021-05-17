@@ -1,0 +1,114 @@
+# Copyright (c) 2021 Intel Corporation.
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.config.pythonsafetygearingestion.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  ports:
+  - port: {{ .Values.config.pythonsafetygearingestion.publisher_port }}
+    name: publisher-port
+  - port: {{ .Values.config.pythonsafetygearingestion.server_port }}
+    name: server-port
+  selector:
+    app: pythonsafetygearingestion
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: pythonsafetygearingestion
+  name: deployment-python-safety-gear-ingestion
+  namespace: {{ .Values.namespace }}
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pythonsafetygearingestion
+  template:
+    metadata:
+      labels:
+        app: pythonsafetygearingestion
+    spec:
+      containers:
+      - name: ia-python-safety-gear-ingestion
+        image: {{ .Values.registry }}ia_python_safety_gear_ingestion:{{ .Values.eii_version }}
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: eii-dev
+          mountPath: /dev
+        {{ if eq .Values.env.dev_mode false}}
+        - name: etcd-certs
+          mountPath: /run/secrets/etcd/
+        {{ end }}
+
+        env:
+        - name: AppName
+          value: "PySafetyGearIngestion"
+        - name: DEV_MODE
+          value: '{{ .Values.env.dev_mode }}'
+        - name: PROFILING_MODE
+          value: '{{ .Values.env.PROFILING_MODE }}'
+        - name: ETCD_HOST
+          value: {{ .Values.config.etcd.name }}
+        - name: ETCD_CLIENT_PORT
+          value: '{{ .Values.config.etcd.client_port }}'
+        - name:  ETCD_PREFIX
+          value: ''
+        - name:  GENICAM
+          value: 'Matrix_Vision'
+        - name: PUBLISHER_TYPE
+          value: "zmq_tcp"
+        - name: PUBLISHER_ENDPOINT
+          value: "0.0.0.0:{{ .Values.config.pythonsafetygearingestion.publisher_port }}"
+        - name: SERVER_TYPE
+          value: "zmq_tcp"
+        - name: SERVER_ENDPOINT
+          value: "0.0.0.0:{{ .Values.config.pythonsafetygearingestion.server_port }}"
+        {{ if eq .Values.env.dev_mode false}}
+        - name: CONFIGMGR_CACERT
+          value: "/run/secrets/etcd/ca_certificate.pem"
+        - name: CONFIGMGR_CERT
+          value: "/run/secrets/etcd/PySafetyGearIngestion_client_certificate.pem"
+        - name: CONFIGMGR_KEY
+          value: "/run/secrets/etcd/PySafetyGearIngestion_client_key.pem"
+        {{ end }}
+
+      volumes:
+      - name: eii-dev
+        hostPath:
+          path: /dev
+      {{ if eq .Values.env.dev_mode false}}
+      - name: etcd-certs
+        secret:
+          secretName: eii-certs
+          items:
+          - key: ca_certificate.pem
+            path: ca_certificate.pem
+          - key: PySafetyGearIngestion_client_certificate.pem
+            path: PySafetyGearIngestion_client_certificate.pem
+          - key: PySafetyGearIngestion_client_key.pem
+            path: PySafetyGearIngestion_client_key.pem
+      {{ end }}

@@ -1,0 +1,4 @@
+config:
+    pythonsafetygearanalytics:
+      name: pythonsafetygearanalytics
+      publisher_port: 65013

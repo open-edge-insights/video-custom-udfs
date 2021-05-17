@@ -49,8 +49,8 @@ spec:
         app: pythonmulticlassification
     spec:
       containers:
-      - name: python-multi-classification
-        image: ${DOCKER_REGISTRY}python_multi_classification:${EII_VERSION}
+      - name: ia-python-multi-classification
+        image: ${DOCKER_REGISTRY}ia_python_multi_classification:${EII_VERSION}
         securityContext:
           privileged: true
         volumeMounts:
@@ -103,7 +103,7 @@ spec:
           value: "zmq_tcp"
         # Override the endpoint provided in interfaces for SERVER
         - name: SERVER_ENDPOINT
-          value: "0.0.0.0:66018"
+          value: "0.0.0.0:64018"
 
       volumes:
       - name: eii-dev

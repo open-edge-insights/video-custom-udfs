@@ -49,8 +49,8 @@ spec:
         app: nativesafetygearingestion
     spec:
       containers:
-      - name: native-safety-gear-ingestion
-        image: ${DOCKER_REGISTRY}native_safety_gear_ingestion:${EII_VERSION}
+      - name: ia-native-safety-gear-ingestion
+        image: ${DOCKER_REGISTRY}ia_native_safety_gear_ingestion:${EII_VERSION}
         securityContext:
           privileged: true
         volumeMounts:
@@ -103,7 +103,7 @@ spec:
           value: "zmq_tcp"
         # Override the endpoint provided in interfaces for SERVER
         - name: SERVER_ENDPOINT
-          value: "0.0.0.0:66017"
+          value: "0.0.0.0:64017"
 
       volumes:
       - name: eii-dev
