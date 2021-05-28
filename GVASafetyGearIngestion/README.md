@@ -16,7 +16,7 @@ This container is based out of VideoIngestion container. Since GVA elements are 
     ```javascript
      {
        "type": "gstreamer",
-       "pipeline": "gencamsrc serial=<DEVICE_SERIAL_NUMBER> pixel-format=<PIXEL_FORMAT> ! vaapipostproc format=bgrx ! gvadetect model=models/ref/frozen_inference_graph.xml ! videoconvert !  video/x-raw,format=BGR ! appsink"
+       "pipeline": "gencamsrc serial=<DEVICE_SERIAL_NUMBER> pixel-format=<PIXEL_FORMAT> ! vaapipostproc format=bgrx ! videoconvert !  video/x-raw,format=BGR ! gvadetect model=models/ref/frozen_inference_graph.xml ! appsink"
      }
     ```
 
