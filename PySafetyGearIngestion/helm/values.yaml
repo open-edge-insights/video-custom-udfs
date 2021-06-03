@@ -3,3 +3,4 @@ config:
       name: pythonsafetygearingestion
       publisher_port: 65023
       server_port: 64019
+      IPC: false

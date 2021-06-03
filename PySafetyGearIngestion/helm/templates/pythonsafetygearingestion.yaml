@@ -57,6 +57,10 @@ spec:
         securityContext:
           privileged: true
         volumeMounts:
+        {{- if eq .Values.config.pythonsafetygearingestion.IPC true}}
+        - name: {{ .Values.volumes.eii_socket.name }}
+          mountPath: {{ .Values.volumes.eii_socket.location }}
+        {{- end }}
         - name: eii-dev
           mountPath: /dev
         {{ if eq .Values.env.dev_mode false}}
@@ -79,6 +83,7 @@ spec:
           value: ''
         - name:  GENICAM
           value: 'Matrix_Vision'
+        {{- if eq .Values.config.pythonsafetygearingestion.IPC false}}
         - name: PUBLISHER_TYPE
           value: "zmq_tcp"
         - name: PUBLISHER_ENDPOINT
@@ -87,6 +92,16 @@ spec:
           value: "zmq_tcp"
         - name: SERVER_ENDPOINT
           value: "0.0.0.0:{{ .Values.config.pythonsafetygearingestion.server_port }}"
+        {{- else }}
+        - name: PUBLISHER_TYPE
+          value: "zmq_ipc"
+        - name: PUBLISHER_ENDPOINT
+          value: "{{ .Values.env.SOCKET_DIR }}"
+        - name: SERVER_TYPE
+          value: "zmq_ipc"
+        - name: SERVER_ENDPOINT
+          value: "{{ .Values.env.SOCKET_DIR }}"       
+        {{- end }}
         {{ if eq .Values.env.dev_mode false}}
         - name: CONFIGMGR_CACERT
           value: "/run/secrets/etcd/ca_certificate.pem"
@@ -97,6 +112,11 @@ spec:
         {{ end }}
 
       volumes:
+      {{- if eq .Values.config.pythonsafetygearingestion.IPC true}}
+      - name: {{ .Values.volumes.eii_socket.name }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.volumes.eii_socket.name }}
+      {{- end }}
       - name: eii-dev
         hostPath:
           path: /dev

@@ -3,3 +3,4 @@ config:
       name: gvasafetygearingestion
       publisher_port: 65021
       server_port: 64020
+      IPC: false

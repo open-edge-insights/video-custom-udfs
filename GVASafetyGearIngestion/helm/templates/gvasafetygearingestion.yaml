@@ -58,6 +58,10 @@ spec:
         securityContext:
           privileged: true
         volumeMounts:
+        {{- if eq .Values.config.gvasafetygearingestion.IPC true}}
+        - name: {{ .Values.volumes.eii_socket.name }}
+          mountPath: {{ .Values.volumes.eii_socket.location }}
+        {{- end }}
         - name: eii-dev
           mountPath: /dev
         {{ if eq .Values.env.dev_mode false}}
@@ -80,6 +84,7 @@ spec:
           value: ''
         - name:  GENICAM
           value: 'Matrix_Vision'
+        {{- if eq .Values.config.nativesafetygearanalytics.IPC false}}
         # Override the endpoint provided in interfaces for PUBLISHER
         - name: PUBLISHER_ENDPOINT
           value: "0.0.0.0:{{ .Values.config.gvasafetygearingestion.publisher_port }}"
@@ -91,6 +96,19 @@ spec:
           value: "0.0.0.0:{{ .Values.config.gvasafetygearingestion.server_port }}"
         - name: SERVER_TYPE
           value: "zmq_tcp"
+        {{- else }}
+        # Override the endpoint provided in interfaces for PUBLISHER
+        - name: PUBLISHER_ENDPOINT
+          value: "{{ .Values.env.SOCKET_DIR }}"
+        # Override the endpoint provided in interfaces for PUBLISHER
+        - name: PUBLISHER_TYPE
+          value: "zmq_ipc"
+        # Override the endpoint provided in interfaces for SERVER
+        - name: SERVER_ENDPOINT
+          value: "{{ .Values.env.SOCKET_DIR }}"
+        - name: SERVER_TYPE
+          value: "zmq_ipc"
+        {{- end }}
 
         {{ if eq .Values.env.dev_mode false}}
         - name: CONFIGMGR_CACERT
@@ -102,6 +120,11 @@ spec:
         {{ end }}
 
       volumes:
+      {{- if eq .Values.config.gvasafetygearingestion.IPC true}}
+      - name: {{ .Values.volumes.eii_socket.name }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.volumes.eii_socket.name }}
+      {{- end }}
       - name: eii-dev
         hostPath:
           path: /dev
