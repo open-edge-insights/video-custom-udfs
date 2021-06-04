@@ -1,0 +1,46 @@
+{
+    "config": {
+        "encoding": {
+            "level": 95,
+            "type": "jpeg"
+        },
+        "ingestor": {
+            "type": "realsense"
+        },
+        "max_workers": 4,
+        "sw_trigger": {
+            "init_state": "running"
+        },
+        "udfs": [
+            {
+                "name": "rs2pcl",
+                "type": "raw_native"
+            }
+        ]
+    },
+    "interfaces": {
+        "Servers": [
+            {
+                "Name": "native_pcl_ingestion",
+                "Type": "zmq_tcp",
+                "EndPoint": "0.0.0.0:64023",
+                "AllowedClients": [
+                    "*"
+                ]
+            }
+        ],
+        "Publishers": [
+            {
+                "Name": "default",
+                "Type": "zmq_ipc",
+                "EndPoint": "/EII/sockets",
+                "Topics": [
+                    "native_pcl_results_stream"
+                ],
+                "AllowedClients": [
+                    "*"
+                ]
+            }
+        ]
+    }
+}
