@@ -272,3 +272,10 @@ Refer [GVASafetyGearIngestion-README.md](./GVASafetyGearIngestion/README.md) for
 
   ```
   Here the models files placed under the `ref` directory on the hostsystem is copied to `./models/ref` path inside the container.
+
+## NativePclIngestion
+
+[*NativePclIngestion*](./NativePclIngestion) is a PCL based UDF container based out of VideoIngestion
+
+Refer [NativePclIngestion-README.md](./NativePclIngestion/README.md) for more information on the udf configs.
+
