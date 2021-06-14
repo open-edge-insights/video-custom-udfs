@@ -50,7 +50,7 @@ spec:
     spec:
       containers:
       - name: ia-python-multi-classification
-        image: {{ .Values.registry }}ia_python_multi_classification:{{ .Values.eii_version }}
+        image: {{ .Values.DOCKER_REGISTRY }}ia_python_multi_classification:{{ .Values.EII_VERSION }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
         securityContext:
           privileged: true
@@ -61,7 +61,7 @@ spec:
         {{- end }}
         - name: eii-dev
           mountPath: /dev
-        {{ if eq .Values.env.dev_mode false}}
+        {{ if eq .Values.env.DEV_MODE false}}
         - name: etcd-certs
           mountPath: /run/secrets/etcd/
         {{ end }}
@@ -70,7 +70,7 @@ spec:
         - name: AppName
           value: "PyMultiClassificationIngestion"
         - name: DEV_MODE
-          value: '{{ .Values.env.dev_mode }}'
+          value: '{{ .Values.env.DEV_MODE }}'
         - name: PROFILING_MODE
           value: '{{ .Values.env.PROFILING_MODE }}'
         - name: ETCD_HOST
@@ -101,7 +101,7 @@ spec:
           value: "{{ .Values.env.SOCKET_DIR }}"
         {{- end }}
 
-        {{ if eq .Values.env.dev_mode false}}
+        {{ if eq .Values.env.DEV_MODE false}}
         - name: CONFIGMGR_CACERT
           value: "/run/secrets/etcd/ca_certificate.pem"
         - name: CONFIGMGR_CERT
@@ -119,7 +119,7 @@ spec:
       - name: eii-dev
         hostPath:
           path: /dev
-      {{ if eq .Values.env.dev_mode false}}
+      {{ if eq .Values.env.DEV_MODE false}}
       - name: etcd-certs
         secret:
           secretName: eii-certs

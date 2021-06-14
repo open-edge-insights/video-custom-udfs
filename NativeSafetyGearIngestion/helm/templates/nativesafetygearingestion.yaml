@@ -52,7 +52,7 @@ spec:
     spec:
       containers:
       - name: ia-native-safety-gear-ingestion
-        image: {{ .Values.registry }}ia_native_safety_gear_ingestion:{{ .Values.eii_version }}
+        image: {{ .Values.DOCKER_REGISTRY }}ia_native_safety_gear_ingestion:{{ .Values.EII_VERSION }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
         securityContext:
           privileged: true
@@ -63,7 +63,7 @@ spec:
         {{- end }}
         - name: eii-dev
           mountPath: /dev
-        {{ if eq .Values.env.dev_mode false}}
+        {{ if eq .Values.env.DEV_MODE false}}
         - name: etcd-certs
           mountPath: /run/secrets/etcd/
         {{ end }}
@@ -72,7 +72,7 @@ spec:
         - name: AppName
           value: "NativeSafetyGearIngestion"
         - name: DEV_MODE
-          value: '{{ .Values.env.dev_mode }}'
+          value: '{{ .Values.env.DEV_MODE }}'
         - name: PROFILING_MODE
           value: '{{ .Values.env.PROFILING_MODE }}'
         - name: ETCD_HOST
@@ -102,7 +102,7 @@ spec:
         - name: SERVER_ENDPOINT
           value: "{{ .Values.env.SOCKET_DIR }}"
         {{- end }}
-        {{ if eq .Values.env.dev_mode false}}
+        {{ if eq .Values.env.DEV_MODE false}}
         - name: CONFIGMGR_CACERT
           value: "/run/secrets/etcd/ca_certificate.pem"
         - name: CONFIGMGR_CERT
@@ -120,7 +120,7 @@ spec:
       - name: eii-dev
         hostPath:
           path: /dev
-      {{ if eq .Values.env.dev_mode false}}
+      {{ if eq .Values.env.DEV_MODE false}}
       - name: etcd-certs
         secret:
           secretName: eii-certs
