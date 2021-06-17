@@ -82,10 +82,10 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
     ARG EII_VERSION                                          <<<<This is to use latest version of VI & VA automatically instead of hardcoding a version
     ARG DOCKER_REGISTRY
     ARG ARTIFACTS="/artifacts"
-    FROM ${DOCKER_REGISTRY}ia_video_common:$EII_VERSION as video_common
-    FROM ${DOCKER_REGISTRY}ia_openvino_base:$EII_VERSION as openvino_base
-    FROM ${DOCKER_REGISTRY}ia_video_analytics:$EII_VERSION as video_analytics
-    FROM ${DOCKER_REGISTRY}ia_eiibase:$EII_VERSION as builder
+    FROM ia_video_common:$EII_VERSION as video_common
+    FROM ia_openvino_base:$EII_VERSION as openvino_base
+    FROM ${DOCKER_REGISTRY}openedgeinsights/ia_video_analytics:$EII_VERSION as video_analytics
+    FROM ia_eiibase:$EII_VERSION as builder
     LABEL description="C++ based Safety Gear UDF Image"
 
     WORKDIR /app
@@ -128,7 +128,7 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
     ```dockerfile
     ARG EII_VERSION
     ARG DOCKER_REGISTRY
-    FROM ${DOCKER_REGISTRY}ia_video_ingestion:$EII_VERSION
+    FROM ${DOCKER_REGISTRY}openedgeinsights/ia_video_ingestion:$EII_VERSION
     LABEL description="Multi-class clasifcation UDF Image"
 
     WORKDIR /app
