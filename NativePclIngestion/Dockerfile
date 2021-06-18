@@ -68,6 +68,7 @@ RUN cp ./rs2pcl/build/librs2pcl.so $ARTIFACTS/lib
 RUN ls /usr/lib/libOpenNI2.so
 
 FROM video_ingestion as runtime
+USER root
 
 HEALTHCHECK NONE
 
@@ -88,3 +89,6 @@ RUN apt-get update && \
 
 COPY --from=builder $ARTIFACTS/lib ${CMAKE_INSTALL_PREFIX}/lib
 COPY --from=builder $ARTIFACTS/rs2pcl .
+
+ARG EII_USER_NAME
+USER ${EII_USER_NAME}
