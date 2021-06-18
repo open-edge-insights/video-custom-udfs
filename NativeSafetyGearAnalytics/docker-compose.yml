@@ -24,7 +24,8 @@ services:
 ## Define Analytics service
   ia_native_safety_gear_analytics:
     depends_on:
-      - ia_video_analytics
+      - ia_video_common
+      - ia_openvino_base
     build:
       context: $PWD/../CustomUdfs/NativeSafetyGearAnalytics
       dockerfile: $PWD/../CustomUdfs/NativeSafetyGearAnalytics/Dockerfile
@@ -65,14 +66,15 @@ services:
       - eii
     volumes:
       - "/var/tmp:/var/tmp"
-      - "/dev:/dev"
       - "vol_eii_socket:${SOCKET_DIR}"
     devices:
-      - "/dev/:/dev/"
       # Following devices under /dev filesystem will be needed based on usecase
       # dri - GPU
       # ion - VPU
       # Selective mount can be done for deployment
+      - "/dev/dri:/dev/dri"
+      - "/dev/ion:/dev/ion"
+      - "/dev/bus/usb:/dev/bus/usb"
     secrets:
       - ca_etcd
       - etcd_NativeSafetyGearAnalytics_cert

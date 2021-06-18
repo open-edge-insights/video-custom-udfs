@@ -22,8 +22,6 @@ version: '3.6'
 services:
 ## Define Analytics service
   ia_python_safety_gear_analytics:
-    depends_on:
-      - ia_video_analytics
     build:
       context: $PWD/../CustomUdfs/PySafetyGearAnalytics
       dockerfile: $PWD/../CustomUdfs/PySafetyGearAnalytics/Dockerfile
@@ -61,11 +59,16 @@ services:
       - eii
     volumes:
       - "/var/tmp:/var/tmp"
-      - "/dev:/dev"
       - "vol_eii_socket:${SOCKET_DIR}"
     devices:
-      - "/dev/:/dev/"
       # Following devices under /dev filesystem will be needed based on usecase
+      # dri - GPU
+      # ion - VPU
+      # USB camera devices
+      # Selective mount can be done for deployment
+      - "/dev/dri:/dev/dri"
+      - "/dev/ion:/dev/ion"
+      - "/dev/bus/usb:/dev/bus/usb"
     secrets:
       - ca_etcd
       - etcd_PySafetyGearAnalytics_cert

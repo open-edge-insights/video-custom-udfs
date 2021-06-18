@@ -181,15 +181,18 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
   * ## *UDF core-logic Directory*
     This directory need to have the Algo/pre-processing implementation which defines the necessary callbacks, IR files and other configurational files as per need. User can place them directly without having another directory level too, in that case the ***Dockerfile*** and ***docker-compose.yml*** should update the path accordingly.  User can find sample implementation in [custom sample UDF](../CustomUdfs) directory.
 
-# **Build and deploy Process**
-The build process is similar to the EII's build and deploy process with some minor chnages. Please find the ordered steps for building and deploying the Custom UDFs.
+# **Deploy Process**
 
-  * As per EII default scenario, the sample custom UDF containers are not mandatory containers to run, hence the builder.py should run "video-streaming-all-udfs.yml". All the sample UDF containers are added in this example. Below code snnipet signifies the same.
+Please find the ordered steps for deploying the Custom UDFs.
+
+  * Please configure Visualizer and WebVisualizer services `config.json` to connect to one or more streams coming out of below CustomUdf services by going
+    through [../Visualizer/README.md](../Visualizer/README.md) and [../WebVisualizer/README.md(../WebVisualizer/README.md)
+  * As per EII default scenario, the sample custom UDF containers are not mandatory containers to run, hence the builder.py should run
+    `video-streaming-all-udfs.yml` usecase. All the sample UDF containers are added in this example. Below code snnipet signifies the same. Just enable
+    the CustomUdf services that are of your interest.
 
     ```yml
     AppName:
-    - VideoIngestion
-    - VideoAnalytics
     - Visualizer
     - WebVisualizer
     - CustomUdfs/NativeSafetyGearAnalytics   <<<<< All lines from here added are customUDFs, User can define his own container directory here
@@ -199,23 +202,31 @@ The build process is similar to the EII's build and deploy process with some min
     - CustomUdfs/PySafetyGearIngestion
     ```
     Run the following command:
+
     ```bash
-    cd <multi-repo cloned path>/IEdgeInsights/build/
-    python3 builder.py -f usecases/video-streaming-all-udfs.yml
+    $ cd [WORKDIR]/IEdgeInsights/build/
+    $ python3 builder.py -f usecases/video-streaming-all-udfs.yml
     ```
     **Note:**
     It is not mandatory to keep the custom Udfs in the CustomUdfs directory, but user must change the video-streaming-all-udfs.yml file accordingly to point the right path accordingly.
     Additionally if it is placed under ***IEdgeInsights*** directory then the builder.py file automatically picks it to generate a consolidated [***eii_config.json***](../build/config/eii_config.json) and [***docker-compose.yml***](../build/docker-compose.yml) file.
 
   * After generation of consolidated [***eii_config.json***](../build/config/eii_config.json) and [***docker-compose.yml***](../build/docker-compose.yml) file, Run the below command to provision the UDF containers. As a pre-cautionary measure, User can cross check the afore-mentioned file to verify the sanity of the UDF specific config and service details.
+
     ```bash
-    cd <WORK_DIR_PATH>/IEdgeInsights/build/provision
-    sudo ./provision.sh  ../docker-compose.yml
+    $ cd [WORKDIR]/IEdgeInsights/build/provision
+    $ sudo ./provision.sh  ../docker-compose.yml
     ```
-  * Build and run the containers.
+  * Run the usecase:
+
     ```bash
-    docker-compose -f docker-compose-build.yml build
-    docker-compose up -d
+    $ cd [WORKDIR]/IEdgeInsights/build/
+    $ # Build base images (needed for buidling native custom udf services)
+    $ docker-compose -f docker-compose-build.yml ia_eiibase ia_common ia_video_common ia_openvino_base
+    $ # Build custom udf services based on the usecase chosen above
+    $ docker-compose -f docker-compose-build.yml ia_gva_safety_gear_ingestion ia_native_safety_gear_analytics ia_native_safety_gear_ingestion \
+      ia_python_multi_classification ia_python_safety_gear_analytics ia_python_safety_gear_ingestion
+    $ docker-compose up -d
     ```
 
 # *Sample UDFs Directory*

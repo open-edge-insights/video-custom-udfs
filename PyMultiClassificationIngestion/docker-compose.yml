@@ -23,8 +23,6 @@ version: '3.6'
 services:
   ## Define ingestion based UDF
   ia_python_multi_classification:
-    depends_on:
-    - ia_video_ingestion
     build:
       context: $PWD/../CustomUdfs/PyMultiClassificationIngestion
       dockerfile: $PWD/../CustomUdfs/PyMultiClassificationIngestion/Dockerfile
@@ -61,7 +59,6 @@ services:
       - 64018:64018
     volumes:
       - "vol_eii_socket:${SOCKET_DIR}"
-      - "/dev:/dev"
       - "/var/tmp:/var/tmp"
     networks:
       - eii
@@ -72,7 +69,9 @@ services:
       # ion - VPU
       # USB camera devices
       # Selective mount can be done for deployment
-    - "/dev/:/dev/"
+      - "/dev/dri:/dev/dri"
+      - "/dev/ion:/dev/ion"
+      - "/dev/bus/usb:/dev/bus/usb"
     secrets:
       - ca_etcd
       - etcd_PyMultiClassificationIngestion_cert

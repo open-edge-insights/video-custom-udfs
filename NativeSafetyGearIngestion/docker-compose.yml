@@ -23,8 +23,6 @@ version: '3.6'
 services:
   ## Define ingestion based UDF
   ia_native_safety_gear_ingestion:
-    depends_on:
-    - ia_video_ingestion
     build:
       context: $PWD/../CustomUdfs/NativeSafetyGearIngestion
       dockerfile: $PWD/../CustomUdfs/NativeSafetyGearIngestion/Dockerfile
@@ -65,7 +63,6 @@ services:
       - eii
     volumes:
     - "vol_eii_socket:${SOCKET_DIR}"
-    - "/dev:/dev"
     - "/var/tmp:/var/tmp"
     privileged: true
     devices:
@@ -74,7 +71,9 @@ services:
       # ion - VPU
       # USB camera devices
       # Selective mount can be done for deployment
-      - "/dev/:/dev/"
+      - "/dev/dri:/dev/dri"
+      - "/dev/ion:/dev/ion"
+      - "/dev/bus/usb:/dev/bus/usb"
     secrets:
       - ca_etcd
       - etcd_NativeSafetyGearIngestion_cert
