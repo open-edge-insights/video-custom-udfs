@@ -29,13 +29,7 @@ services:
       args:
         # User can alter the version on need basis. TODO: Can be taken from env
         EII_VERSION: ${EII_VERSION}
-        EII_UID: ${EII_UID}
-        EII_USER_NAME: ${EII_USER_NAME}
-        # set CMAKE_BUILD_TYPE value to "Debug" to generate debug symbols
-        CMAKE_BUILD_TYPE: "Release"
         DOCKER_REGISTRY: ${DOCKER_REGISTRY}
-        CMAKE_INSTALL_PREFIX: ${EII_INSTALL_PATH}
-        RUN_TESTS: "OFF"
     image: ${DOCKER_REGISTRY}ia_native_safety_gear_ingestion:${EII_VERSION}
     container_name: ia_native_safety_gear_ingestion
     hostname: ia_native_safety_gear_ingestion

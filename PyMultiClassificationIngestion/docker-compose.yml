@@ -28,12 +28,7 @@ services:
       dockerfile: $PWD/../CustomUdfs/PyMultiClassificationIngestion/Dockerfile
       args:
         EII_VERSION: ${EII_VERSION}
-        EII_UID: ${EII_UID}
-        EII_USER_NAME: ${EII_USER_NAME}
-        # set CMAKE_BUILD_TYPE value to "Debug" to generate debug symbols
-        CMAKE_BUILD_TYPE: "Release"
         DOCKER_REGISTRY: ${DOCKER_REGISTRY}
-        RUN_TESTS: "OFF"
     image: ${DOCKER_REGISTRY}ia_python_multi_classification:${EII_VERSION}
     container_name: ia_python_multi_classification
     hostname: ia_python_multi_classification

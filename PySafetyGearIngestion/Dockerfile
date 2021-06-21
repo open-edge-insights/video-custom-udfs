@@ -22,7 +22,7 @@
 
 ARG EII_VERSION
 ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}ia_video_ingestion:$EII_VERSION
+FROM ${DOCKER_REGISTRY}openedgeinsights/ia_video_ingestion:$EII_VERSION
 LABEL description="Python based safety Gear Ingestion container"
 HEALTHCHECK NONE
 

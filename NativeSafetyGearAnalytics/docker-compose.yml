@@ -31,12 +31,9 @@ services:
       dockerfile: $PWD/../CustomUdfs/NativeSafetyGearAnalytics/Dockerfile
       args:
         EII_VERSION: ${EII_VERSION}
-        EII_UID: ${EII_UID}
-        EII_USER_NAME: ${EII_USER_NAME}
         DOCKER_REGISTRY: ${DOCKER_REGISTRY}
         # set CMAKE_BUILD_TYPE value to "Debug" to generate debug symbols
         CMAKE_BUILD_TYPE: "Release"
-        RUN_TESTS: "OFF"
         CMAKE_INSTALL_PREFIX: ${EII_INSTALL_PATH}
     image: ${DOCKER_REGISTRY}ia_native_safety_gear_analytics:${EII_VERSION}
     container_name: ia_native_safety_gear_analytics

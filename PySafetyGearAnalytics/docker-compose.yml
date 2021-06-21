@@ -27,12 +27,7 @@ services:
       dockerfile: $PWD/../CustomUdfs/PySafetyGearAnalytics/Dockerfile
       args:
         EII_VERSION: ${EII_VERSION}
-        EII_UID: ${EII_UID}
-        EII_USER_NAME: ${EII_USER_NAME}
         DOCKER_REGISTRY: ${DOCKER_REGISTRY}
-        # set CMAKE_BUILD_TYPE value to "Debug" to generate debug symbols
-        CMAKE_BUILD_TYPE: "Release"
-        RUN_TESTS: "OFF"
     image: ${DOCKER_REGISTRY}ia_python_safety_gear_analytics:${EII_VERSION}
     container_name: ia_python_safety_gear_analytics
     hostname: ia_python_safety_gear_analytics

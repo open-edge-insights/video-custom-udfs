@@ -224,8 +224,7 @@ Please find the ordered steps for deploying the Custom UDFs.
     $ # Build base images (needed for buidling native custom udf services)
     $ docker-compose -f docker-compose-build.yml ia_eiibase ia_common ia_video_common ia_openvino_base
     $ # Build custom udf services based on the usecase chosen above
-    $ docker-compose -f docker-compose-build.yml ia_gva_safety_gear_ingestion ia_native_safety_gear_analytics ia_native_safety_gear_ingestion \
-      ia_python_multi_classification ia_python_safety_gear_analytics ia_python_safety_gear_ingestion
+    $ docker-compose -f docker-compose-build.yml build ia_gva_safety_gear_ingestion ia_native_safety_gear_analytics ia_native_safety_gear_ingestion ia_python_multi_classification ia_python_safety_gear_analytics ia_python_safety_gear_ingestion
     $ docker-compose up -d
     ```
 
