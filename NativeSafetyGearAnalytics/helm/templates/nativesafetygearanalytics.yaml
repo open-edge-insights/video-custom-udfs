@@ -48,6 +48,10 @@ spec:
       labels:
         app: nativesafetygearanalytics
     spec:
+      {{- if and .Values.DOCKER_USERNAME .Values.DOCKER_PASSWORD }}
+      imagePullSecrets:
+      - name: registryauth
+      {{- end }}
       containers:
       - name: ia-native-safety-gear-analytics
         image: {{ .Values.DOCKER_REGISTRY }}ia_native_safety_gear_analytics:{{ .Values.EII_VERSION }}

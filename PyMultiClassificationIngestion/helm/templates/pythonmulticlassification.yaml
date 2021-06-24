@@ -48,6 +48,10 @@ spec:
       labels:
         app: pythonmulticlassification
     spec:
+      {{- if and .Values.DOCKER_USERNAME .Values.DOCKER_PASSWORD }}
+      imagePullSecrets:
+      - name: registryauth
+      {{- end }}
       containers:
       - name: ia-python-multi-classification
         image: {{ .Values.DOCKER_REGISTRY }}ia_python_multi_classification:{{ .Values.EII_VERSION }}
