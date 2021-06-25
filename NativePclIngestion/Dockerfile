@@ -65,8 +65,6 @@ RUN /bin/bash -c "source /opt/intel/openvino/bin/setupvars.sh && \
 
 RUN cp ./rs2pcl/build/librs2pcl.so $ARTIFACTS/lib
 
-RUN ls /usr/lib/libOpenNI2.so
-
 FROM video_ingestion as runtime
 USER root
 
