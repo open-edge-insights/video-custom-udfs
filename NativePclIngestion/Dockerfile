@@ -89,4 +89,6 @@ COPY --from=builder $ARTIFACTS/lib ${CMAKE_INSTALL_PREFIX}/lib
 COPY --from=builder $ARTIFACTS/rs2pcl .
 
 ARG EII_USER_NAME
+RUN chown ${EII_USER_NAME}:${EII_USER_NAME} /app /var/tmp
+RUN usermod -a -G users ${EII_USER_NAME}
 USER ${EII_USER_NAME}

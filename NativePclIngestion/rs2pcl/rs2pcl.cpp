@@ -39,18 +39,28 @@ UdfRetCode rs2pcl::process(Frame* frame) {
     try {
         set_rs2_intrinsics_and_extrinsics(frame->get_meta_data());
 
-        rs2::frameset fset = construct_rs2_frameset(frame->get_data(0), frame->get_data(1));
+        void* color_frame = frame->get_data(RGB_FRAME_INDEX);
+        if (color_frame == NULL) {
+            LOG_ERROR_0("color_frame is NULL");
+        }
+
+        void* depth_frame = frame->get_data(DEPTH_FRAME_INDEX);
+        if (depth_frame == NULL) {
+            LOG_ERROR_0("depth_frame is NULL");
+        }
+
+        construct_rs2_frameset(color_frame, depth_frame);
 
         ++m_frame_number;
 
-        rs2::video_frame rs2_color = fset.first_or_default(RS2_STREAM_COLOR);
+        rs2::video_frame rs2_color = color_queue.wait_for_frame();
         if (rs2_color == NULL) {
             const char* err = "rs2 color frame is NULL";
             LOG_ERROR("%s", err);
             return UdfRetCode::UDF_DROP_FRAME;
         }
 
-        rs2::depth_frame rs2_depth = fset.first_or_default(RS2_STREAM_DEPTH);
+        rs2::depth_frame rs2_depth = depth_queue.wait_for_frame();
         if (rs2_depth == NULL) {
             const char* err = "rs2 depth frame is NULL";
             LOG_ERROR("%s", err);
@@ -86,11 +96,12 @@ UdfRetCode rs2pcl::process(Frame* frame) {
         Cloud_Filter.setFilterLimits (0.0, 1.0);      // Set accepted interval values
         Cloud_Filter.filter (*newCloud);              // Filtered Cloud Outputted
 
-        LOG_DEBUG_0("Generating PCD Point Cloud File... ");
         std::string cloudFile;
         if (m_frame_number == 200) {
+            LOG_DEBUG_0("Generating PCD Point Cloud File... ");
             cloudFile = "/var/tmp/PCL_Frame" + std::to_string(m_frame_number) + ".pcd";
             pcl::io::savePCDFileASCII(cloudFile, *cloud); // Input cloud to be saved to .pcd
+            usleep(1000*1000);
         }
 
         LOG_DEBUG("%s file generated", cloudFile.c_str());
