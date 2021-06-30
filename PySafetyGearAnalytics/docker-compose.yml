@@ -22,6 +22,7 @@ version: '3.6'
 services:
 ## Define Analytics service
   ia_python_safety_gear_analytics:
+    read_only: true
     build:
       context: $PWD/../CustomUdfs/PySafetyGearAnalytics
       dockerfile: $PWD/../CustomUdfs/PySafetyGearAnalytics/Dockerfile
@@ -33,10 +34,10 @@ services:
     hostname: ia_python_safety_gear_analytics
     restart: unless-stopped
     security_opt:
-    - no-new-privileges    
+    - no-new-privileges
     healthcheck:
       test: ["CMD-SHELL", "exit", "0"]
-      interval: 5m 
+      interval: 5m
     ipc: "none"
     environment:
       AppName: "PySafetyGearAnalytics"
@@ -47,7 +48,6 @@ services:
       ETCD_CLIENT_PORT: ${ETCD_CLIENT_PORT}
       ETCD_PREFIX: ${ETCD_PREFIX}
       CertType: "zmq"
-    privileged: true
     ports:
       - 65019:65019
     networks:
@@ -55,15 +55,20 @@ services:
     volumes:
       - "/var/tmp:/var/tmp"
       - "vol_eii_socket:${SOCKET_DIR}"
+      - "/dev:/dev"
+    device_cgroup_rules:
+      # Default run - device-cgroup-rule='c 189:* rmw'
+      # NCS2 run - device-cgroup-rule='c 209:* rmw'
+      # Selective rules can be applied for deployment
+      - 'c 189:* rmw'
+      - 'c 209:* rmw'
     devices:
       # Following devices under /dev filesystem will be needed based on usecase
       # dri - GPU
       # ion - VPU
       # USB camera devices
       # Selective mount can be done for deployment
-      - "/dev/dri:/dev/dri"
-      - "/dev/ion:/dev/ion"
-      - "/dev/bus/usb:/dev/bus/usb"
+      - "/dev:/dev"
     secrets:
       - ca_etcd
       - etcd_PySafetyGearAnalytics_cert

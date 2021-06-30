@@ -23,11 +23,11 @@ version: '3.6'
 services:
   ## Define ingestion based UDF
   ia_native_safety_gear_ingestion:
+    read_only: true
     build:
       context: $PWD/../CustomUdfs/NativeSafetyGearIngestion
       dockerfile: $PWD/../CustomUdfs/NativeSafetyGearIngestion/Dockerfile
       args:
-        # User can alter the version on need basis. TODO: Can be taken from env
         EII_VERSION: ${EII_VERSION}
         DOCKER_REGISTRY: ${DOCKER_REGISTRY}
     image: ${DOCKER_REGISTRY}ia_native_safety_gear_ingestion:${EII_VERSION}
@@ -35,7 +35,7 @@ services:
     hostname: ia_native_safety_gear_ingestion
     restart: unless-stopped
     security_opt:
-    - no-new-privileges    
+    - no-new-privileges
     healthcheck:
       test: ["CMD-SHELL", "exit", "0"]
       interval: 5m
@@ -56,18 +56,22 @@ services:
     networks:
       - eii
     volumes:
-    - "vol_eii_socket:${SOCKET_DIR}"
-    - "/var/tmp:/var/tmp"
-    privileged: true
+      - "vol_eii_socket:${SOCKET_DIR}"
+      - "/var/tmp:/var/tmp"
+      - "/dev:/dev"
+    device_cgroup_rules:
+      # Default run - device-cgroup-rule='c 189:* rmw'
+      # NCS2 run - device-cgroup-rule='c 209:* rmw'
+      # Selective rules can be applied for deployment
+      - 'c 189:* rmw'
+      - 'c 209:* rmw'
     devices:
       # Following devices under /dev filesystem will be needed based on usecase
       # dri - GPU
       # ion - VPU
       # USB camera devices
       # Selective mount can be done for deployment
-      - "/dev/dri:/dev/dri"
-      - "/dev/ion:/dev/ion"
-      - "/dev/bus/usb:/dev/bus/usb"
+      - "/dev:/dev"
     secrets:
       - ca_etcd
       - etcd_NativeSafetyGearIngestion_cert
