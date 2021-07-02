@@ -147,8 +147,6 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
     ```yml
     services:
       python_multi_classification:      <<<<< Define the name of the container
-        depends_on:
-        - ia_video_ingestion            <<<<< If it is based on VA then it should be ia_video_ananlytics
         build:
           context: $PWD/../CustomUdfs/PyMultiClassificationIngestion                 <<<<< This path should be the relative path of container artifact
           dockerfile: $PWD/../CustomUdfs/PyMultiClassificationIngestion/Dockerfile   <<<<< Path to Dockerfile of the container
@@ -222,7 +220,7 @@ Please find the ordered steps for deploying the Custom UDFs.
     ```bash
     $ cd [WORKDIR]/IEdgeInsights/build/
     $ # Build base images (needed for buidling native custom udf services)
-    $ docker-compose -f docker-compose-build.yml ia_eiibase ia_common ia_video_common ia_openvino_base
+    $ docker-compose -f docker-compose-build.yml build ia_eiibase ia_common ia_video_common ia_openvino_base
     $ # Build custom udf services based on the usecase chosen above
     $ docker-compose -f docker-compose-build.yml build ia_gva_safety_gear_ingestion ia_native_safety_gear_analytics ia_native_safety_gear_ingestion ia_python_multi_classification ia_python_safety_gear_analytics ia_python_safety_gear_ingestion
     $ docker-compose up -d
