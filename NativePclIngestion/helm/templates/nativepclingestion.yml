@@ -21,47 +21,47 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.config.pythonsafetygearingestion.name }}
+  name: {{ .Values.config.nativepclingestion.name }}
   namespace: {{ .Values.namespace }}
 spec:
   ports:
-  - port: {{ .Values.config.pythonsafetygearingestion.publisher_port }}
+  - port: {{ .Values.config.nativepclingestion.publisher_port }}
     name: publisher-port
-  - port: {{ .Values.config.pythonsafetygearingestion.server_port }}
+  - port: {{ .Values.config.nativepclingestion.server_port }}
     name: server-port
   selector:
-    app: pythonsafetygearingestion
+    app: nativepclingestion
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: pythonsafetygearingestion
-  name: deployment-python-safety-gear-ingestion
+    app: nativepclingestion
+  name: deployment-native-pcl-ingestion
   namespace: {{ .Values.namespace }}
 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: pythonsafetygearingestion
+      app: nativepclingestion
   template:
     metadata:
       labels:
-        app: pythonsafetygearingestion
+        app: nativepclingestion
     spec:
       {{- if and .Values.DOCKER_USERNAME .Values.DOCKER_PASSWORD }}
       imagePullSecrets:
       - name: registryauth
       {{- end }}
       containers:
-      - name: ia-python-safety-gear-ingestion
-        image: {{ .Values.DOCKER_REGISTRY }}ia_python_safety_gear_ingestion:{{ .Values.EII_VERSION }}
+      - name: ia-native-pcl-ingestion
+        image: {{ .Values.DOCKER_REGISTRY }}native_pcl_ingestion:{{ .Values.EII_VERSION }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
         securityContext:
           privileged: true
         volumeMounts:
-        {{- if eq .Values.config.pythonsafetygearingestion.IPC true}}
+        {{- if eq .Values.config.nativepclingestion.IPC true}}
         - name: {{ .Values.volumes.eii_socket.name }}
           mountPath: {{ .Values.volumes.eii_socket.location }}
         {{- end }}
@@ -78,7 +78,7 @@ spec:
 
         env:
         - name: AppName
-          value: "PySafetyGearIngestion"
+          value: "NativePclIngestion"
         - name: DEV_MODE
           value: '{{ .Values.env.DEV_MODE }}'
         - name: PROFILING_MODE
@@ -91,15 +91,15 @@ spec:
           value: ''
         - name:  GENICAM
           value: 'Matrix_Vision'
-        {{- if eq .Values.config.pythonsafetygearingestion.IPC false}}
+        {{- if eq .Values.config.nativepclingestion.IPC false}}
         - name: PUBLISHER_TYPE
           value: "zmq_tcp"
         - name: PUBLISHER_ENDPOINT
-          value: "0.0.0.0:{{ .Values.config.pythonsafetygearingestion.publisher_port }}"
+          value: "0.0.0.0:{{ .Values.config.nativepclingestion.publisher_port }}"
         - name: SERVER_TYPE
           value: "zmq_tcp"
         - name: SERVER_ENDPOINT
-          value: "0.0.0.0:{{ .Values.config.pythonsafetygearingestion.server_port }}"
+          value: "0.0.0.0:{{ .Values.config.nativepclingestion.server_port }}"
         {{- else }}
         - name: PUBLISHER_TYPE
           value: "zmq_ipc"
@@ -108,19 +108,19 @@ spec:
         - name: SERVER_TYPE
           value: "zmq_ipc"
         - name: SERVER_ENDPOINT
-          value: "{{ .Values.env.SOCKET_DIR }}"       
+          value: "{{ .Values.env.SOCKET_DIR }}"
         {{- end }}
         {{ if eq .Values.env.DEV_MODE false}}
         - name: CONFIGMGR_CACERT
           value: "/run/secrets/etcd/ca_certificate.pem"
         - name: CONFIGMGR_CERT
-          value: "/run/secrets/etcd/PySafetyGearIngestion_client_certificate.pem"
+          value: "/run/secrets/etcd/NativePclIngestion_client_certificate.pem"
         - name: CONFIGMGR_KEY
-          value: "/run/secrets/etcd/PySafetyGearIngestion_client_key.pem"
+          value: "/run/secrets/etcd/NativePclIngestion_client_key.pem"
         {{ end }}
 
       volumes:
-      {{- if eq .Values.config.pythonsafetygearingestion.IPC true}}
+      {{- if eq .Values.config.nativepclingestion.IPC true}}
       - name: {{ .Values.volumes.eii_socket.name }}
         persistentVolumeClaim:
           claimName: {{ .Values.volumes.eii_socket.name }}
@@ -142,8 +142,8 @@ spec:
           items:
           - key: ca_certificate.pem
             path: ca_certificate.pem
-          - key: PySafetyGearIngestion_client_certificate.pem
-            path: PySafetyGearIngestion_client_certificate.pem
-          - key: PySafetyGearIngestion_client_key.pem
-            path: PySafetyGearIngestion_client_key.pem
+          - key: NativePclIngestion_client_certificate.pem
+            path: NativePclIngestion_client_certificate.pem
+          - key: NativePclIngestion_client_key.pem
+            path: NativePclIngestion_client_key.pem
       {{ end }}

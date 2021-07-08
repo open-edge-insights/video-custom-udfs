@@ -67,6 +67,10 @@ spec:
         {{- end }}
         - name: eii-dev
           mountPath: /dev
+        - name: tmp
+          mountPath: /tmp
+        - name: var-tmp
+          mountPath: /var/tmp
         {{ if eq .Values.env.DEV_MODE false}}
         - name: etcd-certs
           mountPath: /run/secrets/etcd/
@@ -124,6 +128,13 @@ spec:
       - name: eii-dev
         hostPath:
           path: /dev
+      - name: tmp
+        hostPath:
+          path: /tmp
+      - name: var-tmp
+        hostPath:
+          path: /var/tmp
+
       {{ if eq .Values.env.DEV_MODE false}}
       - name: etcd-certs
         secret:
