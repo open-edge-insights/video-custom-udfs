@@ -34,7 +34,7 @@ This container is based out of VideoIngestion container. Since GVA elements are 
       ```javascript
       {
         "type": "gstreamer",
-        "pipeline": "rtspsrc location=\"rtsp://admin:intel123@<RTSP CAMERA IP>:554/\" latency=100 ! rtph264depay ! h264parse ! vaapih264dec ! vaapipostproc format=bgrx ! gvadetect model=models/ref/frozen_inference_graph.xml ! videoconvert ! video/x-raw,format=BGR ! appsink"
+        "pipeline": "rtspsrc location=\"rtsp://<USERNAME>:<PASSWORD>@<RTSP_CAMERA_IP>:<PORT>/<FEED>\" latency=100 ! rtph264depay ! h264parse ! vaapih264dec ! vaapipostproc format=bgrx ! gvadetect model=models/ref/frozen_inference_graph.xml ! videoconvert ! video/x-raw,format=BGR ! appsink"
       }
       ```
 
@@ -52,7 +52,7 @@ This container is based out of VideoIngestion container. Since GVA elements are 
       ```javascript
       {
         "type": "gstreamer",
-        "pipeline": "rtspsrc location=\"rtsp://<SOURCE_IP>:8554/\" latency=100 ! rtph264depay ! h264parse ! vaapih264dec ! vaapipostproc format=bgrx ! gvadetect model=models/ref/frozen_inference_graph.xml ! videoconvert ! video/x-raw,format=BGR ! appsink"
+        "pipeline": "rtspsrc location=\"rtsp://<SOURCE_IP>:<PORT>/<FEED>\" latency=100 ! rtph264depay ! h264parse ! vaapih264dec ! vaapipostproc format=bgrx ! gvadetect model=models/ref/frozen_inference_graph.xml ! videoconvert ! video/x-raw,format=BGR ! appsink"
       }
       ```
 
