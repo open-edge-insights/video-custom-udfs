@@ -25,7 +25,7 @@ metadata:
   namespace: {{ .Values.namespace }}
 spec:
   ports:
-  - port: {{ .Values.config.nativesafetygearanalytics.publisher_port }}
+  - port: {{ .Values.config.nativesafetygearanalytics.publish_port }}
     name: publisher-port
   selector:
     app: nativesafetygearanalytics
@@ -91,10 +91,10 @@ spec:
         - name: PUBLISHER_TYPE
           value: "zmq_tcp"
         - name: PUBLISHER_ENDPOINT
-          value: "0.0.0.0:{{ .Values.config.nativesafetygearanalytics.publisher_port }}"
+          value: "0.0.0.0:{{ .Values.config.nativesafetygearanalytics.publish_port }}"
         {{- if .Values.config.nativesafetygearingestion }}
         - name: SUBSCRIBER_ENDPOINT
-          value: "{{ .Values.config.nativesafetygearingestion.name }}:{{ .Values.config.nativesafetygearingestion.publisher_port }}"
+          value: "{{ .Values.config.nativesafetygearingestion.name }}:{{ .Values.config.nativesafetygearingestion.publish_port }}"
         - name: SUBSCRIBER_TYPE
           value: "zmq_tcp"
         {{- end }}

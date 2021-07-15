@@ -25,7 +25,7 @@ metadata:
   namespace: {{ .Values.namespace }}
 spec:
   ports:
-  - port: {{ .Values.config.gvasafetygearingestion.publisher_port }}
+  - port: {{ .Values.config.gvasafetygearingestion.publish_port }}
     name: publisher-port
   ports:
   - port: {{ .Values.config.gvasafetygearingestion.server_port }}
@@ -95,7 +95,7 @@ spec:
         {{- if eq .Values.config.nativesafetygearanalytics.IPC false}}
         # Override the endpoint provided in interfaces for PUBLISHER
         - name: PUBLISHER_ENDPOINT
-          value: "0.0.0.0:{{ .Values.config.gvasafetygearingestion.publisher_port }}"
+          value: "0.0.0.0:{{ .Values.config.gvasafetygearingestion.publish_port }}"
         # Override the endpoint provided in interfaces for PUBLISHER
         - name: PUBLISHER_TYPE
           value: "zmq_tcp"

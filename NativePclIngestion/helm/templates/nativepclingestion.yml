@@ -25,7 +25,7 @@ metadata:
   namespace: {{ .Values.namespace }}
 spec:
   ports:
-  - port: {{ .Values.config.nativepclingestion.publisher_port }}
+  - port: {{ .Values.config.nativepclingestion.publish_port }}
     name: publisher-port
   - port: {{ .Values.config.nativepclingestion.server_port }}
     name: server-port
@@ -95,7 +95,7 @@ spec:
         - name: PUBLISHER_TYPE
           value: "zmq_tcp"
         - name: PUBLISHER_ENDPOINT
-          value: "0.0.0.0:{{ .Values.config.nativepclingestion.publisher_port }}"
+          value: "0.0.0.0:{{ .Values.config.nativepclingestion.publish_port }}"
         - name: SERVER_TYPE
           value: "zmq_tcp"
         - name: SERVER_ENDPOINT

@@ -1,6 +1,6 @@
 config:
     nativepclingestion:
       name: nativepclingestion
-      publisher_port: 65024
+      publish_port: 65024
       server_port: 64023
       IPC: false

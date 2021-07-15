@@ -1,6 +1,6 @@
 config:
     pythonmulticlassification:
       name: pythonmulticlassification
-      publisher_port: 65025
+      publish_port: 65025
       server_port: 64018
       IPC: false

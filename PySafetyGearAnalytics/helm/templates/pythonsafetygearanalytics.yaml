@@ -25,7 +25,7 @@ metadata:
   namespace: {{ .Values.namespace }}
 spec:
   ports:
-  - port: {{ .Values.config.pythonsafetygearanalytics.publisher_port }}
+  - port: {{ .Values.config.pythonsafetygearanalytics.publish_port }}
     name: publisher-port
   selector:
     app: pythonsafetygearanalytics
@@ -91,10 +91,10 @@ spec:
         - name: PUBLISHER_TYPE
           value: "zmq_tcp"
         - name: PUBLISHER_ENDPOINT
-          value: "0.0.0.0:{{ .Values.config.pythonsafetygearanalytics.publisher_port }}"
+          value: "0.0.0.0:{{ .Values.config.pythonsafetygearanalytics.publish_port }}"
         {{- if .Values.config.pythonsafetygearingestion }}
         - name: SUBSCRIBER_ENDPOINT
-          value: "{{ .Values.config.pythonsafetygearingestion.name }}:{{ .Values.config.pythonsafetygearingestion.publisher_port }}"
+          value: "{{ .Values.config.pythonsafetygearingestion.name }}:{{ .Values.config.pythonsafetygearingestion.publish_port }}"
         - name: SUBSCRIBER_TYPE
           value: "zmq_tcp"
         {{- end }}

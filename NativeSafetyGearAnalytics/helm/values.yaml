@@ -1,5 +1,5 @@
 config:
     nativesafetygearanalytics:
       name: nativesafetygearanalytics
-      publisher_port: 65017
+      publish_port: 65017
       IPC: false
