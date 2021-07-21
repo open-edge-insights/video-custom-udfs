@@ -1,3 +1,12 @@
+**Contents**
+
+- [**Introduction**](#introduction)
+- [**UDF Container Directory Layout**](#udf-container-directory-layout)
+- [**Deploy Process**](#deploy-process)
+- [*Sample UDFs Directory*](#sample-udfs-directory)
+  - [GVASafetyGearIngestion](#gvasafetygearingestion)
+  - [NativePclIngestion](#nativepclingestion)
+
 # **Introduction**
 This document describes the new approach of creating UDFs and using them inside the EII framework. Unlike [The UDF Writing Guide](../common/video/udfs/HOWTO_GUIDE_FOR_WRITING_UDF.md) which specifically emphasizes on the coding aspects(callbacks) of the UDFs, this document describes the workflow of a  custom UDF.
 
@@ -171,7 +180,7 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
           - etcd_PyMultiClassification_key
 
     secrets:
-      etcd_PyMultiClassification_cert:                                       <<<<< The cerificate mentioned below are created during provision step
+      etcd_PyMultiClassification_cert:                                       <<<<< The certificate mentioned below are created during provision step
         file: provision/Certificates/PyMultiClassificationIngestion/PyMultiClassification_client_certificate.pem
       etcd_PyMultiClassification_key:
         file: provision/Certificates/PyMultiClassificationIngestion/PyMultiClassification_client_key.pem
@@ -213,9 +222,9 @@ Please find the ordered steps for deploying the Custom UDFs.
 
     ```bash
     $ cd [WORKDIR]/IEdgeInsights/build/provision
-    $ sudo ./provision.sh  ../docker-compose.yml
+    $ sudo -E ./provision.sh  ../docker-compose.yml
     ```
-  * Run the usecase:
+  * Run the use case:
 
     ```bash
     $ cd [WORKDIR]/IEdgeInsights/build/
