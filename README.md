@@ -1,13 +1,13 @@
 **Contents**
 
-- [**Introduction**](#introduction)
-- [**UDF Container Directory Layout**](#udf-container-directory-layout)
-- [**Deploy Process**](#deploy-process)
-- [*Sample UDFs Directory*](#sample-udfs-directory)
+- [Introduction](#introduction)
+- [UDF Container Directory Layout](#udf-container-directory-layout)
+- [Deploy Process](#deploy-process)
+- [Sample UDFs Directory](#sample-udfs-directory)
   - [GVASafetyGearIngestion](#gvasafetygearingestion)
   - [NativePclIngestion](#nativepclingestion)
 
-# **Introduction**
+# Introduction
 This document describes the new approach of creating UDFs and using them inside the EII framework. Unlike [The UDF Writing Guide](../common/video/udfs/HOWTO_GUIDE_FOR_WRITING_UDF.md) which specifically emphasizes on the coding aspects(callbacks) of the UDFs, this document describes the workflow of a  custom UDF.
 
 Currently the UDFs are to be created inside [udfs-path](../common/video/udfs) of EII build environment so that it can get compiled into the VI(Video Ingestion) & VA(Video Analytics) containers. In addition to aforementioned approach,each UDF can be built as an independent container based out of VI(VideoIngestion) or VA(VideoAnalytics) container image. This additional method has multiple benefits, listing some of them below:
@@ -20,7 +20,7 @@ Currently the UDFs are to be created inside [udfs-path](../common/video/udfs) of
 
 As per this approach an UDF or a chain of UDFs should be compiled and run as a separate EII container. A video streaming pipeline contains two important components among all i.e. ingestion and analytics and in EII user adds UDFs as pre-processing, post-processing or analytics Algo, hence these UDF containers need to ne inherited from VI and VA container.
 
-# **UDF Container Directory Layout**
+# UDF Container Directory Layout
 1. A native(c++) & python UDF container source base looks as below, though it can look different based on use-case.
 
 ``` bash
@@ -188,7 +188,7 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
   * ## *UDF core-logic Directory*
     This directory need to have the Algo/pre-processing implementation which defines the necessary callbacks, IR files and other configurational files as per need. User can place them directly without having another directory level too, in that case the ***Dockerfile*** and ***docker-compose.yml*** should update the path accordingly.  User can find sample implementation in [custom sample UDF](../CustomUdfs) directory.
 
-# **Deploy Process**
+# Deploy Process
 
 Please find the ordered steps for deploying the Custom UDFs.
 
@@ -235,7 +235,7 @@ Please find the ordered steps for deploying the Custom UDFs.
     $ docker-compose up -d
     ```
 
-# *Sample UDFs Directory*
+# Sample UDFs Directory
 In the CustomUdfs directory, there are 5 sample UDfs implemented and they related asshown below. These samples are created to showcase different use case.
 
 ```bash
