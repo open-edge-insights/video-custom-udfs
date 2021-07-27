@@ -52,6 +52,9 @@ services:
       CertType: "zmq"
       # Setting GENICAM value to the respective camera which needs to be used
       GENICAM: "Matrix_Vision"
+      # Setting the GST log levels
+      # The env variable will set WARNING level 2 for gencamsrc plugin and none for other plugins
+      GST_DEBUG: "0,gencamsrc:2"
     ports:
       - 64020:64020
     networks:
