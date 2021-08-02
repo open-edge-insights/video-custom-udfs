@@ -56,6 +56,6 @@ This container is based out of VideoIngestion container. Since GVA elements are 
       }
       ```
 
-**Refer [GVA-README](../../VideoIngestion/docs/gva_doc.md) for more information on GVA.**
+**Refer [GVA-README](https://github.com/open-edge-insights/video-ingestion/blob/master/docs/gva_doc.md) for more information on GVA.**
 
-**Refer [VideoIngestion-README](../../VideoIngestion/README.md) for more information on ingestor configurations.**
+**Refer [VideoIngestion-README](https://github.com/open-edge-insights/video-ingestion/blob/master/README.md) for more information on ingestor configurations.**

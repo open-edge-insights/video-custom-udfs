@@ -12,5 +12,5 @@ The code for generating PCD file has been commented intentionally. Interested us
     "type": "raw_native"
 }
 ```
-Refer [udfs-README](../../common/video/udfs/README.md) for more information on configs of other in-built udfs like dummy, fps and resize udfs.
+Refer [udfs-README](https://github.com/open-edge-insights/video-common/blob/master/udfs/README.md) for more information on configs of other in-built udfs like dummy, fps and resize udfs.
 
