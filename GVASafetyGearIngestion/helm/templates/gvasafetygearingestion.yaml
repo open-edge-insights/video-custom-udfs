@@ -27,7 +27,6 @@ spec:
   ports:
   - port: {{ .Values.config.gvasafetygearingestion.publish_port }}
     name: publisher-port
-  ports:
   - port: {{ .Values.config.gvasafetygearingestion.server_port }}
     name: server-port
   selector:
@@ -92,7 +91,7 @@ spec:
           value: ''
         - name:  GENICAM
           value: 'Matrix_Vision'
-        {{- if eq .Values.config.nativesafetygearanalytics.IPC false}}
+        {{- if eq .Values.config.gvasafetygearingestion.IPC false}}
         # Override the endpoint provided in interfaces for PUBLISHER
         - name: PUBLISHER_ENDPOINT
           value: "0.0.0.0:{{ .Values.config.gvasafetygearingestion.publish_port }}"
