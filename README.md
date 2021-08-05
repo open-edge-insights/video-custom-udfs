@@ -186,14 +186,14 @@ For ingestor related configs refer [VideoIngestion-README](https://github.com/op
         file: provision/Certificates/PyMultiClassificationIngestion/PyMultiClassification_client_key.pem
     ```
   * ## *UDF core-logic Directory*
-    This directory need to have the Algo/pre-processing implementation which defines the necessary callbacks, IR files and other configurational files as per need. User can place them directly without having another directory level too, in that case the ***Dockerfile*** and ***docker-compose.yml*** should update the path accordingly.  User can find sample implementation in [custom sample UDF](../CustomUdfs) directory.
+    This directory need to have the Algo/pre-processing implementation which defines the necessary callbacks, IR files and other configurational files as per need. User can place them directly without having another directory level too, in that case the ***Dockerfile*** and ***docker-compose.yml*** should update the path accordingly.
 
 # Deploy Process
 
 Please find the ordered steps for deploying the Custom UDFs.
 
   * Please configure Visualizer and WebVisualizer services `config.json` to connect to one or more streams coming out of below CustomUdf services by going
-    through [../Visualizer/README.md](https://github.com/open-edge-insights/video-native-visualizer/blob/master/README.md) and [../WebVisualizer/README.md(https://github.com/open-edge-insights/video-web-visualizer/blob/master/README.md)
+    through [../Visualizer/README.md](https://github.com/open-edge-insights/video-native-visualizer/blob/master/README.md) and [../WebVisualizer/README.md](https://github.com/open-edge-insights/video-web-visualizer/blob/master/README.md)
   * As per EII default scenario, the sample custom UDF containers are not mandatory containers to run, hence the builder.py should run
     `video-streaming-all-udfs.yml` usecase. All the sample UDF containers are added in this example. Below code snnipet signifies the same. Just enable
     the CustomUdf services that are of your interest.
@@ -268,7 +268,7 @@ Refer [PyMultiClassificationIngestion-README](./PyMultiClassificationIngestion/R
 **Notes**:
 * It is not mandatory to have Ingestion containers for every analytics UDF, UDFs are connected to each other via MSGBUS topics. Hence we can always use stock VideoIngestion container as long as Custom Analytic UDF container can read and churn the data it receives.
 
-* User shouldn't remove VI & VA containers before first time build of custom UDF as it will fail to build custom UDFs. Once these UDFs are functional user can always get rid of running VI & VA containers. While removing the VI and VA containers, user need to make necessary chnages in the [***docker-compose.yml***](../build/docker-compose.yml) files based on the way it is written for e.g. user may need to remove **depends_on** keyword if custom container has it for VI and VA containers.
+* User shouldn't remove VI & VA containers before first time build of custom UDF as it will fail to build custom UDFs. Once these UDFs are functional user can always get rid of running VI & VA containers. While removing the VI and VA containers, user need to make necessary chnages in the **../build/docker-compose.yml** files based on the way it is written for e.g. user may need to remove **depends_on** keyword if custom container has it for VI and VA containers.
 
 ## GVASafetyGearIngestion
 
