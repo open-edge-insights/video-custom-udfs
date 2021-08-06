@@ -22,9 +22,11 @@
 
 ARG EII_VERSION
 ARG DOCKER_REGISTRY
-FROM ${DOCKER_REGISTRY}ia_video_ingestion:$EII_VERSION
+FROM ${DOCKER_REGISTRY}openedgeinsights/ia_video_ingestion:$EII_VERSION
 LABEL description="C++ based Safety gear Ingestion image"
 HEALTHCHECK NONE
 
+ARG CMAKE_INSTALL_PREFIX
+ENV CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
 COPY ./Safety_Full_Hat_and_Vest.avi ./test_videos/Safety_Full_Hat_and_Vest.avi
-
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${CMAKE_INSTALL_PREFIX}/lib/udfs/

@@ -3,8 +3,8 @@
 This UDF accepts the frame, and classifies object in frame into different cataegories. Additionally it shows probability of other classes too with its confidence value. This classification doesn't need any specialized image preprocessing UDF.
 
   > **NOTE**: For a successful execution user can stream a sample video file
-  > [classification_vid.avi](../../VideoIngestion/test_videos/classification_vid.avi).
-  > For using camera classification will work correctly if the model has been trained for the object earlier. It is currently trained with some subset of imageNet database. The labels for which it is trained already trained can be found in following [label file](../../common/udfs/python/sample_classification/ref/squeezenet1.1.labels)
+  > [classification_vid.avi](classification_vid.avi).
+  > For using camera classification will work correctly if the model has been trained for the object earlier. It is currently trained with some subset of imageNet database. The labels for which it is trained already trained can be found in following [label file](./sample_classification/ref/squeezenet1.1.labels)
 
    `UDF config`:
 

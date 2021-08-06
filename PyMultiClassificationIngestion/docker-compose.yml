@@ -22,54 +22,60 @@ version: '3.6'
 
 services:
   ## Define ingestion based UDF
-  python_multi_classification:
-    depends_on:
-    - ia_video_ingestion
+  ia_python_multi_classification:
+    read_only: true
     build:
       context: $PWD/../CustomUdfs/PyMultiClassificationIngestion
       dockerfile: $PWD/../CustomUdfs/PyMultiClassificationIngestion/Dockerfile
       args:
         EII_VERSION: ${EII_VERSION}
-        EII_UID: ${EII_UID}
-        EII_USER_NAME: ${EII_USER_NAME}
-        # set CMAKE_BUILD_TYPE value to "Debug" to generate debug symbols
-        CMAKE_BUILD_TYPE: "Release"
         DOCKER_REGISTRY: ${DOCKER_REGISTRY}
-        RUN_TESTS: "OFF"
-    image: ${DOCKER_REGISTRY}python_multi_classification:${EII_VERSION}
-    container_name: python_multi_classification
-    hostname: python_multi_classification
-    network_mode: host
+    image: ${DOCKER_REGISTRY}ia_python_multi_classification:${EII_VERSION}
+    container_name: ia_python_multi_classification
+    hostname: ia_python_multi_classification
     restart: unless-stopped
     security_opt:
-    - no-new-privileges    
+    - no-new-privileges
     healthcheck:
       test: ["CMD-SHELL", "exit", "0"]
-      interval: 5m 
+      interval: 5m
     ipc: "none"
     environment:
       AppName: "PyMultiClassificationIngestion"
       DEV_MODE: ${DEV_MODE}
       PROFILING_MODE: ${PROFILING_MODE}
-      no_proxy: ${eii_no_proxy},${RTSP_CAMERA_IP},${ETCD_HOST}
+      no_proxy: ${RTSP_CAMERA_IP},${ETCD_HOST}
       ETCD_HOST: ${ETCD_HOST}
       ETCD_CLIENT_PORT: ${ETCD_CLIENT_PORT}
       ETCD_PREFIX: ${ETCD_PREFIX}
       CertType: "zmq"
       # Setting GENICAM value to the respective camera which needs to be used
       GENICAM: "Matrix_Vision"
+      # Setting the GST log levels
+      # The env variable will set WARNING level 2 for gencamsrc plugin and none for other plugins
+      GST_DEBUG: "0,gencamsrc:2"
+    ports:
+      - 64018:64018
+    networks:
+      - eii
     volumes:
       - "vol_eii_socket:${SOCKET_DIR}"
-      - "/dev:/dev"
       - "/var/tmp:/var/tmp"
-    privileged: true
+      - "/dev:/dev"
+      - "/tmp:/tmp"
+    device_cgroup_rules:
+      # Default run - device-cgroup-rule='c 189:* rmw'
+      # NCS2 run - device-cgroup-rule='c 209:* rmw'
+      # Selective rules can be applied for deployment
+      - 'c 189:* rmw'
+      - 'c 209:* rmw'
     devices:
       # Following devices under /dev filesystem will be needed based on usecase
       # dri - GPU
       # ion - VPU
       # USB camera devices
       # Selective mount can be done for deployment
-    - "/dev/:/dev/"
+      - "/dev:/dev"
     secrets:
       - ca_etcd
       - etcd_PyMultiClassificationIngestion_cert

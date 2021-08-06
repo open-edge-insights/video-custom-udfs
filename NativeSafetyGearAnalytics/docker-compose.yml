@@ -22,27 +22,26 @@ version: '3.6'
 
 services:
 ## Define Analytics service
-  native_safety_gear_analytics:
+  ia_native_safety_gear_analytics:
+    read_only: true
     depends_on:
-      - ia_video_analytics
+      - ia_video_common
+      - ia_openvino_base
     build:
       context: $PWD/../CustomUdfs/NativeSafetyGearAnalytics
       dockerfile: $PWD/../CustomUdfs/NativeSafetyGearAnalytics/Dockerfile
       args:
         EII_VERSION: ${EII_VERSION}
-        EII_UID: ${EII_UID}
-        EII_USER_NAME: ${EII_USER_NAME}
         DOCKER_REGISTRY: ${DOCKER_REGISTRY}
         # set CMAKE_BUILD_TYPE value to "Debug" to generate debug symbols
         CMAKE_BUILD_TYPE: "Release"
-        RUN_TESTS: "OFF"
-    image: ${DOCKER_REGISTRY}native_safety_gear_analytics:${EII_VERSION}
-    container_name: native_safety_gear_analytics
-    hostname: native_safety_gear_analytics
-    network_mode: host
+        CMAKE_INSTALL_PREFIX: ${EII_INSTALL_PATH}
+    image: ${DOCKER_REGISTRY}ia_native_safety_gear_analytics:${EII_VERSION}
+    container_name: ia_native_safety_gear_analytics
+    hostname: ia_native_safety_gear_analytics
     restart: unless-stopped
     security_opt:
-    - no-new-privileges    
+    - no-new-privileges
     healthcheck:
       test: ["CMD-SHELL", "exit", "0"]
       interval: 5m
@@ -51,24 +50,32 @@ services:
       AppName: "NativeSafetyGearAnalytics"
       DEV_MODE: ${DEV_MODE}
       PROFILING_MODE: ${PROFILING_MODE}
-      no_proxy: ${eii_no_proxy},${ETCD_HOST}
+      no_proxy: ${ETCD_HOST}
       ETCD_HOST: ${ETCD_HOST}
       ETCD_CLIENT_PORT: ${ETCD_CLIENT_PORT}
       ETCD_PREFIX: ${ETCD_PREFIX}
       CertType: "zmq"
-      # Setting GENICAM value to the respective camera which needs to be used
-      GENICAM: "Basler"
-    privileged: true
+    ports:
+      - 65017:65017
+    networks:
+      - eii
     volumes:
       - "/var/tmp:/var/tmp"
-      - "/dev:/dev"
       - "vol_eii_socket:${SOCKET_DIR}"
+      - "/dev:/dev"
+      - "/tmp:/tmp"
+    device_cgroup_rules:
+      # Default run - device-cgroup-rule='c 189:* rmw'
+      # NCS2 run - device-cgroup-rule='c 209:* rmw'
+      # Selective rules can be applied for deployment
+      - 'c 189:* rmw'
+      - 'c 209:* rmw'
     devices:
-      - "/dev/:/dev/"
       # Following devices under /dev filesystem will be needed based on usecase
       # dri - GPU
       # ion - VPU
       # Selective mount can be done for deployment
+      - "/dev:/dev"
     secrets:
       - ca_etcd
       - etcd_NativeSafetyGearAnalytics_cert

@@ -1,7 +1,16 @@
-# **Introduction**
-This document describes the new approach of creating UDFs and using them inside the EII framework. Unlike [The UDF Writing Guide](../common/video/udfs/HOWTO_GUIDE_FOR_WRITING_UDF.md) which specifically emphasizes on the coding aspects(callbacks) of the UDFs, this document describes the workflow of a  custom UDF.
+**Contents**
 
-Currently the UDFs are to be created inside [udfs-path](../common/video/udfs) of EII build environment so that it can get compiled into the VI(Video Ingestion) & VA(Video Analytics) containers. In addition to aforementioned approach,each UDF can be built as an independent container based out of VI(VideoIngestion) or VA(VideoAnalytics) container image. This additional method has multiple benefits, listing some of them below:
+- [Introduction](#introduction)
+- [UDF Container Directory Layout](#udf-container-directory-layout)
+- [Deploy Process](#deploy-process)
+- [Sample UDFs Directory](#sample-udfs-directory)
+  - [GVASafetyGearIngestion](#gvasafetygearingestion)
+  - [NativePclIngestion](#nativepclingestion)
+
+# Introduction
+This document describes the new approach of creating UDFs and using them inside the EII framework. Unlike [The UDF Writing Guide](https://github.com/open-edge-insights/video-common/blob/master/udfs/HOWTO_GUIDE_FOR_WRITING_UDF.md) which specifically emphasizes on the coding aspects(callbacks) of the UDFs, this document describes the workflow of a  custom UDF.
+
+Currently the UDFs are to be created inside [udfs-path](https://github.com/open-edge-insights/video-common/tree/master/udfs) of EII build environment so that it can get compiled into the VI(Video Ingestion) & VA(Video Analytics) containers. In addition to aforementioned approach,each UDF can be built as an independent container based out of VI(VideoIngestion) or VA(VideoAnalytics) container image. This additional method has multiple benefits, listing some of them below:
 
 * With increased number of sample UDFs, VI and VA need not grow large in size because of the bloated Algo artifacts.
 * Any update to the UDF's Algo or its logic will compile and build only intended UDF specific code, instead of rebuilding every UDFs
@@ -11,7 +20,7 @@ Currently the UDFs are to be created inside [udfs-path](../common/video/udfs) of
 
 As per this approach an UDF or a chain of UDFs should be compiled and run as a separate EII container. A video streaming pipeline contains two important components among all i.e. ingestion and analytics and in EII user adds UDFs as pre-processing, post-processing or analytics Algo, hence these UDF containers need to ne inherited from VI and VA container.
 
-# **UDF Container Directory Layout**
+# UDF Container Directory Layout
 1. A native(c++) & python UDF container source base looks as below, though it can look different based on use-case.
 
 ``` bash
@@ -49,8 +58,8 @@ PyMultiClassificationIngestion
 The top level directory ***"NativeSafetyGearAnalytics"*** & ***"PyMultiClassificationIngestion"*** hosts respective the container's build ingredients. The Algo/pre-processing logics are placed under e.g. ***"safety_gear_demo"*** & ***sample_classification*** to showcase a grouping of logically related entities otherwise it is not a mandatory directory layout.
 
   * ## *config.json*
-    This file defines UDF specific configuration and other generic configs such as queue-depth, number-of-worker-thread etc. These generic configs can be added to overwrite any default of setting of VI and VA container. In order to know more about schema of defining these configs and its permissible values, kindly refer [UDF-README](../common/video/udfs/README.md) file.
-For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/README.md).
+    This file defines UDF specific configuration and other generic configs such as queue-depth, number-of-worker-thread etc. These generic configs can be added to overwrite any default of setting of VI and VA container. In order to know more about schema of defining these configs and its permissible values, kindly refer [UDF-README](https://github.com/open-edge-insights/video-common/blob/master/udfs/README.md) file.
+For ingestor related configs refer [VideoIngestion-README](https://github.com/open-edge-insights/video-ingestion/blob/master/README.md).
 
  An example snippet would look as below:
     ```bash
@@ -81,33 +90,61 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
     ```dockerfile
     ARG EII_VERSION                                          <<<<This is to use latest version of VI & VA automatically instead of hardcoding a version
     ARG DOCKER_REGISTRY
-    FROM ${DOCKER_REGISTRY}ia_video_analytics:$EII_VERSION   <<<<<This container is based VA container
+    ARG ARTIFACTS="/artifacts"
+    FROM ia_video_common:$EII_VERSION as video_common
+    FROM ia_openvino_base:$EII_VERSION as openvino_base
+    FROM ${DOCKER_REGISTRY}openedgeinsights/ia_video_analytics:$EII_VERSION as video_analytics
+    FROM ia_eiibase:$EII_VERSION as builder
     LABEL description="C++ based Safety Gear UDF Image"
 
-    WORKDIR ${GO_WORK_DIR}
+    WORKDIR /app
 
+    ARG ARTIFACTS
+    RUN mkdir $ARTIFACTS \
+              $ARTIFACTS/safety_gear_demo \
+              $ARTIFACTS/lib
+    ARG CMAKE_INSTALL_PREFIX
+    COPY --from=video_common ${CMAKE_INSTALL_PREFIX}/include ${CMAKE_INSTALL_PREFIX}/include
+    COPY --from=video_common ${CMAKE_INSTALL_PREFIX}/lib ${CMAKE_INSTALL_PREFIX}/lib
+    COPY --from=openvino_base /opt/intel /opt/intel
+
+    # Copy more than one UDFs here
+    # Both C++ & Python are allowed in a container.
+    COPY ./safety_gear_demo/ ./safety_gear_demo
+    RUN cp -r ./safety_gear_demo $ARTIFACTS/safety_gear_demo
+
+    # Build native UDF samples
     RUN /bin/bash -c "source /opt/intel/openvino/bin/setupvars.sh && \
-        cd ./safetty_gear_demo && \
+        cd ./safety_gear_demo && \
         rm -rf build && \
         mkdir build && \
         cd build && \
-        cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} .. && \
-        make && \
-        make install"
+        cmake -DCMAKE_INSTALL_INCLUDEDIR=${CMAKE_INSTALL_PREFIX}/include -DCMAKE_INSTALL_PREFIX=$CMAKE_INSTALL_PREFIX -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} .. && \
+        make"
+
+    RUN cp ./safety_gear_demo/build/libsafety_gear_demo.so $ARTIFACTS/lib
+
+    FROM video_analytics as runtime   <<<<<This container is based VA container
+    HEALTHCHECK NONE
+    WORKDIR /app
+    ARG ARTIFACTS
+    ARG CMAKE_INSTALL_PREFIX
+    COPY --from=builder $ARTIFACTS/lib ${CMAKE_INSTALL_PREFIX}/lib
+    COPY --from=builder $ARTIFACTS/safety_gear_demo .
     ```
     An Example of python based UDF's ***Dockerfile*** will looks as below:
 
     ```dockerfile
     ARG EII_VERSION
     ARG DOCKER_REGISTRY
-    FROM ${DOCKER_REGISTRY}ia_video_ingestion:$EII_VERSION
+    FROM ${DOCKER_REGISTRY}openedgeinsights/ia_video_ingestion:$EII_VERSION
     LABEL description="Multi-class clasifcation UDF Image"
 
-    WORKDIR ${GO_WORK_DIR}
+    WORKDIR /app
 
-    # Added GO_WORK_DIR to python path as copying the UDF code block under GO_WORK_DIR
+    # Added /app to python path as copying the UDF code block under /app
     # else user can add the path to which it copies its udf code.
-    ENV PYTHONPATH ${PYTHONPATH}:${GO_WORK_DIR}
+    ENV PYTHONPATH ${PYTHONPATH}:/app
 
     # User can mention about all UDF directories here, both py and C++.
     COPY ./sample_classification ./sample_classification  <<<<< ./sample_classification is the destination here for UdfLoader to pick it at runtime. Additionally we have set the python path for UdfLoader to identify the algo artifacts properly.
@@ -119,8 +156,6 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
     ```yml
     services:
       python_multi_classification:      <<<<< Define the name of the container
-        depends_on:
-        - ia_video_ingestion            <<<<< If it is based on VA then it should be ia_video_ananlytics
         build:
           context: $PWD/../CustomUdfs/PyMultiClassificationIngestion                 <<<<< This path should be the relative path of container artifact
           dockerfile: $PWD/../CustomUdfs/PyMultiClassificationIngestion/Dockerfile   <<<<< Path to Dockerfile of the container
@@ -145,23 +180,26 @@ For ingestor related configs refer [VideoIngestion-README](../../VideoIngestion/
           - etcd_PyMultiClassification_key
 
     secrets:
-      etcd_PyMultiClassification_cert:                                       <<<<< The cerificate mentioned below are created during provision step
+      etcd_PyMultiClassification_cert:                                       <<<<< The certificate mentioned below are created during provision step
         file: provision/Certificates/PyMultiClassificationIngestion/PyMultiClassification_client_certificate.pem
       etcd_PyMultiClassification_key:
         file: provision/Certificates/PyMultiClassificationIngestion/PyMultiClassification_client_key.pem
     ```
   * ## *UDF core-logic Directory*
-    This directory need to have the Algo/pre-processing implementation which defines the necessary callbacks, IR files and other configurational files as per need. User can place them directly without having another directory level too, in that case the ***Dockerfile*** and ***docker-compose.yml*** should update the path accordingly.  User can find sample implementation in [custom sample UDF](../CustomUdfs) directory.
+    This directory need to have the Algo/pre-processing implementation which defines the necessary callbacks, IR files and other configurational files as per need. User can place them directly without having another directory level too, in that case the ***Dockerfile*** and ***docker-compose.yml*** should update the path accordingly.
 
-# **Build and deploy Process**
-The build process is similar to the EII's build and deploy process with some minor chnages. Please find the ordered steps for building and deploying the Custom UDFs.
+# Deploy Process
 
-  * As per EII default scenario, the sample custom UDF containers are not mandatory containers to run, hence the builder.py should run "video-streaming-all-udfs.yml". All the sample UDF containers are added in this example. Below code snnipet signifies the same.
+Please find the ordered steps for deploying the Custom UDFs.
+
+  * Please configure Visualizer and WebVisualizer services `config.json` to connect to one or more streams coming out of below CustomUdf services by going
+    through [../Visualizer/README.md](https://github.com/open-edge-insights/video-native-visualizer/blob/master/README.md) and [../WebVisualizer/README.md](https://github.com/open-edge-insights/video-web-visualizer/blob/master/README.md)
+  * As per EII default scenario, the sample custom UDF containers are not mandatory containers to run, hence the builder.py should run
+    `video-streaming-all-udfs.yml` usecase. All the sample UDF containers are added in this example. Below code snnipet signifies the same. Just enable
+    the CustomUdf services that are of your interest.
 
     ```yml
     AppName:
-    - VideoIngestion
-    - VideoAnalytics
     - Visualizer
     - WebVisualizer
     - CustomUdfs/NativeSafetyGearAnalytics   <<<<< All lines from here added are customUDFs, User can define his own container directory here
@@ -171,25 +209,33 @@ The build process is similar to the EII's build and deploy process with some min
     - CustomUdfs/PySafetyGearIngestion
     ```
     Run the following command:
+
     ```bash
-    cd <multi-repo cloned path>/IEdgeInsights/build/
-    python3 builder.py -f video-streaming-all-udfs.yml
+    $ cd [WORKDIR]/IEdgeInsights/build/
+    $ python3 builder.py -f usecases/video-streaming-all-udfs.yml
     ```
     **Note:**
     It is not mandatory to keep the custom Udfs in the CustomUdfs directory, but user must change the video-streaming-all-udfs.yml file accordingly to point the right path accordingly.
-    Additionally if it is placed under ***IEdgeInsights*** directory then the builder.py file automatically picks it to generate a consolidated [***eii-config.json***](../build/config/eii-config.json) and [***docker-compose.yml***](../build/docker-compose.yml) file.
+    Additionally if it is placed under ***IEdgeInsights*** directory then the builder.py file automatically picks it to generate a consolidated Additionally if it is placed under ***IEdgeInsights*** directory then the builder.py file automatically picks it to generate a consolidated `IEdgeInsights/build/provision/config/eii_config.json` and `IEdgeInsights/build/docker-compose.yml` files.
 
-  * After generation of consolidated [***eii-config.json***](../build/config/eii-config.json) and [***docker-compose.yml***](../build/docker-compose.yml) file, Run the below command to provision the UDF containers. As a pre-cautionary measure, User can cross check the afore-mentioned file to verify the sanity of the UDF specific config and service details.
+  * After generation of consolidated ***eii_config.json*** and ***docker-compose.yml*** file, Run the below command to provision the UDF containers. As a pre-cautionary measure, User can cross check the afore-mentioned file to verify the sanity of the UDF specific config and service details.
+
     ```bash
-    cd <WORK_DIR_PATH>/IEdgeInsights/build/provision
-    sudo ./provision.sh  ../docker-compose.yml
+    $ cd [WORKDIR]/IEdgeInsights/build/provision
+    $ sudo -E ./provision.sh  ../docker-compose.yml
     ```
-  * Build and run the containers.
+  * Run the use case:
+
     ```bash
-    docker-compose up --build -d
+    $ cd [WORKDIR]/IEdgeInsights/build/
+    $ # Build base images (needed for buidling native custom udf services)
+    $ docker-compose -f docker-compose-build.yml build ia_eiibase ia_common ia_video_common ia_openvino_base
+    $ # Build custom udf services based on the usecase chosen above
+    $ docker-compose -f docker-compose-build.yml build ia_gva_safety_gear_ingestion ia_native_safety_gear_analytics ia_native_safety_gear_ingestion ia_python_multi_classification ia_python_safety_gear_analytics ia_python_safety_gear_ingestion
+    $ docker-compose up -d
     ```
 
-# *Sample UDFs Directory*
+# Sample UDFs Directory
 In the CustomUdfs directory, there are 5 sample UDfs implemented and they related asshown below. These samples are created to showcase different use case.
 
 ```bash
@@ -205,7 +251,7 @@ In the CustomUdfs directory, there are 5 sample UDfs implemented and they relate
 └── README.md
 
 ```
-The [*NativeSafetyGearIngestion*](./NativeSafetyGearIngestion) container has used [dummy](../common/video/udfs/native/dummy) UDF which is defined in VideoIngestion container. user can define its own preprocessing UDF and add to config.json file to modify it. The results are posted to a eii-msgbus topic which is subscribed by [NativeSafetyGearAnalytics](./NativeSafetyGearAnalytics) containers. The configs can be seen in [docker-compose.yml](./NativeSafetyGearAnalytics/docker-compose.yml) file.
+The [*NativeSafetyGearIngestion*](./NativeSafetyGearIngestion) container has used [dummy](https://github.com/open-edge-insights/video-common/tree/master/udfs/native/dummy) UDF which is defined in VideoIngestion container. user can define its own preprocessing UDF and add to config.json file to modify it. The results are posted to a eii-msgbus topic which is subscribed by [NativeSafetyGearAnalytics](./NativeSafetyGearAnalytics) containers. The configs can be seen in [docker-compose.yml](./NativeSafetyGearAnalytics/docker-compose.yml) file.
 
 Refer [NativeSafetyGearIngestion-README](./NativeSafetyGearIngestion/README.md) for more information on the udf configs.
 Refer [NativeSafetyGearAnalytics-README](./NativeSafetyGearAnalytics/README.md) for more information on the udf configs.
@@ -222,7 +268,7 @@ Refer [PyMultiClassificationIngestion-README](./PyMultiClassificationIngestion/R
 **Notes**:
 * It is not mandatory to have Ingestion containers for every analytics UDF, UDFs are connected to each other via MSGBUS topics. Hence we can always use stock VideoIngestion container as long as Custom Analytic UDF container can read and churn the data it receives.
 
-* User shouldn't remove VI & VA containers before first time build of custom UDF as it will fail to build custom UDFs. Once these UDFs are functional user can always get rid of running VI & VA containers. While removing the VI and VA containers, user need to make necessary chnages in the [***docker-compose.yml***](../build/docker-compose.yml) files based on the way it is written for e.g. user may need to remove **depends_on** keyword if custom container has it for VI and VA containers.
+* User shouldn't remove VI & VA containers before first time build of custom UDF as it will fail to build custom UDFs. Once these UDFs are functional user can always get rid of running VI & VA containers. While removing the VI and VA containers, user need to make necessary chnages in the **../build/docker-compose.yml** files based on the way it is written for e.g. user may need to remove **depends_on** keyword if custom container has it for VI and VA containers.
 
 ## GVASafetyGearIngestion
 
@@ -243,3 +289,10 @@ Refer [GVASafetyGearIngestion-README.md](./GVASafetyGearIngestion/README.md) for
 
   ```
   Here the models files placed under the `ref` directory on the hostsystem is copied to `./models/ref` path inside the container.
+
+## NativePclIngestion
+
+[*NativePclIngestion*](./NativePclIngestion) is a PCL based UDF container based out of VideoIngestion
+
+Refer [NativePclIngestion-README.md](./NativePclIngestion/README.md) for more information on the udf configs.
+

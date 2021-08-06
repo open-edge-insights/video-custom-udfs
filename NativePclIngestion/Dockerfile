@@ -1,5 +1,4 @@
-
-# Copyright (c) 2020 Intel Corporation.
+# Copyright (c) 2021 Intel Corporation.
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -19,48 +18,77 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Dockerfile for Native Safety Gear UDF
+# Dockerfile for PCL UDF
 
 ARG EII_VERSION
 ARG DOCKER_REGISTRY
 ARG ARTIFACTS="/artifacts"
+
 FROM ia_video_common:$EII_VERSION as video_common
 FROM ia_openvino_base:$EII_VERSION as openvino_base
-FROM ${DOCKER_REGISTRY}openedgeinsights/ia_video_analytics:$EII_VERSION as video_analytics
+FROM ${DOCKER_REGISTRY}openedgeinsights/ia_video_ingestion:$EII_VERSION as video_ingestion
 FROM ia_eiibase:$EII_VERSION as builder
-LABEL description="C++ based Safety Gear UDF Image"
+
+LABEL description="C++ based PCL UDF"
 
 WORKDIR /app
 
 ARG ARTIFACTS
 RUN mkdir $ARTIFACTS \
-          $ARTIFACTS/safety_gear_demo \
+          $ARTIFACTS/rs2pcl \
           $ARTIFACTS/lib
+
 ARG CMAKE_INSTALL_PREFIX
+
+ENV DEBIAN_FRONTEND="noninteractive"
+
+RUN apt-get update && \
+    apt-get install -y libpcl-dev
+
 COPY --from=video_common ${CMAKE_INSTALL_PREFIX}/include ${CMAKE_INSTALL_PREFIX}/include
 COPY --from=video_common ${CMAKE_INSTALL_PREFIX}/lib ${CMAKE_INSTALL_PREFIX}/lib
 COPY --from=openvino_base /opt/intel /opt/intel
 
 # Copy more than one UDFs here
 # Both C++ & Python are allowed in a container.
-COPY ./safety_gear_demo/ ./safety_gear_demo
-RUN cp -r ./safety_gear_demo $ARTIFACTS/safety_gear_demo
+COPY ./rs2pcl/ ./rs2pcl
+RUN cp -r ./rs2pcl $ARTIFACTS/rs2pcl
 
 # Build native UDF samples
 RUN /bin/bash -c "source /opt/intel/openvino/bin/setupvars.sh && \
-    cd ./safety_gear_demo && \
+    cd ./rs2pcl && \
     rm -rf build && \
     mkdir build && \
     cd build && \
     cmake -DCMAKE_INSTALL_INCLUDEDIR=${CMAKE_INSTALL_PREFIX}/include -DCMAKE_INSTALL_PREFIX=$CMAKE_INSTALL_PREFIX -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} .. && \
     make"
 
-RUN cp ./safety_gear_demo/build/libsafety_gear_demo.so $ARTIFACTS/lib
+RUN cp ./rs2pcl/build/librs2pcl.so $ARTIFACTS/lib
 
-FROM video_analytics as runtime
+FROM video_ingestion as runtime
+USER root
+
 HEALTHCHECK NONE
+
 WORKDIR /app
+
 ARG ARTIFACTS
 ARG CMAKE_INSTALL_PREFIX
+
+# PCL libraries are required in both build stage for compiling udf and
+# runtime stage for loading the udf. Since PCL has a lot of dependency
+# packages it was feasible to copy the required files from build stage.
+# Hence libpcl-dev package is installed again in runtime stage
+
+ENV DEBIAN_FRONTEND="noninteractive"
+
+RUN apt-get update && \
+    apt-get install -y libpcl-dev
+
 COPY --from=builder $ARTIFACTS/lib ${CMAKE_INSTALL_PREFIX}/lib
-COPY --from=builder $ARTIFACTS/safety_gear_demo .
+COPY --from=builder $ARTIFACTS/rs2pcl .
+
+ARG EII_USER_NAME
+RUN chown ${EII_USER_NAME}:${EII_USER_NAME} /app /var/tmp
+RUN usermod -a -G users ${EII_USER_NAME}
+USER ${EII_USER_NAME}

@@ -1,0 +1,6 @@
+config:
+    gvasafetygearingestion:
+      name: gvasafetygearingestion
+      publish_port: 65021
+      server_port: 64020
+      IPC: false

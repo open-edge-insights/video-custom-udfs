@@ -4,7 +4,7 @@ This udf accepts the frames, detects safety gear such as safety helmet, safety j
 the frame and any violations occuring.
 
 > **NOTE**: This works well with only the
-> [safe gear video file](../../VideoIngestion/test_videos/Safety_Full_Hat_and_Vest.avi).
+> [safe gear video file](../NativeSafetyGearIngestion/Safety_Full_Hat_and_Vest.avi).
 > For camera usecase, proper tuning needs to be done to have the proper model
 > built and used for inference.
 
@@ -61,7 +61,7 @@ User can move these directory to anwhere in the host system and compile the code
         dockerfile: $HOME/NativeSafetyGearAnalytics/Dockerfile
 	```
 
-	2. Change the [video-streaming-all-udfs.yml](../../build/video-streaming-all-udfs.yml) file to define the service with full path instead of relative path from IEdgeInsights as follows:
+	2. Change the [video-streaming-all-udfs.yml](https://github.com/open-edge-insights/eii-core/blob/master/build/usecases/video-streaming-all-udfs.yml) file to define the service with full path instead of relative path from IEdgeInsights as follows:
 
     From:
 

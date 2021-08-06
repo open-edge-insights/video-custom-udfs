@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Intel Corporation.
+# Copyright (c) 2021 Intel Corporation.
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,18 +21,25 @@
 version: '3.6'
 
 services:
-  ## Define ingestion based UDF
-  ia_native_safety_gear_ingestion:
+## Define Ingestion based service
+  native_pcl_ingestion:
     read_only: true
+    depends_on:
+      - ia_video_common
+      - ia_openvino_base
     build:
-      context: $PWD/../CustomUdfs/NativeSafetyGearIngestion
-      dockerfile: $PWD/../CustomUdfs/NativeSafetyGearIngestion/Dockerfile
+      context: $PWD/../CustomUdfs/NativePclIngestion
+      dockerfile: $PWD/../CustomUdfs/NativePclIngestion/Dockerfile
       args:
         EII_VERSION: ${EII_VERSION}
+        EII_USER_NAME: ${EII_USER_NAME}
         DOCKER_REGISTRY: ${DOCKER_REGISTRY}
-    image: ${DOCKER_REGISTRY}ia_native_safety_gear_ingestion:${EII_VERSION}
-    container_name: ia_native_safety_gear_ingestion
-    hostname: ia_native_safety_gear_ingestion
+        # set CMAKE_BUILD_TYPE value to "Debug" to generate debug symbols
+        CMAKE_BUILD_TYPE: "Release"
+        CMAKE_INSTALL_PREFIX: ${EII_INSTALL_PATH}
+    image: ${DOCKER_REGISTRY}native_pcl_ingestion:${EII_VERSION}
+    container_name: native_pcl_ingestion
+    hostname: native_pcl_ingestion
     restart: unless-stopped
     security_opt:
     - no-new-privileges
@@ -41,26 +48,23 @@ services:
       interval: 5m
     ipc: "none"
     environment:
-      AppName: "NativeSafetyGearIngestion"
+      AppName: "NativePclIngestion"
       DEV_MODE: ${DEV_MODE}
       PROFILING_MODE: ${PROFILING_MODE}
-      no_proxy: ${RTSP_CAMERA_IP},${ETCD_HOST}
+      no_proxy: ${eii_no_proxy},${ETCD_HOST}
       ETCD_HOST: ${ETCD_HOST}
       ETCD_CLIENT_PORT: ${ETCD_CLIENT_PORT}
       ETCD_PREFIX: ${ETCD_PREFIX}
       CertType: "zmq"
       # Setting GENICAM value to the respective camera which needs to be used
       GENICAM: "Matrix_Vision"
-      # Setting the GST log levels
-      # The env variable will set WARNING level 2 for gencamsrc plugin and none for other plugins
-      GST_DEBUG: "0,gencamsrc:2"
     ports:
-      - 64017:64017
+      - 64023:64023
     networks:
       - eii
     volumes:
-      - "vol_eii_socket:${SOCKET_DIR}"
       - "/var/tmp:/var/tmp"
+      - "vol_eii_socket:${SOCKET_DIR}"
       - "/dev:/dev"
       - "/tmp:/tmp"
     device_cgroup_rules:
@@ -73,17 +77,15 @@ services:
       # Following devices under /dev filesystem will be needed based on usecase
       # dri - GPU
       # ion - VPU
-      # USB camera devices
       # Selective mount can be done for deployment
       - "/dev:/dev"
     secrets:
       - ca_etcd
-      - etcd_NativeSafetyGearIngestion_cert
-      - etcd_NativeSafetyGearIngestion_key
+      - etcd_NativePclIngestion_cert
+      - etcd_NativePclIngestion_key
 
 secrets:
-  etcd_NativeSafetyGearIngestion_cert:
-    file: provision/Certificates/NativeSafetyGearIngestion/NativeSafetyGearIngestion_client_certificate.pem
-  etcd_NativeSafetyGearIngestion_key:
-    file: provision/Certificates/NativeSafetyGearIngestion/NativeSafetyGearIngestion_client_key.pem
-
+  etcd_NativePclIngestion_cert:
+    file: provision/Certificates/NativePclIngestion/NativePclIngestion_client_certificate.pem
+  etcd_NativePclIngestion_key:
+    file: provision/Certificates/NativePclIngestion/NativePclIngestion_client_key.pem

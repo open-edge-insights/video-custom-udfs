@@ -1,0 +1,6 @@
+config:
+    nativesafetygearingestion:
+      name: nativesafetygearingestion
+      publish_port: 65022
+      server_port: 64017
+      IPC: false

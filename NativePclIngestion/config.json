@@ -5,11 +5,7 @@
             "type": "jpeg"
         },
         "ingestor": {
-            "loop_video": true,
-            "pipeline": "./test_videos/classification_vid.avi",
-            "poll_interval": 0.2,
-            "queue_size": 10,
-            "type": "opencv"
+            "type": "realsense"
         },
         "max_workers": 4,
         "sw_trigger": {
@@ -17,21 +13,17 @@
         },
         "udfs": [
             {
-                "name": "sample_classification.multi_class_classifier",
-                "type": "python",
-                "device": "CPU",
-                "labels_file_path": "./sample_classification/ref/squeezenet1.1.labels",
-                "model_xml": "./sample_classification/ref/squeezenet1.1_FP32.xml",
-                "model_bin": "./sample_classification/ref/squeezenet1.1_FP32.bin"
+                "name": "rs2pcl",
+                "type": "raw_native"
             }
         ]
     },
     "interfaces": {
         "Servers": [
             {
-                "Name": "py_multi_calssification",
+                "Name": "native_pcl_ingestion",
                 "Type": "zmq_tcp",
-                "EndPoint": "0.0.0.0:64018",
+                "EndPoint": "0.0.0.0:64023",
                 "AllowedClients": [
                     "*"
                 ]
@@ -43,7 +35,7 @@
                 "Type": "zmq_ipc",
                 "EndPoint": "/EII/sockets",
                 "Topics": [
-                    "py_multi_calssification_results_stream"
+                    "native_pcl_results_stream"
                 ],
                 "AllowedClients": [
                     "*"

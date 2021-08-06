@@ -19,7 +19,7 @@
             {
                 "Name": "gva_safety_gear",
                 "Type": "zmq_tcp",
-                "EndPoint": "127.0.0.1:66020",
+                "EndPoint": "0.0.0.0:64020",
                 "AllowedClients": [
                     "*"
                 ]

@@ -1,0 +1,5 @@
+config:
+    pythonsafetygearanalytics:
+      name: pythonsafetygearanalytics
+      publish_port: 65019
+      IPC: false
