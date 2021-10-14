@@ -209,13 +209,9 @@ SafetyDemo::SafetyDemo(config_t *config) : BaseUdf(config) {
 
     // ---------------------------Loading model to the device --------
     LOG_INFO("Loading model to the device");
-    ExecutableNetwork executable_network =
-        ie.LoadNetwork(m_network, device_type->body.string);
+    m_executable_network = ie.LoadNetwork(m_network, device_type->body.string);
     // -------------------------------------------------------------------
 
-    // --------------------------- Create infer request ---------------
-    LOG_INFO("Creating inference request");
-    m_infer_request = executable_network.CreateInferRequest();
     LOG_INFO_0("COMPLETED UDF INTITIALIZATION....");
 
 }
@@ -225,6 +221,12 @@ SafetyDemo::~SafetyDemo() {}
 UdfRetCode SafetyDemo::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *meta) {
 
     LOG_DEBUG_0("Entered Native Safety Demo Udf::process() function...");
+
+    std::lock_guard<std::mutex> guard(m_mutex);
+
+    // --------------------------- Create infer request ---------------
+    LOG_DEBUG_0("Creating inference request");
+    m_infer_request = m_executable_network.CreateInferRequest();
 
     msgbus_ret_t ret;
     /** Collect images data ptrs **/

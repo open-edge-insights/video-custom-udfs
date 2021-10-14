@@ -60,6 +60,7 @@ class Udf:
         self.model_xml = model_xml
         self.model_bin = model_bin
         self.device = device
+        self.lock = threading.Lock()
 
         assert os.path.exists(self.model_xml), \
             'Model xml file missing: {}'.format(self.model_xml)
@@ -103,8 +104,11 @@ class Udf:
         # Change data layout from HWC to CHW
         in_frame = in_frame.transpose((2, 0, 1))
         in_frame = in_frame.reshape((n, c, h, w))
-        self.executionNet.start_async(request_id=cur_request_id, inputs={
+
+        self.lock.acquire()
+        self.executionNet.infer(inputs={
             self.inputBlob: in_frame})
+        self.lock.release()
 
         if self.executionNet.requests[cur_request_id].wait(-1) == 0:
             inf_end = time.time()
@@ -112,8 +116,10 @@ class Udf:
             fps = str("%.2f" % (1/det_time))
 
             # Parse detection results of the current request
+            self.lock.acquire()
             res = self.executionNet.requests[cur_request_id].outputs[
                 self.outputBlob]
+            self.lock.release()
 
             for obj in res[0][0]:
                 # obj[1] representing the category of the object detection
