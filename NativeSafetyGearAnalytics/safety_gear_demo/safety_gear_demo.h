@@ -60,6 +60,10 @@ namespace eii {
                 int m_object_size;
                 //Maximum number of batches can run in paralell.
                 int m_max_proposal_count;
+                // Executable Netrwork
+                ExecutableNetwork m_executable_network;
+                // Mutex Variable
+                std::mutex m_mutex;
 
             public:
                 SafetyDemo(config_t *config);

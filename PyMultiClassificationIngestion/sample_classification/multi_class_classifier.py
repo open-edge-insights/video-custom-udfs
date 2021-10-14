@@ -22,6 +22,7 @@ import os
 import logging
 import cv2
 import numpy as np
+import threading
 from time import time
 
 from openvino.inference_engine import IECore
@@ -66,6 +67,8 @@ class Udf:
             self.labels_map = [x.split(sep=' ', maxsplit=1)[-1].strip() for x
                                in f]
 
+        self.lock = threading.Lock()
+
         # Load OpenVINO model
         self.ie = IECore()
         self.net = self.ie.read_network(model=model_xml, weights=model_bin)
@@ -101,7 +104,9 @@ class Udf:
         # Start sync inference
         infer_time = []
         t0 = time()
+        self.lock.acquire()
         res = self.exec_net.infer(inputs={self.input_blob: images})
+        self.lock.release()
         infer_time.append((time() - t0)*1000)
         average_time = np.average(np.asarray(infer_time))
         average_time_msg = 'Average running time of one iteration'
