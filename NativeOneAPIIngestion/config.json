@@ -1,0 +1,53 @@
+{
+    "config": {
+        "encoding": {
+            "level": 95,
+            "type": "jpeg"
+        },
+        "ingestor": {
+            "loop_video": true,
+            "pipeline": "./test_videos/pcb_d2000.avi",
+            "poll_interval": 0.2,
+            "queue_size": 10,
+            "type": "opencv"
+        },
+        "max_workers": 4,
+        "sw_trigger": {
+            "init_state": "running"
+        },
+        "udfs": [
+            {
+                "name": "dpcpp_blur_udf",
+                "type": "native",
+                "height" : 50,
+                "width" : 50
+            }
+        ]
+
+    },
+    "interfaces": {
+        "Servers": [
+            {
+                "Name": "native_one_api",
+                "Type": "zmq_tcp",
+                "EndPoint": "0.0.0.0:64030",
+                "AllowedClients": [
+                    "*"
+                ]
+            }
+        ],
+        "Publishers": [
+            {
+                "Name": "default",
+                "Type": "zmq_ipc",
+                "EndPoint": "/EII/sockets",
+                "Topics": [
+                    "dpcpp_oneapi_blurr"
+                ],
+                "AllowedClients": [
+                    "*"
+                ]
+            }
+        ]
+    }
+}
