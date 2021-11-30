@@ -36,4 +36,3 @@ This UDF accepts the frame, and classifies object in frame into different cataeg
       "model_bin": "./sample_classification/ref/squeezenet1.1_FP16.bin",
   }
   ```
-

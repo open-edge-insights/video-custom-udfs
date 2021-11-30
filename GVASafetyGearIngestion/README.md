@@ -2,7 +2,7 @@
 
 This container is based out of VideoIngestion container. Since GVA elements are used for analytics there is no need for using any udf.
 
- * `Video File - Gstreamer ingestor with GVA elements`
+* `Video File - Gstreamer ingestor with GVA elements`
 
       ```javascript
       {
@@ -10,8 +10,7 @@ This container is based out of VideoIngestion container. Since GVA elements are 
         "pipeline": "multifilesrc loop=TRUE stop-index=0 location=./test_videos/Safety_Full_Hat_and_Vest.avi ! h264parse ! decodebin ! videoconvert ! video/x-raw,format=BGR ! gvadetect model=models/ref/frozen_inference_graph.xml ! appsink"
       }
 
-
- * `Generic Plugin - Gstreamer ingestor with GVA elements`
+* `Generic Plugin - Gstreamer ingestor with GVA elements`
 
     ```javascript
      {
@@ -29,7 +28,7 @@ This container is based out of VideoIngestion container. Since GVA elements are 
     }
     ```
 
- * `RTSP camera - Gstreamer ingestor with GVA elements`
+* `RTSP camera - Gstreamer ingestor with GVA elements`
 
       ```javascript
       {
@@ -38,7 +37,7 @@ This container is based out of VideoIngestion container. Since GVA elements are 
       }
       ```
 
- * `USB camera - Gstreamer ingestor with GVA elements`
+* `USB camera - Gstreamer ingestor with GVA elements`
 
       ```javascript
       {
@@ -47,7 +46,7 @@ This container is based out of VideoIngestion container. Since GVA elements are 
       }
       ```
 
- * `RTSP simulated - Gstreamer ingestor with GVA elements`
+* `RTSP simulated - Gstreamer ingestor with GVA elements`
 
       ```javascript
       {
