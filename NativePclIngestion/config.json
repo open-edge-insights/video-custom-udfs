@@ -1,5 +1,6 @@
 {
     "config": {
+	"cert_type": ["zmq"],
         "encoding": {
             "level": 95,
             "type": "jpeg"
