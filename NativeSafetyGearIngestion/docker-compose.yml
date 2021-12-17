@@ -62,8 +62,8 @@ services:
       - "/var/tmp:/var/tmp"
       - "/dev:/dev"
       - "/tmp:/tmp"
-      - ./Certificates/NativeSafetyGearIngestion:/Certificates/NativeSafetyGearIngestion
-      - ./Certificates/rootca:/Certificates/rootca
+      - ./Certificates/NativeSafetyGearIngestion:/run/secrets/NativeSafetyGearIngestion
+      - ./Certificates/rootca:/run/secrets/rootca
     device_cgroup_rules:
       # Default run - device-cgroup-rule='c 189:* rmw'
       # NCS2 run - device-cgroup-rule='c 209:* rmw'

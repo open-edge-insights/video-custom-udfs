@@ -66,8 +66,8 @@ services:
       - "vol_eii_socket:${SOCKET_DIR}"
       - "/dev:/dev"
       - "/tmp:/tmp"
-      - ./Certificates/NativeOneAPIIngestion:/Certificates/NativeOneAPIIngestion
-      - ./Certificates/rootca:/Certificates/rootca
+      - ./Certificates/NativeOneAPIIngestion:/run/secrets/NativeOneAPIIngestion
+      - ./Certificates/rootca:/run/secrets/rootca
     device_cgroup_rules:
       # Default run - device-cgroup-rule='c 189:* rmw'
       # NCS2 run - device-cgroup-rule='c 209:* rmw'

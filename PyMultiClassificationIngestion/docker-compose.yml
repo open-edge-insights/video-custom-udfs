@@ -62,8 +62,8 @@ services:
       - "/var/tmp:/var/tmp"
       - "/dev:/dev"
       - "/tmp:/tmp"
-      - ./Certificates/PyMultiClassificationIngestion:/Certificates/PyMultiClassificationIngestion
-      - ./Certificates/rootca:/Certificates/rootca
+      - ./Certificates/PyMultiClassificationIngestion:/run/secrets/PyMultiClassificationIngestion
+      - ./Certificates/rootca:/run/secrets/rootca
     device_cgroup_rules:
       # Default run - device-cgroup-rule='c 189:* rmw'
       # NCS2 run - device-cgroup-rule='c 209:* rmw'
