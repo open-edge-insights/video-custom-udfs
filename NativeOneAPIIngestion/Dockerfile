@@ -111,11 +111,7 @@ RUN wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCT
     apt update && \
     apt install -y intel-basekit
 
-COPY --from=builder /opt/intel/oneapi/vpl/2021.6.0/lib/cmake/* ${CMAKE_INSTALL_PREFIX}/lib/cmake/
-COPY --from=builder /opt/intel/oneapi/vpl/2021.6.0/lib/pkgconfig/* ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig/
-COPY --from=builder /opt/intel/oneapi/vpl/2021.6.0/lib/lib* ${CMAKE_INSTALL_PREFIX}/lib/
-COPY --from=builder /opt/intel/oneapi/intelpython/python3.7/envs/2021.4.0/lib/libsvml.so ${CMAKE_INSTALL_PREFIX}/lib/
-COPY --from=builder /opt/intel/oneapi/intelpython/python3.7/lib/* ${CMAKE_INSTALL_PREFIX}/lib/
+ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:/opt/intel/oneapi/intelpython/latest/lib
 
 ARG EII_USER_NAME
 RUN chown ${EII_USER_NAME}:${EII_USER_NAME} /app /var/tmp
