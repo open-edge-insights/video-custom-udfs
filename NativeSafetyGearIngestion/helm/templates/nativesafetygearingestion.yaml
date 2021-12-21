@@ -112,7 +112,7 @@ spec:
         {{- end }}
         {{ if eq .Values.env.DEV_MODE false}}
         - name: CONFIGMGR_CACERT
-          value: "/run/secrets/etcd/ca_certificate.pem"
+          value: "/run/secrets/etcd/cacert.pem"
         - name: CONFIGMGR_CERT
           value: "/run/secrets/etcd/NativeSafetyGearIngestion_client_certificate.pem"
         - name: CONFIGMGR_KEY
@@ -140,8 +140,8 @@ spec:
         secret:
           secretName: eii-certs
           items:
-          - key: ca_certificate.pem
-            path: ca_certificate.pem
+          - key: cacert.pem
+            path: cacert.pem
           - key: NativeSafetyGearIngestion_client_certificate.pem
             path: NativeSafetyGearIngestion_client_certificate.pem
           - key: NativeSafetyGearIngestion_client_key.pem
