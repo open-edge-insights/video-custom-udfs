@@ -16,5 +16,5 @@ Refer [udfs-README](https://github.com/open-edge-insights/video-common/blob/mast
 
 ### Known Issues/Limitations:
 
-> RealSense Software Device error for initial set of frames (non-blocking error)
-> Exception thorwn by PCL APIs for certain RealSense frames (non-blocking error)
+- RealSense Software Device error for initial set of frames (non-blocking error)
+- Exception thorwn by PCL APIs for certain RealSense frames (non-blocking error)
