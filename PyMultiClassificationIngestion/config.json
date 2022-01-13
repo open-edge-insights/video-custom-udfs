@@ -44,7 +44,7 @@
                 "Type": "zmq_ipc",
                 "EndPoint": "/EII/sockets",
                 "Topics": [
-                    "py_multi_calssification_results_stream"
+                    "py_multi_classification_results_stream"
                 ],
                 "AllowedClients": [
                     "*"
