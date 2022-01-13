@@ -77,10 +77,10 @@ spec:
         env:
         - name: AppName
           value: "nativeoneapiingestion"
+        - name:  RUN_AS_USER
+          value: 'eiiuser'
         - name: DEV_MODE
           value: '{{ .Values.env.DEV_MODE }}'
-        - name: RUN_AS_USER
-          value: 'eiiuser'
         - name: PROFILING_MODE
           value: '{{ .Values.env.PROFILING_MODE }}'
         - name: ETCD_HOST
