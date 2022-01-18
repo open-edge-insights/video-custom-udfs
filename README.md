@@ -218,6 +218,8 @@ Please find the ordered steps for deploying the Custom UDFs.
     - CustomUdfs/PyMultiClassificationIngestion
     - CustomUdfs/PySafetyGearAnalytics
     - CustomUdfs/PySafetyGearIngestion
+    - CustomUdfs/GVASafetyGearIngestion
+    - CustomUdfs/NativeOneAPIIngestion
     ```
 
     Run the following command:
@@ -229,29 +231,24 @@ Please find the ordered steps for deploying the Custom UDFs.
 
     **Note:**
     It is not mandatory to keep the custom Udfs in the CustomUdfs directory, but user must change the video-streaming-all-udfs.yml file accordingly to point the right path accordingly.
-    Additionally if it is placed under ***IEdgeInsights*** directory then the builder.py file automatically picks it to generate a consolidated Additionally if it is placed under ***IEdgeInsights*** directory then the builder.py file automatically picks it to generate a consolidated `IEdgeInsights/build/provision/config/eii_config.json` and `IEdgeInsights/build/docker-compose.yml` files.
+    Additionally if it is placed under ***IEdgeInsights*** directory then the builder.py file automatically picks it to generate a consolidated Additionally if it is placed under ***IEdgeInsights*** directory then the builder.py file automatically picks it to generate a consolidated `IEdgeInsights/build/eii_config.json` and `IEdgeInsights/build/docker-compose.yml` files.
 
-- After generation of consolidated ***eii_config.json*** and ***docker-compose.yml*** file, Run the below command to provision the UDF containers. As a pre-cautionary measure, User can cross check the afore-mentioned file to verify the sanity of the UDF specific config and service details.
-
-    ```bash
-    cd [WORKDIR]/IEdgeInsights/build/provision
-    sudo -E ./provision.sh  ../docker-compose.yml
-    ```
+- After generation of consolidated ***eii_config.json*** and ***docker-compose.yml*** file, Run the below command to run the usecase. As a pre-cautionary measure, User can cross check the afore-mentioned file to verify the sanity of the UDF specific config and service details.
 
 - Run the use case:
 
     ```bash
     cd [WORKDIR]/IEdgeInsights/build/
     # Build base images (needed for buidling native custom udf services)
-    docker-compose -f docker-compose-build.yml build ia_eiibase ia_common ia_video_common ia_openvino_base
+    docker-compose -f docker-compose-build.yml build ia_eiibase ia_common ia_video_common ia_openvino_base ia_configmgr_agent
     # Build custom udf services based on the usecase chosen above
-    docker-compose -f docker-compose-build.yml build ia_gva_safety_gear_ingestion ia_native_safety_gear_analytics ia_native_safety_gear_ingestion ia_python_multi_classification ia_python_safety_gear_analytics ia_python_safety_gear_ingestion
+    docker-compose -f docker-compose-build.yml build ia_gva_safety_gear_ingestion ia_native_safety_gear_analytics ia_native_safety_gear_ingestion ia_python_multi_classification ia_python_safety_gear_analytics ia_python_safety_gear_ingestion ia_native_oneapi_ingestion
     docker-compose up -d
     ```
 
 # Sample UDFs Directory
 
-In the CustomUdfs directory, there are 5 sample UDfs implemented and they related asshown below. These samples are created to showcase different use case.
+In the CustomUdfs directory, there are 5 sample UDfs implemented and they related as shown below. These samples are created to showcase different use case.
 
 ```bash
 .
@@ -262,6 +259,9 @@ In the CustomUdfs directory, there are 5 sample UDfs implemented and they relate
 
 ├── PySafetyGearAnalytics
 ├── PySafetyGearIngestion
+
+├── GVASafetyGearIngestion
+├── NativeOneAPIIngestion
 
 └── README.md
 
@@ -307,6 +307,12 @@ Refer [GVASafetyGearIngestion-README.md](./GVASafetyGearIngestion/README.md) for
   ```
 
   Here the models files placed under the `ref` directory on the hostsystem is copied to `./models/ref` path inside the container.
+
+## NativeOneAPIIngestion
+
+[*NativeOneAPIIngestion*](./NativeOneAPIIngestion) is a DPCPP based UDF container based out of VideoIngestion
+
+Refer [NativeOneAPIIngestion-README.md](./NativeOneAPIIngestion/README.md) for more information on the udf configs.
 
 ## NativePclIngestion
 
