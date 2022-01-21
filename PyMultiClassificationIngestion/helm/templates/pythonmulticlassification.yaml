@@ -77,8 +77,6 @@ spec:
         env:
         - name: AppName
           value: "PyMultiClassificationIngestion"
-        - name:  RUN_AS_USER
-          value: 'eiiuser'
         - name: DEV_MODE
           value: '{{ .Values.env.DEV_MODE }}'
         - name: PROFILING_MODE
@@ -125,7 +123,7 @@ spec:
       - name: {{ .Values.volumes.eii_socket.name }}
         persistentVolumeClaim:
           claimName: {{ .Values.volumes.eii_socket.name }}
-      {{- end }}        
+      {{- end }}
       - name: eii-dev
         hostPath:
           path: /dev
