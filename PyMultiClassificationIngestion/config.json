@@ -30,7 +30,7 @@
     "interfaces": {
         "Servers": [
             {
-                "Name": "py_multi_calssification",
+                "Name": "py_multi_classification",
                 "Type": "zmq_tcp",
                 "EndPoint": "0.0.0.0:64018",
                 "AllowedClients": [
