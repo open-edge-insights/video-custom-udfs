@@ -114,9 +114,9 @@ spec:
         - name: CONFIGMGR_CACERT
           value: "/run/secrets/etcd/cacert.pem"
         - name: CONFIGMGR_CERT
-          value: "/run/secrets/etcd/nativeoneapiingestion_client_certificate.pem"
+          value: "/run/secrets/etcd/NativeOneAPIIngestion_client_certificate.pem"
         - name: CONFIGMGR_KEY
-          value: "/run/secrets/etcd/nativeoneapiingestion_client_key.pem"
+          value: "/run/secrets/etcd/NativeOneAPIIngestion_client_key.pem"
         {{ end }}
 
       volumes:
@@ -142,8 +142,8 @@ spec:
           items:
           - key: cacert.pem
             path: cacert.pem
-          - key: nativeoneapiingestion_client_certificate.pem
-            path: nativeoneapiingestion_client_certificate.pem
-          - key: nativeoneapiingestion_client_key.pem
-            path: nativeoneapiingestion_client_key.pem
+          - key: NativeOneAPIIngestion_client_certificate.pem
+            path: NativeOneAPIIngestion_client_certificate.pem
+          - key: NativeOneAPIIngestion_client_key.pem
+            path: NativeOneAPIIngestion_client_key.pem
       {{ end }}

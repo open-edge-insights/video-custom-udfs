@@ -139,6 +139,7 @@ spec:
       - name: etcd-certs
         secret:
           secretName: eii-certs
+          items:
           - key: cacert.pem
             path: cacert.pem
           - key: PySafetyGearIngestion_client_certificate.pem
