@@ -73,6 +73,8 @@ spec:
           mountPath: /tmp
         - name: var-tmp
           mountPath: /var/tmp
+        - name: run-udev
+          mountPath: /run/udev
         {{ if eq .Values.env.DEV_MODE false}}
         - name: etcd-certs
           mountPath: /run/secrets/etcd/
@@ -146,6 +148,9 @@ spec:
       - name: var-tmp
         hostPath:
           path: /var/tmp
+       - name: run-udev
+        hostPath:
+          path: /run/udev
 
       {{ if eq .Values.env.DEV_MODE false}}
       - name: etcd-certs
