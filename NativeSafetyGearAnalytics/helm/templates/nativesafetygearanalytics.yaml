@@ -63,8 +63,10 @@ spec:
         - name: {{ .Values.volumes.eii_socket.name }}
           mountPath: {{ .Values.volumes.eii_socket.location }}
         {{- end }}
-        - name: eii-dev
+        - name: dev
           mountPath: /dev
+        - name: dev-shm
+          mountPath: /dev/shm
         - name: tmp
           mountPath: /tmp
         - name: var-tmp
@@ -123,9 +125,12 @@ spec:
         persistentVolumeClaim:
           claimName: {{ .Values.volumes.eii_socket.name }}
       {{- end }}
-      - name: eii-dev
+      - name: dev
         hostPath:
           path: /dev
+      - name: dev-shm
+        hostPath:
+          path: /dev/shm
       - name: tmp
         hostPath:
           path: /tmp
