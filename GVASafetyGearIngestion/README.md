@@ -24,7 +24,7 @@ This container is based out of VideoIngestion container. Since GVA elements are 
     ```javascript
     {
      "type": "gstreamer",
-     "pipeline" : "gencamsrc serial=<DEVICE_SERIAL_NUMBER> pixel-format=mono8 exposure-time=5000 exposure-mode=timed exposure-auto=off ! videoconvert ! video/x-raw,format=BGR ! gvadetect model=models/ref/frozen_inference_graph.xml ! appsink"
+     "pipeline" : "gencamsrc serial=<DEVICE_SERIAL_NUMBER> pixel-format=mono8 exposure-time=5000 exposure-mode=timed exposure-auto=off throughput-limit=300000000 ! videoconvert ! video/x-raw,format=BGR ! gvadetect model=models/ref/frozen_inference_graph.xml ! appsink"
     }
     ```
 
