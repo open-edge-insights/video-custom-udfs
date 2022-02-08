@@ -34,12 +34,11 @@ using namespace eii::msgbus;
 using namespace cl::sycl;
 
 dpcpp_blur_udf::dpcpp_blur_udf(config_t *config) : BaseUdf(config) {
-
   LOG_DEBUG_0("Initializing UDF...");
 
   height = config_get(config, "height");
-  if(height != NULL) {
-    if(height->type != CVT_INTEGER) {
+  if (height != NULL) {
+    if (height->type != CVT_INTEGER) {
       const char *err = "height type must be a integer";
       LOG_ERROR("%s", err);
       config_value_destroy(height);
@@ -52,8 +51,8 @@ dpcpp_blur_udf::dpcpp_blur_udf(config_t *config) : BaseUdf(config) {
   }
 
   width = config_get(config, "width");
-  if(width != NULL) {
-    if(width->type != CVT_INTEGER) {
+  if (width != NULL) {
+    if (width->type != CVT_INTEGER) {
       const char *err = "width type must be a integer";
       LOG_ERROR("%s", err);
       config_value_destroy(width);
@@ -71,31 +70,34 @@ dpcpp_blur_udf::dpcpp_blur_udf(config_t *config) : BaseUdf(config) {
 
 dpcpp_blur_udf::~dpcpp_blur_udf() {}
 
-UdfRetCode dpcpp_blur_udf::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *meta) {
-
+UdfRetCode dpcpp_blur_udf::process(cv::Mat &frame, cv::Mat &output,
+                                   msg_envelope_t *meta) {
   CV_Assert(frame.isContinuous());
   buffer<uint8_t, 2> frame_buf(frame.data, range<2>(frame.rows, frame.cols));
 
   // sycl_queue is submiting its items to the handler context for the job to be done
-  // Please refer sycl_queue documentation for more info: https://docs.oneapi.io/versions/latest/dpcpp/iface/queue.html
+  // Please refer sycl_queue documentation for more info:
+  // https://docs.oneapi.io/versions/latest/dpcpp/iface/queue.html
   sycl_queue.submit([&](handler& h) {
     auto pixels = frame_buf.get_access<access::mode::read_write>(h);
-    // sycl_inverse_class is used to inverse each pixel which is used in the parallel execution.
+    // sycl_inverse_class is used to inverse each pixel which is used
+    // in the parallel execution.
     h.parallel_for<class sycl_inverse_kernel>(range<2>(1, 1), [=](item<2> item) {
         // These data is written back to the same frame buffer where actual frame data resides
         uint8_t v = pixels[item];
         pixels[item] = ~v;
     });
 
-    // We just reusing OpenCL context/device/queue from SYCL here and utilizing the same queue for blurring
-    cv::blur(frame, output, cv::Size(height->body.integer, width->body.integer));
+    // We just reusing OpenCL context/device/queue from SYCL here
+    // and utilizing the same queue for blurring
+    cv::blur(frame, output, cv::Size(height->body.integer,
+                                     width->body.integer));
   });
   sycl_queue.wait_and_throw();
 
   return UdfRetCode::UDF_OK;
 }
-extern "C"
-{
+extern "C" {
 /**
  * ease the process of finding UDF symbol from shared object.
  *
@@ -105,5 +107,4 @@ extern "C"
         eii::custom_udfs::dpcpp_blur_udf* udf = new eii::custom_udfs::dpcpp_blur_udf(config);
         return (void *)udf;
     }
-
-}; // extern "C"
+};  // extern "C"

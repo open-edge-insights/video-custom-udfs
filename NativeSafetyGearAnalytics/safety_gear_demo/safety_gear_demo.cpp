@@ -22,24 +22,25 @@
  * @file
  * @brief SafetyGear Demo UDF Implementation, ported to EII from OpenVINO.
  */
+#include "safety_gear_demo.h"
+
+#include <eii/utils/logger.h>
+#include <eii/utils/config.h>
 #include <iostream>
 #include <string>
 #include <memory>
 #include <vector>
 #include <algorithm>
 #include <map>
-#include <eii/utils/logger.h>
-#include <eii/utils/config.h>
 #include <opencv2/opencv.hpp>
 
-#include "safety_gear_demo.h"
 
 using namespace eii::custom_udfs;
 using namespace eii::msgbus;
 
 
 SafetyDemo::SafetyDemo(config_t *config) : BaseUdf(config) {
-    // --------------------------- Load inference engine -------------------------------------
+    // -------------------- Load inference engine -----------------------------
     LOG_DEBUG("Initializing UDF, Entered constructor...");
     Core ie;
     config_value_t *path_to_bin = NULL;
@@ -50,11 +51,11 @@ SafetyDemo::SafetyDemo(config_t *config) : BaseUdf(config) {
         const char *err = " Config passed to UDF is NULL";
         LOG_ERROR("%s", err);
         throw err;
-   }
+    }
 
     path_to_xml = config_get(config, "model_xml");
-    if(path_to_xml != NULL) {
-        if(path_to_xml->type != CVT_STRING) {
+    if (path_to_xml != NULL) {
+        if (path_to_xml->type != CVT_STRING) {
             const char *err = "IR file path must be a string";
             config_value_destroy(path_to_xml);
             throw err;
@@ -65,8 +66,8 @@ SafetyDemo::SafetyDemo(config_t *config) : BaseUdf(config) {
         throw err;
     }
     path_to_bin = config_get(config, "model_bin");
-    if(path_to_bin != NULL) {
-        if(path_to_bin->type != CVT_STRING) {
+    if (path_to_bin != NULL) {
+        if (path_to_bin->type != CVT_STRING) {
             const char * err = "IR file path must be a string";
             LOG_ERROR("%s", err);
             config_value_destroy(path_to_xml);
@@ -79,8 +80,8 @@ SafetyDemo::SafetyDemo(config_t *config) : BaseUdf(config) {
         throw err;
     }
     device_type = config_get(config, "device");
-    if(device_type != NULL) {
-        if(device_type->type != CVT_STRING) {
+    if (device_type != NULL) {
+        if (device_type->type != CVT_STRING) {
             const char * err = "device type must be a string";
             LOG_ERROR("%s", err);
             config_value_destroy(path_to_xml);
@@ -100,30 +101,31 @@ SafetyDemo::SafetyDemo(config_t *config) : BaseUdf(config) {
         (std::string("GPU").compare(device_type->body.string) == 0) ||
         (std::string("HDDL").compare(device_type->body.string) == 0) ||
         (std::string("MYRIAD").compare(device_type->body.string) == 0) ||
-	(std::string("HETERO:FPGA,CPU").compare(device_type->body.string) == 0) ||
-	(std::string("HETERO:FPGA,GPU").compare(device_type->body.string) == 0) ||
-	(std::string("HETERO:FPGA,CPU,GPU").compare(device_type->body.string) == 0)) {
+        (std::string("HETERO:FPGA,CPU").compare(device_type->body.string) == 0) ||
+        (std::string("HETERO:FPGA,GPU").compare(device_type->body.string) == 0) ||
+        (std::string("HETERO:FPGA,CPU,GPU").compare(device_type->body.string) == 0)) {
      #ifdef WITH_EXTENSIONS
         ie.AddExtension(std::make_shared<Extensions::Cpu::CpuExtensions>(), "CPU");
      #endif
     } else {
-        //TODO: Will add support for GPU and improvise the above "if" caluse.
+        // TODO: Will add support for GPU and improvise the above "if" caluse.
         const char *err = "Not a supported device to run Analytics";
         LOG_ERROR("Not a supported device: %s to run Analytics",
                   device_type->body.string);
         throw err;
     }
     LOG_DEBUG("COMPLETED LOADING CPU EXTENSION....");
-    LOG_DEBUG("Loading IR files: \n\txml: %s, \n\tbin: %s\n",\
+    LOG_DEBUG("Loading IR files: \n\txml: %s, \n\tbin: %s\n", \
                path_to_xml->body.string, path_to_bin->body.string);
 
     InferenceEngine::Core core;
     /** Read network model **/
-    m_network = core.ReadNetwork(path_to_xml->body.string, path_to_bin->body.string);
+    m_network = core.ReadNetwork(path_to_xml->body.string, \
+                                 path_to_bin->body.string);
 
     LOG_DEBUG("COMPLETED scanning IR files....");
 
-    // --------------------------- Prepare input blobs --------------------------------------------------
+    // ------------------------ Prepare input blobs ---------------------------
     LOG_INFO_0("Preparing input blobs");
 
     /** Taking information about all topology inputs **/
@@ -149,7 +151,8 @@ SafetyDemo::SafetyDemo(config_t *config) : BaseUdf(config) {
 
             Precision inputPrecision = Precision::FP32;
             item.second->setPrecision(inputPrecision);
-            if ((item.second->getTensorDesc().getDims()[1] != 3 && item.second->getTensorDesc().getDims()[1] != 6)) {
+            if ((item.second->getTensorDesc().getDims()[1] != 3 &&
+                 item.second->getTensorDesc().getDims()[1] != 6)) {
                 const char *err = "Invalid input info. Should be 3 or 6 values length";
                 LOG_ERROR("%s", err);
                 throw err;
@@ -163,7 +166,7 @@ SafetyDemo::SafetyDemo(config_t *config) : BaseUdf(config) {
         m_input_info = m_inputs_info.begin()->second;
     }
 
-    // --------------------------- 6. Prepare output blobs -------------------------------------------------
+    // ------------------------ 6. Prepare output blobs ------------------------
     LOG_INFO_0("Preparing output blobs");
 
     OutputsDataMap outputsInfo(m_network.getOutputsInfo());
@@ -217,13 +220,11 @@ SafetyDemo::SafetyDemo(config_t *config) : BaseUdf(config) {
     LOG_INFO("Creating inference request");
     m_infer_request = executable_network.CreateInferRequest();
     LOG_INFO_0("COMPLETED UDF INTITIALIZATION....");
-
 }
 
 SafetyDemo::~SafetyDemo() {}
 
 UdfRetCode SafetyDemo::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *meta) {
-
     LOG_DEBUG_0("Entered Native Safety Demo Udf::process() function...");
 
     msgbus_ret_t ret;
@@ -252,12 +253,12 @@ UdfRetCode SafetyDemo::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *
 
     unsigned char *data = static_cast<unsigned char *>(imageInput->buffer());
 
-    //Iterate over all pixel in image (b,g,r)
+    // Iterate over all pixel in image (b,g,r)
     LOG_DEBUG("Start copying to inference buffer...")
     for (size_t pid = 0; pid < image_size; pid++) {
-        //Iterate over all channels
+        // Iterate over all channels
         for (size_t ch = 0; ch < num_channels; ++ch) {
-            //[images stride + channels stride + pixel id] all in bytes
+            // [images stride + channels stride + pixel id] all in bytes
             data[ch * image_size + pid] = imagesData[pid * num_channels + ch];
         }
     }
@@ -272,16 +273,16 @@ UdfRetCode SafetyDemo::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *
         p[0] = static_cast<float>(m_inputs_info[m_image_input_name]->getTensorDesc().getDims()[2]);
         p[1] = static_cast<float>(m_inputs_info[m_image_input_name]->getTensorDesc().getDims()[3]);
         for (size_t k = 2; k < imInfoDim; k++) {
-            p[k] = 1.0f; // all scale factors are set to 1.0
+            p[k] = 1.0f;  // all scale factors are set to 1.0
         }
     }
 
-    // --------------------------- Do inference ---------------------------------------------------------
+    // --------------------------- Do inference ---------------------------------------
     LOG_DEBUG("Start inference...");
     m_infer_request.Infer();
-    // -----------------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------
 
-    // --------------------------- Process output -------------------------------------------------------
+    // --------------------------- Process output ---------------------------------------
     LOG_DEBUG("Processing output blobs....");
     const Blob::Ptr output_blob = m_infer_request.GetBlob(m_output_name);
     const float *detection = static_cast<PrecisionTrait<Precision::FP32>::value_type *>(output_blob->buffer());
@@ -389,7 +390,7 @@ UdfRetCode SafetyDemo::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *
             }
 
             ret = msgbus_msg_envelope_elem_array_add(br, xmax_int);
-            if(ret != MSG_SUCCESS) {
+            if (ret != MSG_SUCCESS) {
                 LOG_ERROR_0("Failed to put xmax");
                 msgbus_msg_envelope_elem_destroy(defects_arr);
                 msgbus_msg_envelope_elem_destroy(tl);
@@ -398,7 +399,7 @@ UdfRetCode SafetyDemo::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *
             }
 
             ret = msgbus_msg_envelope_elem_array_add(br, ymax_int);
-            if(ret != MSG_SUCCESS) {
+            if (ret != MSG_SUCCESS) {
                 LOG_ERROR_0("Failed to put ymax");
                 msgbus_msg_envelope_elem_destroy(defects_arr);
                 msgbus_msg_envelope_elem_destroy(tl);
@@ -425,7 +426,7 @@ UdfRetCode SafetyDemo::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *
             }
 
             ret = msgbus_msg_envelope_elem_object_put(roi, "br", br);
-            if(ret != MSG_SUCCESS) {
+            if (ret != MSG_SUCCESS) {
                 LOG_ERROR_0("Failed to put br object in roi");
                 msgbus_msg_envelope_elem_destroy(defects_arr);
                 msgbus_msg_envelope_elem_destroy(roi);
@@ -442,7 +443,7 @@ UdfRetCode SafetyDemo::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *
             }
 
             ret = msgbus_msg_envelope_elem_object_put(roi, "type", type);
-            if(ret != MSG_SUCCESS) {
+            if (ret != MSG_SUCCESS) {
                 LOG_ERROR_0("Failed to label in roi");
                 msgbus_msg_envelope_elem_destroy(defects_arr);
                 msgbus_msg_envelope_elem_destroy(roi);
@@ -451,7 +452,7 @@ UdfRetCode SafetyDemo::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *
             }
 
             ret = msgbus_msg_envelope_elem_array_add(defects_arr, roi);
-            if(ret != MSG_SUCCESS) {
+            if (ret != MSG_SUCCESS) {
                 LOG_ERROR_0("Failed to put roi to defect list");
                 msgbus_msg_envelope_elem_destroy(defects_arr);
                 msgbus_msg_envelope_elem_destroy(roi);
@@ -462,9 +463,9 @@ UdfRetCode SafetyDemo::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *
     }
 
     ret = msgbus_msg_envelope_put(meta, "defects", defects_arr);
-    if(ret != MSG_SUCCESS) {
+    if (ret != MSG_SUCCESS) {
         LOG_ERROR_0("Failed to defect array in meta config");
-        //Element should be released recursively.
+        // Element should be released recursively.
         msgbus_msg_envelope_elem_destroy(defects_arr);
         return UdfRetCode::UDF_ERROR;
     }
@@ -473,17 +474,14 @@ UdfRetCode SafetyDemo::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *
     return UdfRetCode::UDF_OK;
 }
 
-extern "C"
-{
-
+extern "C" {
 /**
  * ease the process of finding UDF symbol from shared object.
  *
  * @return void*
  */
     void *initialize_udf(config_t *config) {
-			SafetyDemo *udf = new SafetyDemo(config);
+            SafetyDemo *udf = new SafetyDemo(config);
         return (void *)udf;
     }
-
-}; // extern "C"
+};  // extern "C"

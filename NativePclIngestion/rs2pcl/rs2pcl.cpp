@@ -76,7 +76,7 @@ UdfRetCode rs2pcl::process(Frame* frame) {
          * if XYZ formatted point cloud is required.
          */
 
-        //auto pcl_points = rs2pcl::points_to_pcl(m_points);
+        // auto pcl_points = rs2pcl::points_to_pcl(m_points);
 
         /*
          * Generating point cloud formatted as per PCL opensource lib.
@@ -107,7 +107,6 @@ UdfRetCode rs2pcl::process(Frame* frame) {
         LOG_DEBUG("%s file generated", cloudFile.c_str());
         */
         return UdfRetCode::UDF_OK;
-
     } catch (const rs2::error &e) {
         LOG_ERROR("RealSense error calling %s( %s ):'\n%s",
                   e.get_failed_function(), e.get_failed_args(), e.what());
@@ -116,11 +115,9 @@ UdfRetCode rs2pcl::process(Frame* frame) {
         LOG_ERROR("Exception occured in native pcl udf process function");
         throw;
     }
-
 }
 
-extern "C"
-{
+extern "C" {
 /**
  * ease the process of finding UDF symbol from shared object.
  *
@@ -130,5 +127,4 @@ extern "C"
         eii::custom_udfs::rs2pcl* udf = new eii::custom_udfs::rs2pcl(config);
         return (void *)udf;
     }
-
-}; // extern "C"
+};  // extern "C"
