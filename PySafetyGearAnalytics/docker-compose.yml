@@ -56,8 +56,8 @@ services:
       - "vol_eii_socket:${SOCKET_DIR}"
       - "/dev:/dev"
       - "/tmp:/tmp"
-      - ./Certificates/PySafetyGearAnalytics:/run/secrets/PySafetyGearAnalytics
-      - ./Certificates/rootca:/run/secrets/rootca
+      - ./Certificates/PySafetyGearAnalytics:/run/secrets/PySafetyGearAnalytics:ro
+      - ./Certificates/rootca/cacert.pem:/run/secrets/rootca/cacert.pem:ro
     device_cgroup_rules:
       # Default run - device-cgroup-rule='c 189:* rmw'
       # NCS2 run - device-cgroup-rule='c 209:* rmw'

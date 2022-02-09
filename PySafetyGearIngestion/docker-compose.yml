@@ -63,8 +63,8 @@ services:
       - "/var/tmp:/var/tmp"
       - "/dev:/dev"
       - "/tmp:/tmp"
-      - ./Certificates/PySafetyGearIngestion:/run/secrets/PySafetyGearIngestion
-      - ./Certificates/rootca:/run/secrets/rootca
+      - ./Certificates/PySafetyGearIngestion:/run/secrets/PySafetyGearIngestion:ro
+      - ./Certificates/rootca/cacert.pem:/run/secrets/rootca/cacert.pem:ro
     device_cgroup_rules:
       # Default run - device-cgroup-rule='c 189:* rmw'
       # NCS2 run - device-cgroup-rule='c 209:* rmw'
