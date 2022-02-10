@@ -212,20 +212,20 @@ SafetyDemo::SafetyDemo(config_t *config) : BaseUdf(config) {
 
     // ---------------------------Loading model to the device --------
     LOG_INFO("Loading model to the device");
-    ExecutableNetwork executable_network =
-        ie.LoadNetwork(m_network, device_type->body.string);
+    m_executable_network = ie.LoadNetwork(m_network, device_type->body.string);
     // -------------------------------------------------------------------
 
-    // --------------------------- Create infer request ---------------
-    LOG_INFO("Creating inference request");
-    m_infer_request = executable_network.CreateInferRequest();
-    LOG_INFO_0("COMPLETED UDF INTITIALIZATION....");
 }
 
 SafetyDemo::~SafetyDemo() {}
 
 UdfRetCode SafetyDemo::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *meta) {
     LOG_DEBUG_0("Entered Native Safety Demo Udf::process() function...");
+
+    // --------------------------- Create infer request ---------------
+    LOG_DEBUG_0("Creating inference request");
+    InferRequest infer_request = m_executable_network.CreateInferRequest();
+    LOG_DEBUG_0("COMPLETED UDF INTITIALIZATION....");
 
     msgbus_ret_t ret;
     /** Collect images data ptrs **/
@@ -245,7 +245,7 @@ UdfRetCode SafetyDemo::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *
     }
 
     /** Creating input blob **/
-    Blob::Ptr imageInput = m_infer_request.GetBlob(m_image_input_name);
+    Blob::Ptr imageInput = infer_request.GetBlob(m_image_input_name);
 
     /** Filling input tensor with images. First b channel, then g and r channels **/
     size_t num_channels = imageInput->getTensorDesc().getDims()[1];
@@ -265,7 +265,7 @@ UdfRetCode SafetyDemo::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *
     LOG_DEBUG("Copied the image to inference buffer")
 
     if (m_image_info_input_name != "") {
-        Blob::Ptr input2 = m_infer_request.GetBlob(m_image_info_input_name);
+        Blob::Ptr input2 = infer_request.GetBlob(m_image_info_input_name);
         auto imInfoDim = m_inputs_info.find(m_image_info_input_name)->second->getTensorDesc().getDims()[1];
 
         /** Fill input tensor with values **/
@@ -279,12 +279,12 @@ UdfRetCode SafetyDemo::process(cv::Mat &frame, cv::Mat &output, msg_envelope_t *
 
     // --------------------------- Do inference ---------------------------------------
     LOG_DEBUG("Start inference...");
-    m_infer_request.Infer();
-    // ---------------------------------------------------------------------------------
+    infer_request.Infer();
+    // -----------------------------------------------------------------------------------------------------
 
     // --------------------------- Process output ---------------------------------------
     LOG_DEBUG("Processing output blobs....");
-    const Blob::Ptr output_blob = m_infer_request.GetBlob(m_output_name);
+    const Blob::Ptr output_blob = infer_request.GetBlob(m_output_name);
     const float *detection = static_cast<PrecisionTrait<Precision::FP32>::value_type *>(output_blob->buffer());
 
     msg_envelope_elem_body_t *defects_arr = msgbus_msg_envelope_new_array();

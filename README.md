@@ -11,6 +11,11 @@
 
 This document describes the new approach of creating UDFs and using them inside the EII framework. Unlike [The UDF Writing Guide](https://github.com/open-edge-insights/video-common/blob/master/udfs/HOWTO_GUIDE_FOR_WRITING_UDF.md) which specifically emphasizes on the coding aspects(callbacks) of the UDFs, this document describes the workflow of a  custom UDF.
 
+For usage of OpenVINO Inference Engine APIs, refer [OpenVINO-Documentation](https://docs.openvino.ai/2021.4/documentation.html) and [OpenVINO-API-Reference](https://docs.openvino.ai/2021.4/api/api_reference.html). Depending the user requirement one can select the suitable APIs. For instance in order to start inference one can select either the synchronous or asynchronous method of InferRequest class. The following sample video custom udfs leverages OpenVINO Inference Engine APIs:
+> - [NativeSafetyGearAnalytics](./NativeSafetyGearAnalytics)
+> - [PySafetyGearAnalytics](./PySafetyGearAnalytics)
+> - [PyMultiClassificationIngestion](./PyMultiClassificationIngestion)
+
 Currently the UDFs are to be created inside [udfs-path](https://github.com/open-edge-insights/video-common/tree/master/udfs) of EII build environment so that it can get compiled into the VI(Video Ingestion) & VA(Video Analytics) containers. In addition to aforementioned approach,each UDF can be built as an independent container based out of VI(VideoIngestion) or VA(VideoAnalytics) container image. This additional method has multiple benefits, listing some of them below:
 
 - With increased number of sample UDFs, VI and VA need not grow large in size because of the bloated Algo artifacts.
