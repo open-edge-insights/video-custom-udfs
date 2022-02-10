@@ -76,9 +76,6 @@ class Udf:
             self.inputBlob = next(iter(self.neuralNet.input_info))
             self.outputBlob = next(iter(self.neuralNet.outputs))
             self.neuralNet.batch_size = 1
-            self.executionNet = self.ie.load_network(network=self.neuralNet,
-                                                     device_name=self.
-                                                     device.upper())
 
         self.profiling = bool(strtobool(os.environ['PROFILING_MODE']))
 
@@ -87,8 +84,13 @@ class Udf:
         """Reads the image frame from input queue for classifier
         and classifies against the specified reference image.
         """
+
         if self.profiling is True:
             metadata['ts_va_classify_entry'] = time.time()*1000
+
+        executionNet = self.ie.load_network(network=self.neuralNet,
+                                                     device_name=self.
+                                                     device.upper())
 
         defects = []
         d_info = []
@@ -105,73 +107,66 @@ class Udf:
         # Change data layout from HWC to CHW
         in_frame = in_frame.transpose((2, 0, 1))
         in_frame = in_frame.reshape((n, c, h, w))
+        executionNet.infer(inputs={self.inputBlob: in_frame})
 
-        self.lock.acquire()
-        self.executionNet.infer(inputs={
-            self.inputBlob: in_frame})
-        self.lock.release()
+        inf_end = time.time()
+        det_time = inf_end - inf_start
+        fps = str("%.2f" % (1/det_time))
 
-        if self.executionNet.requests[cur_request_id].wait(-1) == 0:
-            inf_end = time.time()
-            det_time = inf_end - inf_start
-            fps = str("%.2f" % (1/det_time))
+        # Parse detection results of the current request
+        res = executionNet.requests[cur_request_id].outputs[
+            self.outputBlob]
 
-            # Parse detection results of the current request
-            self.lock.acquire()
-            res = self.executionNet.requests[cur_request_id].outputs[
-                self.outputBlob]
-            self.lock.release()
+        for obj in res[0][0]:
+            # obj[1] representing the category of the object detection
+            # Draw only objects when probability more than specified
+            # threshold represented by obj[2]
 
-            for obj in res[0][0]:
-                # obj[1] representing the category of the object detection
-                # Draw only objects when probability more than specified
-                # threshold represented by obj[2]
+            if obj[1] == 1 and obj[2] > 0.57:
+                xmin = int(obj[3] * initial_w)
+                ymin = int(obj[4] * initial_h)
+                xmax = int(obj[5] * initial_w)
+                ymax = int(obj[6] * initial_h)
+                class_id = int(obj[1])
+                prob = obj[2]
 
-                if obj[1] == 1 and obj[2] > 0.57:
-                    xmin = int(obj[3] * initial_w)
-                    ymin = int(obj[4] * initial_h)
-                    xmax = int(obj[5] * initial_w)
-                    ymax = int(obj[6] * initial_h)
-                    class_id = int(obj[1])
-                    prob = obj[2]
+                defects.append({'type': safety_helmet,
+                                'tl': (xmin, ymin),
+                                'br': (xmax, ymax)})
 
-                    defects.append({'type': safety_helmet,
-                                    'tl': (xmin, ymin),
-                                    'br': (xmax, ymax)})
+            if obj[1] == 2 and obj[2] > 0.525:
+                xmin = int(obj[3] * initial_w)
+                ymin = int(obj[4] * initial_h)
+                xmax = int(obj[5] * initial_w)
+                ymax = int(obj[6] * initial_h)
+                class_id = int(obj[1])
+                prob = obj[2]
 
-                if obj[1] == 2 and obj[2] > 0.525:
-                    xmin = int(obj[3] * initial_w)
-                    ymin = int(obj[4] * initial_h)
-                    xmax = int(obj[5] * initial_w)
-                    ymax = int(obj[6] * initial_h)
-                    class_id = int(obj[1])
-                    prob = obj[2]
+                defects.append({'type': safety_jacket,
+                                'tl': (xmin, ymin),
+                                'br': (xmax, ymax)})
 
-                    defects.append({'type': safety_jacket,
-                                    'tl': (xmin, ymin),
-                                    'br': (xmax, ymax)})
+            if obj[1] == 3 and obj[2] > 0.3:
+                xmin = int(obj[3] * initial_w)
+                ymin = int(obj[4] * initial_h)
+                xmax = int(obj[5] * initial_w)
+                ymax = int(obj[6] * initial_h)
+                class_id = int(obj[1])
+                prob = obj[2]
 
-                if obj[1] == 3 and obj[2] > 0.3:
-                    xmin = int(obj[3] * initial_w)
-                    ymin = int(obj[4] * initial_h)
-                    xmax = int(obj[5] * initial_w)
-                    ymax = int(obj[6] * initial_h)
-                    class_id = int(obj[1])
-                    prob = obj[2]
+                defects.append({'type': safe, 'tl': (xmin, ymin),
+                                'br': (xmax, ymax)})
 
-                    defects.append({'type': safe, 'tl': (xmin, ymin),
-                                    'br': (xmax, ymax)})
+            if obj[1] == 4 and obj[2] > 0.35:
+                xmin = int(obj[3] * initial_w)
+                ymin = int(obj[4] * initial_h)
+                xmax = int(obj[5] * initial_w)
+                ymax = int(obj[6] * initial_h)
+                class_id = int(obj[1])
+                prob = obj[2]
 
-                if obj[1] == 4 and obj[2] > 0.35:
-                    xmin = int(obj[3] * initial_w)
-                    ymin = int(obj[4] * initial_h)
-                    xmax = int(obj[5] * initial_w)
-                    ymax = int(obj[6] * initial_h)
-                    class_id = int(obj[1])
-                    prob = obj[2]
-
-                    defects.append({'type': violation, 'tl': (xmin, ymin),
-                                    'br': (xmax, ymax)})
+                defects.append({'type': violation, 'tl': (xmin, ymin),
+                                'br': (xmax, ymax)})
 
         metadata["defects"] = defects
 

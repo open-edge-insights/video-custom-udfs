@@ -44,8 +44,8 @@ namespace eii {
             private:
                 // Convolutional Neural network object to represent IR files
                 CNNNetwork m_network;
-                //Inference request object for submitting image
-                InferRequest m_infer_request;
+                // Executable Network
+                ExecutableNetwork m_executable_network;
                 // First tensor's image input name
                 std::string m_image_input_name;
                 // Input image name for different model type.(input shape = 2)
@@ -60,10 +60,6 @@ namespace eii {
                 int m_object_size;
                 //Maximum number of batches can run in paralell.
                 int m_max_proposal_count;
-                // Executable Netrwork
-                ExecutableNetwork m_executable_network;
-                // Mutex Variable
-                std::mutex m_mutex;
 
             public:
                 SafetyDemo(config_t *config);
