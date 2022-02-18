@@ -98,8 +98,6 @@ ARG CMAKE_INSTALL_PREFIX
 
 ENV DEBIAN_FRONTEND="noninteractive"
 
-RUN apt-get update && \
-    apt-get install -y libpcl-dev
 
 COPY --from=builder $ARTIFACTS/lib ${CMAKE_INSTALL_PREFIX}/lib
 COPY --from=builder $ARTIFACTS/dpcpp_blur_udf $ARTIFACTS/dpcpp_blur_udf
