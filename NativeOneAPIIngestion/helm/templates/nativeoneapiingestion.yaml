@@ -80,7 +80,7 @@ spec:
 
         env:
         - name: AppName
-          value: "nativeoneapiingestion"
+          value: "NativeOneAPIIngestion"
         - name: DEV_MODE
           value: '{{ .Values.env.DEV_MODE }}'
         - name: PROFILING_MODE
