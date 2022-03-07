@@ -9,13 +9,14 @@ This container is based out of VideoIngestion container. Since GVA elements are 
         "type": "gstreamer",
         "pipeline": "multifilesrc loop=TRUE stop-index=0 location=./test_videos/Safety_Full_Hat_and_Vest.avi ! h264parse ! decodebin ! videoconvert ! video/x-raw,format=BGR ! gvadetect model=models/ref/frozen_inference_graph.xml ! appsink"
       }
+      ```
 
 * `Generic Plugin - Gstreamer ingestor with GVA elements`
 
     ```javascript
      {
        "type": "gstreamer",
-       "pipeline": "gencamsrc serial=<DEVICE_SERIAL_NUMBER> pixel-format=<PIXEL_FORMAT> exposure-time=5000 exposure-mode=timed exposure-auto=off ! vaapipostproc format=bgrx ! videoconvert !  video/x-raw,format=BGR ! gvadetect model=models/ref/frozen_inference_graph.xml ! appsink"
+       "pipeline": "gencamsrc serial=<DEVICE_SERIAL_NUMBER> pixel-format=<PIXEL_FORMAT> exposure-time=5000 exposure-mode=timed exposure-auto=off throughput-limit=300000000 ! vaapipostproc format=bgrx ! videoconvert !  video/x-raw,format=BGR ! gvadetect model=models/ref/frozen_inference_graph.xml ! appsink"
      }
     ```
 
