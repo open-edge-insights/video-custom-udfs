@@ -188,16 +188,9 @@ For ingestor related configs refer [VideoIngestion-README](https://github.com/op
         privileged: true
         devices:
           - "/dev/:/dev/"
-        secrets:                                                             <<<<< In the PROD mode the "secret" section need to be defined as described.
-          - ca_etcd
-          - etcd_PyMultiClassification_cert
-          - etcd_PyMultiClassification_key
-
-    secrets:
-      etcd_PyMultiClassification_cert:                                       <<<<< The certificate mentioned below are created during provision step
-        file: provision/Certificates/PyMultiClassificationIngestion/PyMultiClassification_client_certificate.pem
-      etcd_PyMultiClassification_key:
-        file: provision/Certificates/PyMultiClassificationIngestion/PyMultiClassification_client_key.pem
+        volumes:                                                             <<<<< In the PROD mode the "volumes" section need to be defined as described.
+          - ./Certificates/PyMultiClassificationIngestion:/run/secrets/PyMultiClassificationIngestion:ro
+          - ./Certificates/rootca/cacert.pem:/run/secrets/rootca/cacert.pem:ro
     ```
 
 - ## *UDF core-logic Directory*
