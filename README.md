@@ -251,7 +251,7 @@ For deploying the Custom UDFs, complete the following steps:
     docker-compose -f docker-compose-build.yml build ia_eiibase ia_common ia_video_common ia_openvino_base ia_configmgr_agent
     # Build custom udf services based on the use case selected
     docker-compose -f docker-compose-build.yml build ia_gva_safety_gear_ingestion ia_native_safety_gear_analytics ia_native_safety_gear_ingestion   ia_python_multi_classificationia_python_safety_gear_analytics ia_python_safety_gear_ingestion ia_native_oneapi_ingestion
-    docker-compose up -d
+    ./eii_start.sh
     ```
 
 ## Sample UDFs Directory
