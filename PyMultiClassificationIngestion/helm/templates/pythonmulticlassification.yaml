@@ -56,8 +56,6 @@ spec:
       - name: ia-python-multi-classification
         image: {{ .Values.DOCKER_REGISTRY }}ia_python_multi_classification:{{ .Values.EII_VERSION }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
-        securityContext:
-          privileged: true
         volumeMounts:
         {{- if eq .Values.config.pythonmulticlassification.IPC true}}
         - name: {{ .Values.volumes.eii_socket.name }}

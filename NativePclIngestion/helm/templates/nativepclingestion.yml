@@ -58,8 +58,6 @@ spec:
       - name: ia-native-pcl-ingestion
         image: {{ .Values.DOCKER_REGISTRY }}native_pcl_ingestion:{{ .Values.EII_VERSION }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
-        securityContext:
-          privileged: true
         volumeMounts:
         {{- if eq .Values.config.nativepclingestion.IPC true}}
         - name: {{ .Values.volumes.eii_socket.name }}
