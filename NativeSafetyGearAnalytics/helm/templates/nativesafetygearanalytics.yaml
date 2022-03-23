@@ -56,8 +56,6 @@ spec:
       - name: ia-native-safety-gear-analytics
         image: {{ .Values.DOCKER_REGISTRY }}ia_native_safety_gear_analytics:{{ .Values.EII_VERSION }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
-        securityContext:
-          privileged: true
         volumeMounts:
         {{- if eq .Values.config.nativesafetygearanalytics.IPC true}}
         - name: {{ .Values.volumes.eii_socket.name }}
