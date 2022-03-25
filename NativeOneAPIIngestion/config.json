@@ -6,7 +6,11 @@
             "type": "jpeg"
         },
         "ingestor": {
-            "type": "realsense"
+            "loop_video": true,
+            "pipeline": "./test_videos/pcb_d2000.avi",
+            "poll_interval": 0.2,
+            "queue_size": 10,
+            "type": "opencv"
         },
         "max_workers": 4,
         "sw_trigger": {
@@ -14,17 +18,20 @@
         },
         "udfs": [
             {
-                "name": "rs2pcl",
-                "type": "raw_native"
+                "name": "dpcpp_blur_udf",
+                "type": "native",
+                "height" : 50,
+                "width" : 50
             }
         ]
+
     },
     "interfaces": {
         "Servers": [
             {
-                "Name": "native_pcl_ingestion",
+                "Name": "native_one_api",
                 "Type": "zmq_tcp",
-                "EndPoint": "0.0.0.0:64023",
+                "EndPoint": "0.0.0.0:64030",
                 "AllowedClients": [
                     "*"
                 ]
@@ -36,7 +43,7 @@
                 "Type": "zmq_ipc",
                 "EndPoint": "/EII/sockets",
                 "Topics": [
-                    "native_pcl_results_stream"
+                    "dpcpp_oneapi_blurr"
                 ],
                 "AllowedClients": [
                     "*"

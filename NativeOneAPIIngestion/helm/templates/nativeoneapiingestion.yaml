@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Intel Corporation.
+# Copyright (c) 2022 Intel Corporation.
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,45 +21,43 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.config.gvasafetygearingestion.name }}
+  name: {{ .Values.config.nativeoneapiingestion.name }}
   namespace: {{ .Values.namespace }}
 spec:
   ports:
-  - port: {{ .Values.config.gvasafetygearingestion.publish_port }}
+  - port: {{ .Values.config.nativeoneapiingestion.publish_port }}
     name: publisher-port
-  - port: {{ .Values.config.gvasafetygearingestion.server_port }}
-    name: server-port
   selector:
-    app: gvasafetygearingestion
+    app: nativeoneapiingestion
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: gvasafetygearingestion
-  name: deployment-gva-safety-gear-ingestion
+    app: nativeoneapiingestion
+  name: deployment-native-one-api-ingestion
   namespace: {{ .Values.namespace }}
 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: gvasafetygearingestion
+      app: nativeoneapiingestion
   template:
     metadata:
       labels:
-        app: gvasafetygearingestion
+        app: nativeoneapiingestion
     spec:
       {{- if and .Values.DOCKER_USERNAME .Values.DOCKER_PASSWORD }}
       imagePullSecrets:
       - name: registryauth
       {{- end }}
       containers:
-      - name: ia-gva-safety-gear-ingestion
-        image: {{ .Values.DOCKER_REGISTRY }}ia_gva_safety_gear_ingestion:{{ .Values.EII_VERSION }}
+      - name: ia-native-one-api-ingestion
+        image: {{ .Values.DOCKER_REGISTRY }}ia_native_oneapi_ingestion:{{ .Values.EII_VERSION }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
         volumeMounts:
-        {{- if eq .Values.config.gvasafetygearingestion.IPC true}}
+        {{- if eq .Values.config.nativeoneapiingestion.IPC true}}
         - name: {{ .Values.volumes.eii_socket.name }}
           mountPath: {{ .Values.volumes.eii_socket.location }}
         {{- end }}
@@ -80,7 +78,7 @@ spec:
 
         env:
         - name: AppName
-          value: "GVASafetyGearIngestion"
+          value: "NativeOneAPIIngestion"
         - name: DEV_MODE
           value: '{{ .Values.env.DEV_MODE }}'
         - name: PROFILING_MODE
@@ -93,43 +91,38 @@ spec:
           value: ''
         - name:  GENICAM
           value: 'Matrix_Vision'
-        {{- if eq .Values.config.gvasafetygearingestion.IPC false}}
-        # Override the endpoint provided in interfaces for PUBLISHER
-        - name: PUBLISHER_ENDPOINT
-          value: "0.0.0.0:{{ .Values.config.gvasafetygearingestion.publish_port }}"
-        # Override the endpoint provided in interfaces for PUBLISHER
+        {{- if eq .Values.config.nativeoneapiingestion.IPC false}}
         - name: PUBLISHER_TYPE
           value: "zmq_tcp"
-        # Override the endpoint provided in interfaces for SERVER
-        - name: SERVER_ENDPOINT
-          value: "0.0.0.0:{{ .Values.config.gvasafetygearingestion.server_port }}"
-        - name: SERVER_TYPE
-          value: "zmq_tcp"
-        {{- else }}
-        # Override the endpoint provided in interfaces for PUBLISHER
         - name: PUBLISHER_ENDPOINT
-          value: "{{ .Values.env.SOCKET_DIR }}"
-        # Override the endpoint provided in interfaces for PUBLISHER
+          value: "0.0.0.0:{{ .Values.config.nativeoneapiingestion.publish_port }}"
+        {{- if .Values.config.nativesafetygearingestion }}
+        - name: SUBSCRIBER_ENDPOINT
+          value: "{{ .Values.config.nativesafetygearingestion.name }}:{{ .Values.config.nativesafetygearingestion.publish_port }}"
+        - name: SUBSCRIBER_TYPE
+          value: "zmq_tcp"
+        {{- end }}
+        {{- else }}
         - name: PUBLISHER_TYPE
           value: "zmq_ipc"
-        # Override the endpoint provided in interfaces for SERVER
-        - name: SERVER_ENDPOINT
+        - name: PUBLISHER_ENDPOINT
           value: "{{ .Values.env.SOCKET_DIR }}"
-        - name: SERVER_TYPE
+        - name: SUBSCRIBER_ENDPOINT
+          value: "{{ .Values.env.SOCKET_DIR }}"
+        - name: SUBSCRIBER_TYPE
           value: "zmq_ipc"
         {{- end }}
-
         {{ if eq .Values.env.DEV_MODE false}}
         - name: CONFIGMGR_CACERT
           value: "/run/secrets/etcd/cacert.pem"
         - name: CONFIGMGR_CERT
-          value: "/run/secrets/etcd/GVASafetyGearIngestion_client_certificate.pem"
+          value: "/run/secrets/etcd/NativeOneAPIIngestion_client_certificate.pem"
         - name: CONFIGMGR_KEY
-          value: "/run/secrets/etcd/GVASafetyGearIngestion_client_key.pem"
+          value: "/run/secrets/etcd/NativeOneAPIIngestion_client_key.pem"
         {{ end }}
 
       volumes:
-      {{- if eq .Values.config.gvasafetygearingestion.IPC true}}
+      {{- if eq .Values.config.nativeoneapiingestion.IPC true}}
       - name: {{ .Values.volumes.eii_socket.name }}
         persistentVolumeClaim:
           claimName: {{ .Values.volumes.eii_socket.name }}
@@ -157,8 +150,8 @@ spec:
           items:
           - key: cacert.pem
             path: cacert.pem
-          - key: GVASafetyGearIngestion_client_certificate.pem
-            path: GVASafetyGearIngestion_client_certificate.pem
-          - key: GVASafetyGearIngestion_client_key.pem
-            path: GVASafetyGearIngestion_client_key.pem
+          - key: NativeOneAPIIngestion_client_certificate.pem
+            path: NativeOneAPIIngestion_client_certificate.pem
+          - key: NativeOneAPIIngestion_client_key.pem
+            path: NativeOneAPIIngestion_client_key.pem
       {{ end }}

@@ -56,15 +56,15 @@ spec:
       - name: ia-native-safety-gear-analytics
         image: {{ .Values.DOCKER_REGISTRY }}ia_native_safety_gear_analytics:{{ .Values.EII_VERSION }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
-        securityContext:
-          privileged: true
         volumeMounts:
         {{- if eq .Values.config.nativesafetygearanalytics.IPC true}}
         - name: {{ .Values.volumes.eii_socket.name }}
           mountPath: {{ .Values.volumes.eii_socket.location }}
         {{- end }}
-        - name: eii-dev
+        - name: dev
           mountPath: /dev
+        - name: dev-shm
+          mountPath: /dev/shm
         - name: tmp
           mountPath: /tmp
         - name: var-tmp
@@ -110,7 +110,7 @@ spec:
         {{- end }}
         {{ if eq .Values.env.DEV_MODE false}}
         - name: CONFIGMGR_CACERT
-          value: "/run/secrets/etcd/ca_certificate.pem"
+          value: "/run/secrets/etcd/cacert.pem"
         - name: CONFIGMGR_CERT
           value: "/run/secrets/etcd/NativeSafetyGearAnalytics_client_certificate.pem"
         - name: CONFIGMGR_KEY
@@ -123,9 +123,12 @@ spec:
         persistentVolumeClaim:
           claimName: {{ .Values.volumes.eii_socket.name }}
       {{- end }}
-      - name: eii-dev
+      - name: dev
         hostPath:
           path: /dev
+      - name: dev-shm
+        hostPath:
+          path: /dev/shm
       - name: tmp
         hostPath:
           path: /tmp
@@ -138,8 +141,8 @@ spec:
         secret:
           secretName: eii-certs
           items:
-          - key: ca_certificate.pem
-            path: ca_certificate.pem
+          - key: cacert.pem
+            path: cacert.pem
           - key: NativeSafetyGearAnalytics_client_certificate.pem
             path: NativeSafetyGearAnalytics_client_certificate.pem
           - key: NativeSafetyGearAnalytics_client_key.pem

@@ -67,7 +67,7 @@ class Udf:
             self.labels_map = [x.split(sep=' ', maxsplit=1)[-1].strip() for x
                                in f]
 
-        self.lock = threading.Lock()
+        self.device = device
 
         # Load OpenVINO model
         self.ie = IECore()
@@ -83,11 +83,11 @@ class Udf:
         self.input_blob = next(iter(self.net.input_info))
         self.output_blob = next(iter(self.net.outputs))
         self.net.batch_size = 1  # change to enable batch loading
-        self.exec_net = self.ie.load_network(network=self.net,
-                                             device_name=device.upper())
 
     # Main classification algorithm
     def process(self, frame, metadata):
+        exec_net = self.ie.load_network(network=self.net,
+                                        device_name=self.device.upper())
         # Read and preprocess input images
         n, c, h, w = self.net.inputs[self.input_blob].shape
         images = np.ndarray(shape=(n, c, h, w))
@@ -104,9 +104,7 @@ class Udf:
         # Start sync inference
         infer_time = []
         t0 = time()
-        self.lock.acquire()
-        res = self.exec_net.infer(inputs={self.input_blob: images})
-        self.lock.release()
+        res = exec_net.infer(inputs={self.input_blob: images})
         infer_time.append((time() - t0)*1000)
         average_time = np.average(np.asarray(infer_time))
         average_time_msg = 'Average running time of one iteration'

@@ -22,7 +22,8 @@
 
   ----
   **NOTE**:
-  * The above config works for both "CPU" and "GPU" devices after setting
+
+* The above config works for both "CPU" and "GPU" devices after setting
   appropriate `device` value. If the device in the above config is "HDDL" or
   "MYRIAD", please use the below config where the model_xml and model_bin files
   are different.Please set the "device" value appropriately based on the device
@@ -45,29 +46,31 @@ User can move these directory to anwhere in the host system and compile the code
 
     From:
 
-	```yml
-	---snip---
+ ```yml
+ ---snip---
     build:
         context: $PWD/../CustomUdfs/PySafetyGearAnalytics
         dockerfile: $PWD/../CustomUdfs/PySafetyGearAnalytics/Dockerfile
-	---snip---
+ ---snip---
     ```
+
     To
 
-	```yml
+ ```yml
     -----snip-----
     build:
         context: $HOME/PySafetyGearAnalytics
         dockerfile: $HOME/PySafetyGearAnalytics/Dockerfile
-	```
+ ```
 
-	2. Change the [video-streaming-all-udfs.yml](https://github.com/open-edge-insights/eii-core/blob/master/build/usecases/video-streaming-all-udfs.yml) file to define the service with full path instead of relative path from IEdgeInsights as follows:
+ 2. Change the [video-streaming-all-udfs.yml](https://github.com/open-edge-insights/eii-core/blob/master/build/usecases/video-streaming-all-udfs.yml) file to define the service with full path instead of relative path from IEdgeInsights as follows:
 
     From:
 
     ```yml
     CustomUdfs/PySafetyGearAnalytics
     ```
+
     To
 
     ```yml

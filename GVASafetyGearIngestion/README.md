@@ -2,21 +2,21 @@
 
 This container is based out of VideoIngestion container. Since GVA elements are used for analytics there is no need for using any udf.
 
- * `Video File - Gstreamer ingestor with GVA elements`
+* `Video File - Gstreamer ingestor with GVA elements`
 
       ```javascript
       {
         "type": "gstreamer",
         "pipeline": "multifilesrc loop=TRUE stop-index=0 location=./test_videos/Safety_Full_Hat_and_Vest.avi ! h264parse ! decodebin ! videoconvert ! video/x-raw,format=BGR ! gvadetect model=models/ref/frozen_inference_graph.xml ! appsink"
       }
+      ```
 
-
- * `Generic Plugin - Gstreamer ingestor with GVA elements`
+* `Generic Plugin - Gstreamer ingestor with GVA elements`
 
     ```javascript
      {
        "type": "gstreamer",
-       "pipeline": "gencamsrc serial=<DEVICE_SERIAL_NUMBER> pixel-format=<PIXEL_FORMAT> ! vaapipostproc format=bgrx ! videoconvert !  video/x-raw,format=BGR ! gvadetect model=models/ref/frozen_inference_graph.xml ! appsink"
+       "pipeline": "gencamsrc serial=<DEVICE_SERIAL_NUMBER> pixel-format=<PIXEL_FORMAT> exposure-time=5000 exposure-mode=timed exposure-auto=off throughput-limit=300000000 ! vaapipostproc format=bgrx ! videoconvert !  video/x-raw,format=BGR ! gvadetect model=models/ref/frozen_inference_graph.xml ! appsink"
      }
     ```
 
@@ -25,11 +25,11 @@ This container is based out of VideoIngestion container. Since GVA elements are 
     ```javascript
     {
      "type": "gstreamer",
-     "pipeline" : "gencamsrc serial=<DEVICE_SERIAL_NUMBER> pixel-format=mono8 ! videoconvert ! video/x-raw,format=BGR ! gvadetect model=models/ref/frozen_inference_graph.xml ! appsink"
+     "pipeline" : "gencamsrc serial=<DEVICE_SERIAL_NUMBER> pixel-format=mono8 exposure-time=5000 exposure-mode=timed exposure-auto=off throughput-limit=300000000 ! videoconvert ! video/x-raw,format=BGR ! gvadetect model=models/ref/frozen_inference_graph.xml ! appsink"
     }
     ```
 
- * `RTSP camera - Gstreamer ingestor with GVA elements`
+* `RTSP camera - Gstreamer ingestor with GVA elements`
 
       ```javascript
       {
@@ -38,7 +38,7 @@ This container is based out of VideoIngestion container. Since GVA elements are 
       }
       ```
 
- * `USB camera - Gstreamer ingestor with GVA elements`
+* `USB camera - Gstreamer ingestor with GVA elements`
 
       ```javascript
       {
@@ -47,7 +47,7 @@ This container is based out of VideoIngestion container. Since GVA elements are 
       }
       ```
 
- * `RTSP simulated - Gstreamer ingestor with GVA elements`
+* `RTSP simulated - Gstreamer ingestor with GVA elements`
 
       ```javascript
       {

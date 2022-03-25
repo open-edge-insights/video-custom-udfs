@@ -1,0 +1,5 @@
+config:
+    nativeoneapiingestion:
+      name: nativeoneapiingestion
+      publish_port: 64027      
+      IPC: false

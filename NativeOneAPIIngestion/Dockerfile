@@ -18,8 +18,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Dockerfile for PCL UDF
-
 ARG EII_VERSION
 ARG DOCKER_REGISTRY
 ARG ARTIFACTS="/artifacts"
@@ -29,41 +27,64 @@ FROM ia_openvino_base:$EII_VERSION as openvino_base
 FROM ${DOCKER_REGISTRY}openedgeinsights/ia_video_ingestion:$EII_VERSION as video_ingestion
 FROM ia_eiibase:$EII_VERSION as builder
 
-LABEL description="C++ based PCL UDF"
+LABEL description="DPCPP based ia_native_oneapi_ingestion UDF"
 
 WORKDIR /app
 
 ARG ARTIFACTS
 RUN mkdir $ARTIFACTS \
-          $ARTIFACTS/rs2pcl \
           $ARTIFACTS/lib
 
 ARG CMAKE_INSTALL_PREFIX
 
 ENV DEBIAN_FRONTEND="noninteractive"
 
-RUN apt-get update && \
-    apt-get install -y libpcl-dev
+RUN apt-get update
 
 COPY --from=video_common ${CMAKE_INSTALL_PREFIX}/include ${CMAKE_INSTALL_PREFIX}/include
 COPY --from=video_common ${CMAKE_INSTALL_PREFIX}/lib ${CMAKE_INSTALL_PREFIX}/lib
 COPY --from=openvino_base /opt/intel /opt/intel
 
-# Copy more than one UDFs here
-# Both C++ & Python are allowed in a container.
-COPY ./rs2pcl/ ./rs2pcl
-RUN cp -r ./rs2pcl $ARTIFACTS/rs2pcl
+# Add package repository to install GPGPU drivers
+RUN apt update && apt install -y gpg-agent wget && \
+    wget -qO - https://repositories.intel.com/graphics/intel-graphics.key | apt-key add -  && \
+    echo 'deb [arch=amd64] https://repositories.intel.com/graphics/ubuntu focal main' | tee /etc/apt/sources.list.d/igpu_driver.list && \
+    apt update
 
-# Build native UDF samples
-RUN /bin/bash -c "source /opt/intel/openvino/bin/setupvars.sh && \
-    cd ./rs2pcl && \
+# Install runtime packages, developed packages and clinfo tool
+RUN apt install -y --no-install-recommends \
+    intel-opencl-icd \
+    intel-level-zero-gpu \
+    level-zero \
+    intel-media-va-driver-non-free \
+    libmfx1 \
+    libigc-dev \
+    intel-igc-cm \
+    libigdfcl-dev \
+    libigfxcmrt-dev \
+    level-zero-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update
+# Add package repository to install intel-basekit and install oneAPI intel-basekit
+RUN wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB -O - | apt-key add - && \
+    echo "deb https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneAPI.list && \
+    apt update && \
+    apt install -y intel-basekit
+
+COPY ./dpcpp_blur_udf/ ./dpcpp_blur_udf
+RUN cp -r ./dpcpp_blur_udf $ARTIFACTS/dpcpp_blur_udf
+
+RUN /bin/bash -c "source /opt/intel/oneapi/setvars.sh &&\
+    source /opt/intel/openvino/bin/setupvars.sh && \
+    cd ./dpcpp_blur_udf && \
     rm -rf build && \
     mkdir build && \
     cd build && \
     cmake -DCMAKE_INSTALL_INCLUDEDIR=${CMAKE_INSTALL_PREFIX}/include -DCMAKE_INSTALL_PREFIX=$CMAKE_INSTALL_PREFIX -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} .. && \
     make"
 
-RUN cp ./rs2pcl/build/librs2pcl.so $ARTIFACTS/lib
+RUN cp ./dpcpp_blur_udf/build/libdpcpp_blur_udf.so $ARTIFACTS/lib
 
 FROM video_ingestion as runtime
 USER root
@@ -75,19 +96,21 @@ WORKDIR /app
 ARG ARTIFACTS
 ARG CMAKE_INSTALL_PREFIX
 
-# PCL libraries are required in both build stage for compiling udf and
-# runtime stage for loading the udf. Since PCL has a lot of dependency
-# packages it was feasible to copy the required files from build stage.
-# Hence libpcl-dev package is installed again in runtime stage
-
 ENV DEBIAN_FRONTEND="noninteractive"
 
-RUN apt-get update && \
-    apt-get install -y libpcl-dev
 
 COPY --from=builder $ARTIFACTS/lib ${CMAKE_INSTALL_PREFIX}/lib
-COPY --from=builder $ARTIFACTS/rs2pcl .
+COPY --from=builder $ARTIFACTS/dpcpp_blur_udf $ARTIFACTS/dpcpp_blur_udf
+
+RUN apt-get update
+# Add package repository to install intel-basekit and install oneAPI intel-basekit
+RUN wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB -O - | apt-key add - && \
+    echo "deb https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneAPI.list && \
+    apt update && \
+    apt install -y intel-basekit
+
+ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:/opt/intel/oneapi/intelpython/latest/lib
 
 ARG EII_USER_NAME
 RUN chown ${EII_USER_NAME}:${EII_USER_NAME} /app /var/tmp
-RUN usermod -a -G users ${EII_USER_NAME}
+USER ${EII_USER_NAME}

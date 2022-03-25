@@ -22,14 +22,14 @@ version: '3.6'
 
 services:
 ## Define Ingestion based service
-  native_pcl_ingestion:
+  ia_native_oneapi_ingestion:
     read_only: true
     depends_on:
       - ia_video_common
       - ia_openvino_base
     build:
-      context: $PWD/../CustomUdfs/NativePclIngestion
-      dockerfile: $PWD/../CustomUdfs/NativePclIngestion/Dockerfile
+      context: $PWD/../CustomUdfs/NativeOneAPIIngestion
+      dockerfile: $PWD/../CustomUdfs/NativeOneAPIIngestion/Dockerfile
       args:
         EII_VERSION: ${EII_VERSION}
         EII_USER_NAME: ${EII_USER_NAME}
@@ -37,9 +37,9 @@ services:
         # set CMAKE_BUILD_TYPE value to "Debug" to generate debug symbols
         CMAKE_BUILD_TYPE: "Release"
         CMAKE_INSTALL_PREFIX: ${EII_INSTALL_PATH}
-    image: ${DOCKER_REGISTRY}native_pcl_ingestion:${EII_VERSION}
-    container_name: native_pcl_ingestion
-    hostname: native_pcl_ingestion
+    image: ${DOCKER_REGISTRY}ia_native_oneapi_ingestion:${EII_VERSION}
+    container_name: ia_native_oneapi_ingestion
+    hostname: ia_native_oneapi_ingestion
     restart: unless-stopped
     security_opt:
     - no-new-privileges
@@ -48,7 +48,7 @@ services:
       interval: 5m
     ipc: "none"
     environment:
-      AppName: "NativePclIngestion"
+      AppName: "NativeOneAPIIngestion"
       DEV_MODE: ${DEV_MODE}
       PROFILING_MODE: ${PROFILING_MODE}
       no_proxy: ${eii_no_proxy},${ETCD_HOST}
@@ -58,7 +58,7 @@ services:
       # Setting GENICAM value to the respective camera which needs to be used
       GENICAM: "Matrix_Vision"
     ports:
-      - 64023:64023
+      - 64027:64027
     networks:
       - eii
     volumes:
@@ -66,7 +66,7 @@ services:
       - "vol_eii_socket:${SOCKET_DIR}"
       - "/dev:/dev"
       - "/tmp:/tmp"
-      - ./Certificates/NativePclIngestion:/run/secrets/NativePclIngestion:ro
+      - ./Certificates/NativeOneAPIIngestion:/run/secrets/NativeOneAPIIngestion:ro
       - ./Certificates/rootca/cacert.pem:/run/secrets/rootca/cacert.pem:ro
     device_cgroup_rules:
       # Default run - device-cgroup-rule='c 189:* rmw'
