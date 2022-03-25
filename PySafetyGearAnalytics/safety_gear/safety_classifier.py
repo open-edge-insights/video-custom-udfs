@@ -60,6 +60,7 @@ class Udf:
         self.model_xml = model_xml
         self.model_bin = model_bin
         self.device = device
+        self.lock = threading.Lock()
 
         assert os.path.exists(self.model_xml), \
             'Model xml file missing: {}'.format(self.model_xml)
@@ -106,6 +107,7 @@ class Udf:
         # Change data layout from HWC to CHW
         in_frame = in_frame.transpose((2, 0, 1))
         in_frame = in_frame.reshape((n, c, h, w))
+
         executionNet.infer(inputs={self.inputBlob: in_frame})
 
         inf_end = time.time()

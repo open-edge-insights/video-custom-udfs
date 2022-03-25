@@ -22,6 +22,7 @@ import os
 import logging
 import cv2
 import numpy as np
+import threading
 from time import time
 
 from openvino.inference_engine import IECore
