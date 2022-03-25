@@ -214,6 +214,7 @@ SafetyDemo::SafetyDemo(config_t *config) : BaseUdf(config) {
     LOG_INFO("Loading model to the device");
     m_executable_network = ie.LoadNetwork(m_network, device_type->body.string);
     // -------------------------------------------------------------------
+
 }
 
 SafetyDemo::~SafetyDemo() {}
